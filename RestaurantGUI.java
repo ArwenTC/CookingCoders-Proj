@@ -60,26 +60,26 @@ public class RestaurantGUI extends JFrame {
 	public void build() {
 		
 		// Creates Panels
-		masterP = new JPanel();
-		viewOrderP = new JPanel();
-		createOrderP = new JPanel();
-		EmployeeViewOrderP = new JPanel();
-		orderListP = new JPanel();
-		createAccountP = new JPanel();
-		logInP = new JPanel();
-		manageUsersP = new JPanel();
-		settingsP = new JPanel();
+		masterP = new PagePanel(new Color(143, 186, 167));
+		viewOrderP = new PagePanel(new Color(143, 186, 167));
+		createOrderP = new PagePanel(new Color(143, 186, 167));
+		EmployeeViewOrderP = new PagePanel(new Color(143, 186, 167));
+		orderListP = new PagePanel(new Color(143, 186, 167));
+		createAccountP = new PagePanel(new Color(143, 186, 167));
+		logInP = new PagePanel(new Color(143, 186, 167));
+		manageUsersP = new PagePanel(new Color(143, 186, 167));
+		settingsP = new PagePanel(new Color(143, 186, 167));
 		
 		// Menu bar that allows user to swap between each view
 		menu = new JMenuBar();
 		// Menu bar buttons
 		viewOrderB = new MenuButton("View Order");
-		createOrderB = new JButton("Create Order");
-		orderListB = new JButton("Order List");
-		logInB = new JButton("Log In");
-		logOutB = new JButton("Log Out");
-		usersB = new JButton("Users");
-		settingsB = new JButton("Settings");
+		createOrderB = new MenuButton("Create Order");
+		orderListB = new MenuButton("Order List");
+		logInB = new MenuButton("Log In");
+		logOutB = new MenuButton("Log Out");
+		usersB = new MenuButton("Users");
+		settingsB = new MenuButton("Settings");
 		
 		// Adds all buttons to the menu bar
 		menu.add(viewOrderB);

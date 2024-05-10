@@ -6,11 +6,50 @@ import java.awt.*;
 public class MenuButton extends JButton {
 	
 	// Creates button color
-	Color buttonColor = new Color(57, 130, 69);
+	Color buttonColor = new Color(50, 168, 82);
+	Color outlineColor = new Color(38, 102, 55);
+	Color textColor = new Color(255, 255, 255);
 	
+	// Constructor that sets all colors
+	public MenuButton(String text, Color buttonColor, Color outlineColor, Color textColor) {
+		// Super constructor
+		super(text);
+		
+		// Sets the button color based on the constructor
+		this.buttonColor = buttonColor;
+		this.outlineColor = outlineColor;
+		this.textColor = textColor;
+		
+		// Sets filled content area flag
+		setContentAreaFilled(false);
+		// Sets the text color to white
+		setForeground(textColor);
+	}
+	
+	// Constructor that sets just button color and outline
+	public MenuButton(String text, Color buttonColor, Color outlineColor) {
+		// Super constructor
+		super(text);
+		
+		// Sets the button color based on the constructor
+		this.buttonColor = buttonColor;
+		this.outlineColor = outlineColor;
+		
+		// Sets filled content area flag
+		setContentAreaFilled(false);
+		// Sets the text color to white
+		setForeground(textColor);
+	}
+
+	// Constructor that uses the default colors
 	public MenuButton(String name) {
-		// Creates a button using the name field
+		// Super constructor
 		super(name);
+		
+		// Sets filled content area flag
+		setContentAreaFilled(false);
+		// Sets the text color to white
+		setForeground(textColor);
 	}
 	
 	@Override
@@ -18,8 +57,17 @@ public class MenuButton extends JButton {
 		
 		// Gets a new graphic
 		Graphics2D style = (Graphics2D) g.create();
+		Graphics2D style2 = (Graphics2D) g.create();
+		// Sets rendering hint
+		style.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		style2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		// Sets the color of the graphic to green
-		style.setColor(new Color(57, 130, 69));
+		style.setColor(this.buttonColor);
+		style2.setColor(this.outlineColor);
+
+		style2.fillRect(0, 0, getWidth(), getHeight());;
+		style.fillRect(3, 0, getWidth()-6, getHeight());;
+		
 		
 		// Releases any memory used to modify the style
 		style.dispose();
