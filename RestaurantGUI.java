@@ -21,13 +21,12 @@ public class RestaurantGUI extends JFrame {
 	// Menu bar that allows user to swap between each view
 	JMenuBar menu;
 	// Menu bar buttons
-	JButton viewOrderB;
-	JButton createOrderB;
-	JButton orderListB;
-	JButton logInB;
-	JButton logOutB;
-	JButton usersB;
-	JButton settingsB;
+	JMenuItem viewOrderB;
+	JMenuItem createOrderB;
+	JMenuItem orderListB;
+	JMenuItem logInB;
+	JMenuItem logOutB;
+	JMenuItem manageB;
 	
 	/**
 	 * Creates the RestaurantGUI
@@ -60,34 +59,96 @@ public class RestaurantGUI extends JFrame {
 	public void build() {
 		
 		// Creates Panels
-		masterP = new PagePanel(new Color(143, 186, 167));
-		viewOrderP = new PagePanel(new Color(143, 186, 167));
-		createOrderP = new PagePanel(new Color(143, 186, 167));
-		EmployeeViewOrderP = new PagePanel(new Color(143, 186, 167));
-		orderListP = new PagePanel(new Color(143, 186, 167));
-		createAccountP = new PagePanel(new Color(143, 186, 167));
-		logInP = new PagePanel(new Color(143, 186, 167));
-		manageUsersP = new PagePanel(new Color(143, 186, 167));
-		settingsP = new PagePanel(new Color(143, 186, 167));
+		masterP = new RPanel();
+		viewOrderP = new RPanel();
+		createOrderP = new RPanel();
+		EmployeeViewOrderP = new RPanel();
+		orderListP = new RPanel();
+		createAccountP = new RPanel();
+		logInP = new RPanel();
+		manageUsersP = new RPanel();
+		settingsP = new RPanel();
 		
 		// Menu bar that allows user to swap between each view
 		menu = new JMenuBar();
+		menu.setLayout(new GridLayout(1, 0, 3, 0));
+		menu.setBackground(new Color(38, 102, 55));
+		menu.setBorderPainted(false);
 		// Menu bar buttons
-		viewOrderB = new MenuButton("View Order");
-		createOrderB = new MenuButton("Create Order");
-		orderListB = new MenuButton("Order List");
-		logInB = new MenuButton("Log In");
-		logOutB = new MenuButton("Log Out");
-		usersB = new MenuButton("Users");
-		settingsB = new MenuButton("Settings");
+		viewOrderB = new RMenuItem("View Order");
+		createOrderB = new RMenuItem("Create Order");
+		orderListB = new RMenuItem("Order List");
+		logInB = new RMenuItem("Log In");
+		logOutB = new RMenuItem("Log Out");
+		manageB = new RMenuItem("Manage");
+		manageB.add(new PopupMenu("message"));
 		
-		// Adds all buttons to the menu bar
+		//setCustomerView();
+		//setEmployeeView();
+		setManagerView();
+		
+	}
+	
+	public void setCustomerView() {
+		// Removes all items from the menu
+		menu.remove(viewOrderB);
+		menu.remove(createOrderB);
+		menu.remove(orderListB);
+		menu.remove(manageB);
+		
+		// Adds necessary items to the menu
 		menu.add(viewOrderB);
 		menu.add(createOrderB);
+		//menu.add(orderListB);
+		//menu.add(manageB);
+		
+		// Logs user out
+		logOut();
+	}
+	public void setEmployeeView() {
+		// Removes all items from the menu
+		menu.remove(viewOrderB);
+		menu.remove(createOrderB);
+		menu.remove(orderListB);
+		menu.remove(manageB);
+		
+		// Adds necessary items to the menu
+		//menu.add(viewOrderB);
 		menu.add(orderListB);
-		menu.add(logInB);
+		menu.add(createOrderB);
+		//menu.add(manageB);
+		
+		// Logs user out
+		logOut();
+	}
+	public void setManagerView() {
+		// Removes all items from the menu
+		menu.remove(viewOrderB);
+		menu.remove(orderListB);
+		menu.remove(createOrderB);
+		menu.remove(manageB);
+		
+		// Adds necessary items to the menu
+		//menu.add(viewOrderB);
+		menu.add(orderListB);
+		menu.add(createOrderB);
+		menu.add(manageB);
+		
+		// Logs user out
+		logOut();
+	}
+	
+	public void logIn() {
+		
+		// Sets the tabs viewed
+		menu.remove(logInB);
 		menu.add(logOutB);
-		menu.add(usersB);
-		menu.add(settingsB);
+	}
+	
+	public void logOut() {
+		
+		// Sets the tabs viewed
+		menu.remove(logOutB);
+		menu.add(logInB);
 	}
 }
