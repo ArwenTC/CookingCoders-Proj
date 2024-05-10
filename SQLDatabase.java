@@ -37,8 +37,10 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Gets the data from the sql
-	 * @return ResultSet containing the database information
+	 * Returns the data set inside a given table.
+	 * @param table
+	 * @return Result set containing info
+	 * @return null upon error
 	 */
 	public ResultSet getDatabaseInfo(String table) {
 		
@@ -58,14 +60,13 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Adds an item to the table
-	 * @param studentID
-	 * @param firstName
-	 * @param lastName
-	 * @param midtermGrade
-	 * @return - the success value of the program to be printed in the pop-up window
+	 * Adds a value to a table, allowing different sizes of inputs.
+	 * @param table
+	 * @param elements
+	 * @param values
+	 * @return int 0 = pass >0 = error code
 	 */
-	public int addItem(String table, String keyName, String keyValue, ArrayList<String> elements, ArrayList<Object> values) {
+	public int addItem(String table, ArrayList<String> elements, ArrayList<Object> values) {
 
 		// String builder used to piece together command
 		StringBuilder elementsSB = new StringBuilder("");
@@ -73,7 +74,7 @@ public class SQLDatabase {
 		
 		try {
 			
-			// Appends first value to string builder
+			// Appends first element to string builder
 			elementsSB.append(elements.get(0));
 			// If there are more values, appends them using a loop
 			if (elements.size() > 1) {
@@ -83,13 +84,12 @@ public class SQLDatabase {
 				}
 			}
 
-			
-			// Adds first value
+			// Adds first value to string builder
 			// Adds a value with " if string and without if not
 			if (values.get(0) instanceof String) {
 				valuesSB.append("\"" + values.get(0) + "\"");
 			} else {
-				valuesSB.append(values.get(0));
+				valuesSB.append(values.get(0).toString());
 			}
 			
 			// If there are more values, appends them using a loop
@@ -100,12 +100,11 @@ public class SQLDatabase {
 					if (values.get(i) instanceof String) {
 						valuesSB.append(", \"" + values.get(i) + "\"");
 					} else {
-						valuesSB.append(", " + values.get(i));
+						valuesSB.append(", " + values.get(i).toString());
 					}
 					
 				}
 			}
-			
 			
 		} catch (Exception e) {
 			// Array accessing errors
@@ -130,13 +129,24 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	
-	public int removeItem(String table, String keyName, String keyValue) {
+	/**
+	 * Removes an item from a given table, provided a key
+	 * @param table
+	 * @param keyName
+	 * @param keyValue
+	 * @return int 0 = pass >0 = error code
+	 */
+	public int removeItem(String table, String keyName, Object keyValue) {
 		
 		// Tries to remove an item from the database using a query
 		try {
-			// Creates selection statement
-			String sqlCommand = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue;
+			// Creates selection statement (either using string or non-string as key)
+			String sqlCommand;
+			if (keyValue instanceof String) {
+				sqlCommand = "DELETE FROM " + table + " WHERE " + keyName + " = \"" + keyValue + "\"";
+			} else {
+				sqlCommand = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue.toString();
+			}
 			Statement statement = con.createStatement();
 			
 			// Executes the deletion
@@ -151,8 +161,16 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	
-	public int updateItem(String table, String keyName, String keyValue, ArrayList<String> elements, ArrayList<Object> values) {
+	/**
+	 * Modifies a set of data in a given table.
+	 * @param table
+	 * @param keyName
+	 * @param keyValue
+	 * @param elements
+	 * @param values
+	 * @return int 0 = pass >0 = error code
+	 */
+	public int updateItem(String table, String keyName, Object keyValue, ArrayList<String> elements, ArrayList<Object> values) {
 		
 		// String builder used to piece together command
 		StringBuilder elementsSB = new StringBuilder("");
@@ -165,7 +183,7 @@ public class SQLDatabase {
 				elementsSB.append(elements.get(0) + " = \"" + values.get(0) + "\"");
 			// Else, adds a normal element to the string value
 			} else {
-				elementsSB.append(elements.get(0) + " = " + values.get(0));
+				elementsSB.append(elements.get(0) + " = " + values.get(0).toString());
 			}
 			
 			// If there are more values, appends them using a loop
@@ -177,7 +195,7 @@ public class SQLDatabase {
 						elementsSB.append("," + elements.get(i) + " = \"" + values.get(i) + "\"");
 					// Else, adds a normal element to the string value
 					} else {
-						elementsSB.append("," + elements.get(i) + " = " + values.get(i));
+						elementsSB.append("," + elements.get(i) + " = " + values.get(i).toString());
 					}
 					
 				}
@@ -189,8 +207,13 @@ public class SQLDatabase {
 		
 		// Tries to remove an item from the database using a query
 		try {
-			// Creates selection statement
-			String sqlCommand = "UPDATE " + tableName + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue;
+			// Creates selection statement (either using string or non-string as key)
+			String sqlCommand;
+			if (keyValue instanceof String) {
+				sqlCommand = "UPDATE " + tableName + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = \"" + keyValue + "\"";
+			} else {
+				sqlCommand = "UPDATE " + tableName + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue.toString();
+			}
 			Statement statement = con.createStatement();
 			
 			// Executes the deletion
