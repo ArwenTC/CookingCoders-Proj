@@ -29,7 +29,9 @@ public class RestaurantGUI extends JFrame {
 	JButton usersB;
 	JButton settingsB;
 	
-	
+	/**
+	 * Creates the RestaurantGUI
+	 */
 	public RestaurantGUI() {
 		
    		// Set the title.
@@ -52,6 +54,9 @@ public class RestaurantGUI extends JFrame {
    		
 	}
 	
+	/**
+	 * Builds the JFrame an sets values
+	 */
 	public void build() {
 		
 		// Creates Panels
@@ -68,7 +73,7 @@ public class RestaurantGUI extends JFrame {
 		// Menu bar that allows user to swap between each view
 		menu = new JMenuBar();
 		// Menu bar buttons
-		viewOrderB = new JButton("View Order");
+		viewOrderB = new MenuButton("View Order");
 		createOrderB = new JButton("Create Order");
 		orderListB = new JButton("Order List");
 		logInB = new JButton("Log In");
@@ -85,7 +90,4 @@ public class RestaurantGUI extends JFrame {
 		menu.add(usersB);
 		menu.add(settingsB);
 	}
-	
-	
-	
 }
