@@ -1,6 +1,10 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RestaurantGUI extends JFrame {
 
@@ -11,7 +15,7 @@ public class RestaurantGUI extends JFrame {
 	JPanel masterP;
 	JPanel viewOrderP;
 	JPanel createOrderP;
-	JPanel EmployeeViewOrderP;
+	JPanel employeeViewOrderP;
 	JPanel orderListP;
 	JPanel createAccountP;
 	JPanel logInP;
@@ -60,9 +64,9 @@ public class RestaurantGUI extends JFrame {
 		
 		// Creates Panels
 		masterP = new RPanel();
-		viewOrderP = new RPanel();
+		viewOrderP = new ViewOrderPanel();
 		createOrderP = new RPanel();
-		EmployeeViewOrderP = new RPanel();
+		employeeViewOrderP = new RPanel();
 		orderListP = new RPanel();
 		createAccountP = new RPanel();
 		logInP = new RPanel();
@@ -83,12 +87,54 @@ public class RestaurantGUI extends JFrame {
 		manageB = new RMenuItem("Manage");
 		manageB.add(new PopupMenu("message"));
 		
-		//setCustomerView();
+		// Adds mouse listeners
+		viewOrderB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                viewOrderAction();
+            }
+        });
+		createOrderB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                createOrderAction();
+            }
+        });
+		orderListB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                orderListAction();
+            }
+        });
+		logInB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                logInAction();
+            }
+        });
+		logOutB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                logOutAction();
+            }
+        });
+		manageB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                manageAction();
+            }
+        });
+		
+		// Sets view of the program
+		setCustomerView();
 		//setEmployeeView();
-		setManagerView();
+		//setManagerView();
 		
 	}
-	
+
+	/**
+	 * Sets the viewable buttons by the user as a customer
+	 */
 	public void setCustomerView() {
 		// Removes all items from the menu
 		menu.remove(viewOrderB);
@@ -105,6 +151,10 @@ public class RestaurantGUI extends JFrame {
 		// Logs user out
 		logOut();
 	}
+
+	/**
+	 * Sets the viewable buttons by the user as an employee
+	 */
 	public void setEmployeeView() {
 		// Removes all items from the menu
 		menu.remove(viewOrderB);
@@ -121,6 +171,10 @@ public class RestaurantGUI extends JFrame {
 		// Logs user out
 		logOut();
 	}
+
+	/**
+	 * Sets the viewable buttons by the user as a manager
+	 */
 	public void setManagerView() {
 		// Removes all items from the menu
 		menu.remove(viewOrderB);
@@ -137,7 +191,11 @@ public class RestaurantGUI extends JFrame {
 		// Logs user out
 		logOut();
 	}
-	
+
+	/**
+	 * Sets logOut to be visible
+	 * Will log the user in
+	 */
 	public void logIn() {
 		
 		// Sets the tabs viewed
@@ -145,10 +203,136 @@ public class RestaurantGUI extends JFrame {
 		menu.add(logOutB);
 	}
 	
+	/**
+	 * Sets logIn to be visible
+	 * Will log the user out
+	 */
 	public void logOut() {
 		
 		// Sets the tabs viewed
 		menu.remove(logOutB);
 		menu.add(logInB);
 	}
+
+	/**
+	 * Method that runs when the user presses "View Order"
+	 */
+	void viewOrderAction() {
+		// Sets the current panel to the page selected by the user
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(viewOrderP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+		System.out.println("Click");
+	}
+
+	/**
+	 * Method that runs when the user presses "Order List"
+	 */
+	void orderListAction() {
+		// Removes any panels currently in view
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(orderListP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+	}
+	
+	/**
+	 * Method that runs when the user presses "Create Order"
+	 */
+	void createOrderAction() {
+		// Removes any panels currently in view
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(createOrderP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+	}
+	
+	/**
+	 * Method that runs when the user presses "Manage"
+	 */
+	void manageAction () {
+		// Removes any panels currently in view
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(manageUsersP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+	}
+
+	/**
+	 * Method that runs when the user presses "Log In"
+	 */
+	void logInAction() {
+		// Removes any panels currently in view
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(logInP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+	}
+	
+	/**
+	 * Method that runs when the user presses "Log Out"
+	 */
+	void logOutAction() {
+		// Sets the current panel to the page selected by the user
+		masterP.remove(viewOrderP);
+		masterP.remove(createOrderP);
+		masterP.remove(employeeViewOrderP);
+		masterP.remove(orderListP);
+		masterP.remove(createAccountP);
+		masterP.remove(logInP);
+		masterP.remove(manageUsersP);
+		// Adds the panel selected by the user
+		masterP.add(logInP);
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
+	}
+	
 }
