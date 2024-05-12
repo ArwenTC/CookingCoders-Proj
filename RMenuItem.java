@@ -1,7 +1,10 @@
 
+package GroupProject;
+
 // Imports
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -26,12 +29,7 @@ public class RMenuItem extends JMenuItem {
 		setForeground(this.color1);
 		
 		// Adds mouse listener methods
-		addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent m) {
-				// TODO Auto-generated method stub
-			}
-
+		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
@@ -69,12 +67,7 @@ public class RMenuItem extends JMenuItem {
 		setForeground(this.color1);
 		
 		// Adds mouse listener methods
-		addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent m) {
-				// TODO Auto-generated method stub
-			}
-			
+		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
