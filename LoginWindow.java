@@ -192,7 +192,8 @@ public class LoginWindow {
                     User newUser = new User();
                     newUser.username = username;
                     newUser.usertype = "customer";
-                    
+
+                    loggedInUser = newUser;
                 
                 } finally {
                     // do this so the password doesn't stay in memory
