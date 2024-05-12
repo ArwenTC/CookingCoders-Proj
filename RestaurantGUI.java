@@ -1,4 +1,6 @@
 
+package GroupProject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,10 +34,16 @@ public class RestaurantGUI extends JFrame {
 	JMenuItem logOutB;
 	JMenuItem manageB;
 	
+	LoginWindow loginWindow;
+	
+	SQLDatabase myDatabase;
+	
 	/**
 	 * Creates the RestaurantGUI
 	 */
-	public RestaurantGUI() {
+	public RestaurantGUI(SQLDatabase myDatabase_) {
+	    
+	    myDatabase = myDatabase_;
 		
    		// Set the title.
    		setTitle("Order Manager");
@@ -54,6 +62,20 @@ public class RestaurantGUI extends JFrame {
    		// Size and display the window.
    		setSize(SIZE_X,SIZE_Y);
    		setVisible(true);
+   		
+        loginWindow.toggleVisibility();
+
+        // wait for user login
+        try {
+            while (!loginWindow.userIsLoggedIn()) {
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        loginWindow.toggleVisibility();
    		
 	}
 	
@@ -125,8 +147,10 @@ public class RestaurantGUI extends JFrame {
             }
         });
 		
+		loginWindow = new LoginWindow(myDatabase);
+		
 		// Sets view of the program
-		setCustomerView();
+		//setCustomerView();
 		//setEmployeeView();
 		//setManagerView();
 		
@@ -137,10 +161,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	public void setCustomerView() {
 		// Removes all items from the menu
-		menu.remove(viewOrderB);
-		menu.remove(createOrderB);
-		menu.remove(orderListB);
-		menu.remove(manageB);
+	    removeAllButtons();
 		
 		// Adds necessary items to the menu
 		menu.add(viewOrderB);
@@ -157,10 +178,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	public void setEmployeeView() {
 		// Removes all items from the menu
-		menu.remove(viewOrderB);
-		menu.remove(createOrderB);
-		menu.remove(orderListB);
-		menu.remove(manageB);
+	    removeAllButtons();
 		
 		// Adds necessary items to the menu
 		//menu.add(viewOrderB);
@@ -177,10 +195,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	public void setManagerView() {
 		// Removes all items from the menu
-		menu.remove(viewOrderB);
-		menu.remove(orderListB);
-		menu.remove(createOrderB);
-		menu.remove(manageB);
+	    removeAllButtons();
 		
 		// Adds necessary items to the menu
 		//menu.add(viewOrderB);
@@ -219,20 +234,12 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void viewOrderAction() {
 		// Sets the current panel to the page selected by the user
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(viewOrderP);
 		// Validates and repaints the changes
 		validate();
 		repaint();
-		
-		System.out.println("Click");
 	}
 
 	/**
@@ -240,13 +247,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void orderListAction() {
 		// Removes any panels currently in view
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(orderListP);
 		// Validates and repaints the changes
@@ -260,13 +261,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void createOrderAction() {
 		// Removes any panels currently in view
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(createOrderP);
 		// Validates and repaints the changes
@@ -280,13 +275,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void manageAction () {
 		// Removes any panels currently in view
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(manageUsersP);
 		// Validates and repaints the changes
@@ -300,13 +289,7 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void logInAction() {
 		// Removes any panels currently in view
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(logInP);
 		// Validates and repaints the changes
@@ -320,19 +303,32 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void logOutAction() {
 		// Sets the current panel to the page selected by the user
-		masterP.remove(viewOrderP);
-		masterP.remove(createOrderP);
-		masterP.remove(employeeViewOrderP);
-		masterP.remove(orderListP);
-		masterP.remove(createAccountP);
-		masterP.remove(logInP);
-		masterP.remove(manageUsersP);
+	    removeAllPanels();
 		// Adds the panel selected by the user
 		masterP.add(logInP);
 		// Validates and repaints the changes
 		validate();
 		repaint();
 		
+	}
+	
+	
+	void removeAllPanels() {
+	    masterP.remove(viewOrderP);
+        masterP.remove(createOrderP);
+        masterP.remove(employeeViewOrderP);
+        masterP.remove(orderListP);
+        masterP.remove(createAccountP);
+        masterP.remove(logInP);
+        masterP.remove(manageUsersP);
+	}
+	
+	
+	void removeAllButtons() {
+	    menu.remove(viewOrderB);
+        menu.remove(createOrderB);
+        menu.remove(orderListB);
+        menu.remove(manageB);
 	}
 	
 }

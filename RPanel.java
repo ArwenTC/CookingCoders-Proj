@@ -1,4 +1,6 @@
 
+package GroupProject;
+
 // Imports
 import javax.swing.*;
 import java.awt.*;

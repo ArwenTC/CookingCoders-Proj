@@ -1,3 +1,6 @@
+
+package GroupProject;
+
 public class Driver {
 	
 	/**
@@ -16,7 +19,9 @@ public class Driver {
 	public int Run() {
 		
 		// Runs the gui
-		RestaurantGUI rgui = new RestaurantGUI();
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "Kl51abe7!-4567");
+	    
+		RestaurantGUI rgui = new RestaurantGUI(myDatabase);
 		
 		// Pass error code
 		return 0;

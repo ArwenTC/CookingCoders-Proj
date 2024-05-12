@@ -1,5 +1,11 @@
+
+package GroupProject;
+
 import java.sql.*;
 import java.util.ArrayList;
+
+// TODO: use char arrays instead of strings so the SQL queries can be overwritten.
+// The above TODO probably isn't necessary since this isn't a security class.
 
 public class SQLDatabase {
 	
@@ -18,7 +24,7 @@ public class SQLDatabase {
 	 * @param username - login details
 	 * @param password - login details
 	 */
-	public SQLDatabase (String databaseURL, String username, String password) {
+	public SQLDatabase(String databaseURL, String username, String password) {
 		
 		this.databaseURL = databaseURL;
 		this.username = username;
@@ -79,15 +85,22 @@ public class SQLDatabase {
 			// If there are more values, appends them using a loop
 			if (elements.size() > 1) {
 				for (int i = 1; i < elements.size(); i++) {
-						elementsSB.append(", " + elements.get(i));
+					elementsSB.append(", " + elements.get(i));
 					
 				}
 			}
 
 			// Adds first value to string builder
-			// Adds a value with " if string and without if not
+			// Adds a value with " if string or char[] and without if not
 			if (values.get(0) instanceof String) {
 				valuesSB.append("\"" + values.get(0) + "\"");
+			} else if (values.get(0) instanceof char[]) {
+			    valuesSB.append("\"");
+			    char[] firstValue = (char[])values.get(0);
+			    for (char ch : firstValue) {
+			        valuesSB.append(ch);
+			    }
+			    valuesSB.append("\"");
 			} else {
 				valuesSB.append(values.get(0).toString());
 			}
@@ -96,10 +109,17 @@ public class SQLDatabase {
 			if (values.size() > 1) {
 				for (int i = 1; i < values.size(); i++) {
 					
-					// Adds a value with " if string and without if not
+					// Adds a value with " if string or char[] and without if not
 					if (values.get(i) instanceof String) {
 						valuesSB.append(", \"" + values.get(i) + "\"");
-					} else {
+					} else if (values.get(i) instanceof char[]) {
+					    valuesSB.append(", \"");
+					    char[] ithValue = (char[])values.get(i);
+		                for (char ch : ithValue) {
+		                    valuesSB.append(ch);
+		                }
+		                valuesSB.append("\"");
+		            } else {
 						valuesSB.append(", " + values.get(i).toString());
 					}
 					
@@ -107,6 +127,7 @@ public class SQLDatabase {
 			}
 			
 		} catch (Exception e) {
+		    System.out.println(e.getMessage());
 			// Array accessing errors
 			return 1;
 		}
@@ -114,13 +135,15 @@ public class SQLDatabase {
 		// Tries to remove an item from the database using a query
 		try {
 			// Creates selection statement
-			String sqlCommand = "INSERT INTO " + tableName + " ( " + elementsSB.toString()  + " ) VALUES ( " + valuesSB.toString() + " )";
+			String sqlCommand = "INSERT INTO " + table + " ( " + elementsSB.toString()  + " ) VALUES ( " + valuesSB.toString() + " )";
 			Statement statement = con.createStatement();
 			
 			// Executes the deletion
+			System.out.println(sqlCommand);
 			statement.execute(sqlCommand);
 			
 		} catch (SQLException e) {
+		    System.out.println(e.getMessage());
 			// Error upon failure
 			return 2;
 		}
@@ -210,9 +233,9 @@ public class SQLDatabase {
 			// Creates selection statement (either using string or non-string as key)
 			String sqlCommand;
 			if (keyValue instanceof String) {
-				sqlCommand = "UPDATE " + tableName + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = \"" + keyValue + "\"";
+				sqlCommand = "UPDATE " + table + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = \"" + keyValue + "\"";
 			} else {
-				sqlCommand = "UPDATE " + tableName + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue.toString();
+				sqlCommand = "UPDATE " + table + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue.toString();
 			}
 			Statement statement = con.createStatement();
 			
@@ -226,6 +249,33 @@ public class SQLDatabase {
 
 		// Returns the success value
 		return 0;
+	}
+	
+	/**
+	 * 
+	 * @param table
+	 * @param column
+	 * @param value
+	 * @return int 0 = doesn't exist 1 = exists >1 = error code
+	 */
+	public int valueExists(String table, String column, String value) {
+	    String sqlString = "SELECT 1 FROM " + table + " WHERE " + column + " = " + value + ";";
+        
+        int exists = 0;
+        
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        
+        try {
+            st = con.prepareStatement(sqlString);
+            rs = st.executeQuery();
+            
+            exists = rs.next() ? 1 : 0;
+        } catch (SQLException e) {
+            return 2;
+        }
+        
+        return exists;
 	}
 	
 }
