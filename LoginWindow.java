@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 class User {
     String username;
     String usertype;
-    int buildingID = -1; // -1 means no buildingID
+    String buildingName;
 }
 
 public class LoginWindow {
@@ -28,8 +28,7 @@ public class LoginWindow {
 	private JPasswordField txtPassword;
 	private JButton btnLogin;
 	private JButton btnReset;
-	private JButton btnExit;
-	private JFrame frmLoginSystem;
+	private JButton btnCancel;
 	private JButton btnSignUp;
 	private JLabel lblConfirm;
     private JPasswordField txtConfirm;
@@ -45,7 +44,7 @@ public class LoginWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-				    LoginWindow window = new LoginWindow();
+				    LoginWindow window = new LoginWindow(new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "placeholder"));
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,8 +54,13 @@ public class LoginWindow {
 	}
 	*/
 	
-	public void toggleVisibility() {
-	    frame.setVisible(!frame.isVisible());
+	public void setVisible(boolean makeVisible) {
+	    frame.setVisible(makeVisible);
+	}
+	
+	
+	public boolean isVisible() {
+	    return frame.isVisible();
 	}
 	
 	
@@ -80,7 +84,7 @@ public class LoginWindow {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 595, 394);
 		frame.setTitle("Admin Login");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lbLogin = new JLabel("Login Systems");
@@ -192,7 +196,8 @@ public class LoginWindow {
                     User newUser = new User();
                     newUser.username = username;
                     newUser.usertype = "customer";
-
+                    newUser.buildingName = "";
+                    
                     loggedInUser = newUser;
                 
                 } finally {
@@ -205,26 +210,21 @@ public class LoginWindow {
         btnSignUp.setBounds(318, 297, 89, 23);
         frame.getContentPane().add(btnSignUp);
 		
-		btnExit = new JButton("Exit");
-		btnExit.addActionListener(new ActionListener() {
+		btnCancel = new JButton("Exit");
+		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frmLoginSystem = new JFrame("Exit");
-				if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm if you want to exit", "Login Systems", JOptionPane.YES_NO_OPTION ) 
-						==JOptionPane.YES_NO_OPTION) {
-					System.exit(0);
-				}
-				
+				frame.setVisible(false);
 			}
 		});
-		btnExit.setBounds(467, 297, 89, 23);
-		frame.getContentPane().add(btnExit);
+		btnCancel.setBounds(467, 297, 89, 23);
+		frame.getContentPane().add(btnCancel);
 		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(21, 277, 553, 2);
 		frame.getContentPane().add(separator);
 		
 		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(21, 75, 553, 2);
+		separator_1.setBounds(31, 55, 553, 2);
 		frame.getContentPane().add(separator_1);
 		
 		JLabel lblSigningUpMsg = new JLabel("If signing up:");
