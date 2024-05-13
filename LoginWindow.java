@@ -1,4 +1,3 @@
-
 package GroupProject;
 
 import java.awt.EventQueue;
@@ -15,11 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.event.ActionEvent;
 
-class User {
-    String username;
-    String usertype;
-    int buildingID = -1; // -1 means no buildingID
-}
+
 
 public class LoginWindow {
 
@@ -108,6 +103,7 @@ public class LoginWindow {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				
 			}
 		});
 		btnLogin.setBounds(31, 297, 89, 23);
@@ -165,15 +161,26 @@ public class LoginWindow {
                         JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+                    /*
+                     * Define the available type option between the customer and the employee
+                     */
+                    String [] userTypes = {"customer", "employee"};
+                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "User Type", JOptionPane.QUESTION_MESSAGE, null, userTypes, userTypes[0]) ;
+                    // if the user cancel the selection they will return from the method
+                    if (selectedUserType == null) {
+                    	return;
+                    }
+                    /**
+                     * Display a dialog to prompt the user to select a user type
+                     */
                     int addResult = myDatabase.addItem(
                         "USER",
-                        new ArrayList<String>(Arrays.asList("Username", "Password", "Usertype")),
+                        new ArrayList<String>(Arrays.asList("Username", "Password", "user_type")),
                         new ArrayList<Object>(
                             Arrays.asList(
                                 username,
                                 password,
-                                "customer"
+                                selectedUserType.toLowerCase() 
                             )
                         )
                     );
@@ -187,11 +194,12 @@ public class LoginWindow {
                         return;
                     }
                     
+            
                     JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
                     
                     User newUser = new User();
                     newUser.username = username;
-                    newUser.usertype = "customer";
+                    newUser.usertype = selectedUserType.toLowerCase();
 
                     loggedInUser = newUser;
                 
@@ -228,11 +236,11 @@ public class LoginWindow {
 		frame.getContentPane().add(separator_1);
 		
 		JLabel lblSigningUpMsg = new JLabel("If signing up:");
-		lblSigningUpMsg.setBounds(96, 200, 71, 14);
+		lblSigningUpMsg.setBounds(96, 200, 110, 14);
 		frame.getContentPane().add(lblSigningUpMsg);
 		
 		lblConfirm = new JLabel("Confirm Password");
-		lblConfirm.setBounds(96, 228, 110, 14);
+		lblConfirm.setBounds(96, 228, 128, 14);
 		frame.getContentPane().add(lblConfirm);
 		
 		txtConfirm = new JPasswordField();
