@@ -53,16 +53,7 @@ public class RestaurantGUI extends JFrame {
    		
    		// Build and add the panel that contains the other components.
    		build();
-   		
-   		// Adds the master panel
-   		add(masterP);
-   		// Sets the menu bar created by the build
-   		setJMenuBar(menu);
-   		
-   		// Size and display the window.
-   		setSize(SIZE_X,SIZE_Y);
-   		setVisible(true);
-   		
+
         loginWindow.toggleVisibility();
 
         // wait for user login
@@ -74,9 +65,27 @@ public class RestaurantGUI extends JFrame {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        
+        // Makes the login window invisible
         loginWindow.toggleVisibility();
+		
+		System.out.println(loginWindow.getProgramView());
    		
+   		// Adds the master panel
+   		add(masterP);
+   		// Sets the menu bar created by the build
+   		setJMenuBar(menu);
+   		
+   		// Size and display the window.
+   		setSize(SIZE_X,SIZE_Y);
+   		setVisible(true);
+
+		//Sets the program view based on the login window input
+		switch (loginWindow.getProgramView()) { 
+			case 0: setCustomerView();
+			case 1: setEmployeeView();
+			case 2: setManagerView(); 
+		}
 	}
 	
 	/**
@@ -147,13 +156,9 @@ public class RestaurantGUI extends JFrame {
             }
         });
 		
-		loginWindow = new LoginWindow(myDatabase);
-		
-		// Sets view of the program
-		//setCustomerView();
-		//setEmployeeView();
-		//setManagerView();
-		
+		// Creates a new login window
+		loginWindow = new LoginWindow(myDatabase, "Testraunt");
+		 
 	}
 
 	/**

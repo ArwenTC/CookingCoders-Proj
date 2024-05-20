@@ -28,6 +28,10 @@ public class LoginWindow {
 	private JButton btnSignUp;
 	private JLabel lblConfirm;
     private JPasswordField txtConfirm;
+    private String building;
+    
+    // Returns a view of the program
+    private int programView;
     
     private User loggedInUser = null;
 	
@@ -49,6 +53,16 @@ public class LoginWindow {
 		});
 	}
 	*/
+
+	/**
+	 * Create the application.
+	 */
+	public LoginWindow(SQLDatabase myDatabase_, String buildingName) {
+	    myDatabase = myDatabase_;
+	    this.building = buildingName;
+	    
+		initialize();
+	}
 	
 	public void toggleVisibility() {
 	    frame.setVisible(!frame.isVisible());
@@ -57,15 +71,6 @@ public class LoginWindow {
 	
 	public boolean userIsLoggedIn() {
 	    return loggedInUser != null;
-	}
-	
-	/**
-	 * Create the application.
-	 */
-	public LoginWindow(SQLDatabase myDatabase_) {
-	    myDatabase = myDatabase_;
-	    
-		initialize();
 	}
 
 	/**
@@ -164,23 +169,35 @@ public class LoginWindow {
                     /*
                      * Define the available type option between the customer and the employee
                      */
-                    String [] userTypes = {"customer", "employee"};
+                    String [] userTypes = {"customer", "employee", "admin"};
                     String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "User Type", JOptionPane.QUESTION_MESSAGE, null, userTypes, userTypes[0]) ;
-                    // if the user cancel the selection they will return from the method
-                    if (selectedUserType == null) {
+                    
+                    // Sets customer view based on the selection by the user
+                    if (selectedUserType.equals("customer")) {
+                    	programView = 0;
+                    } else if (selectedUserType.equals("employee")) { 
+                    	programView = 1;
+                    } else if (selectedUserType.equals("admin")) {
+                    	programView = 2;
+                    } else {
+                    	// Returns the function in case the user exits the prompt
                     	return;
                     }
+
+                	System.out.println(selectedUserType + ": " + programView);
+                    
                     /**
                      * Display a dialog to prompt the user to select a user type
                      */
                     int addResult = myDatabase.addItem(
                         "USER",
-                        new ArrayList<String>(Arrays.asList("Username", "Password", "user_type")),
+                        new ArrayList<String>(Arrays.asList("Username", "Password", "Usertype", "BuildingName")),
                         new ArrayList<Object>(
                             Arrays.asList(
                                 username,
                                 password,
-                                selectedUserType.toLowerCase() 
+                                selectedUserType.toLowerCase(),
+                                building
                             )
                         )
                     );
@@ -248,4 +265,13 @@ public class LoginWindow {
 		frame.getContentPane().add(txtConfirm);
 		
 	}
+	
+	/**
+	 * Getter for program view
+	 * @return
+	 */
+	public int getProgramView() {
+		return programView;
+	}
+	
 }
