@@ -252,7 +252,7 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * 
+	 * Checks if a value exists in a table given a column and value
 	 * @param table
 	 * @param column
 	 * @param value

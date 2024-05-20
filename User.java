@@ -4,24 +4,48 @@ import java.sql.*;
 
 public class User {
 
-	public String username;
-	public String usertype;
+	// User fields
+	private String userName;
+	private String userType;
 	
+	/**
+	 * Constructor
+	 * @param userName
+	 * @param userType
+	 */
+	public User(String userName, String userType) {
+		this.userName = userName;
+		this.userType = userType;
+	}
+	
+	/**
+	 * Getter for userName
+	 * @return userName
+	 */
 	public String getUsername(){
-		return username;
+		return userName;
+	}
+	/**
+	 * Setter for userName
+	 * @param username
+	 */
+	public void setUsername(String userName) {
+		this.userName = userName;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	
+	/**
+	 * Getter for user type
+	 * @return userType
+	 */
 	public String getUserType() {
-		return usertype;
+		return userType;
 	}
-	
-	public void setUsertype(String usertype) {
-		this.usertype = usertype;
+	/**
+	 * Setter for user type
+	 * @param usertype
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 	
 }
