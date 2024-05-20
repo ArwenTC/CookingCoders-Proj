@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 public class RestaurantGUI extends JFrame {
 
 	// Window Size
-	final int SIZE_X = 500, SIZE_Y = 500;
+	final int SIZE_X = 600, SIZE_Y = 400;
 	
 	// Panels that will be swapped depending what the user selects
 	JPanel masterP;
@@ -19,8 +19,6 @@ public class RestaurantGUI extends JFrame {
 	JPanel createOrderP;
 	JPanel employeeViewOrderP;
 	JPanel orderListP;
-	JPanel createAccountP;
-	JPanel logInP;
 	JPanel manageUsersP;
 	JPanel settingsP;
 	
@@ -30,14 +28,22 @@ public class RestaurantGUI extends JFrame {
 	JMenuItem viewOrderB;
 	JMenuItem createOrderB;
 	JMenuItem orderListB;
-	JMenuItem logInB;
-	JMenuItem logOutB;
 	JMenuItem manageB;
 	
 	LoginWindow loginWindow;
 	
 	SQLDatabase myDatabase;
-	
+    
+    User loggedInUser;
+
+    String chosenBuildingName;
+
+    JLabel lblBuildingName;
+    JTextField buildingNameField;
+    private JTextField usernameField;
+    private JTextField passwordField;
+    private JTextField textField;
+
 	/**
 	 * Creates the RestaurantGUI
 	 */
@@ -53,16 +59,7 @@ public class RestaurantGUI extends JFrame {
    		
    		// Build and add the panel that contains the other components.
    		build();
-   		
-   		// Adds the master panel
-   		add(masterP);
-   		// Sets the menu bar created by the build
-   		setJMenuBar(menu);
-   		
-   		// Size and display the window.
-   		setSize(SIZE_X,SIZE_Y);
-   		setVisible(true);
-   		
+
         loginWindow.toggleVisibility();
 
         // wait for user login
@@ -74,9 +71,27 @@ public class RestaurantGUI extends JFrame {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        
+        // Makes the login window invisible
         loginWindow.toggleVisibility();
+		
+		System.out.println(loginWindow.getProgramView());
    		
+   		// Adds the master panel
+   		add(masterP);
+   		// Sets the menu bar created by the build
+   		setJMenuBar(menu);
+   		
+   		// Size and display the window.
+   		setSize(SIZE_X,SIZE_Y);
+   		setVisible(true);
+
+		//Sets the program view based on the login window input
+		switch (loginWindow.getProgramView()) { 
+			case 0: setCustomerView();
+			case 1: setEmployeeView();
+			case 2: setManagerView(); 
+		}
 	}
 	
 	/**
@@ -89,9 +104,7 @@ public class RestaurantGUI extends JFrame {
 		viewOrderP = new ViewOrderPanel();
 		createOrderP = new RPanel();
 		employeeViewOrderP = new RPanel();
-		orderListP = new RPanel();
-		createAccountP = new RPanel();
-		logInP = new RPanel();
+		orderListP = new OrderListPanel();
 		manageUsersP = new RPanel();
 		settingsP = new RPanel();
 		
@@ -104,8 +117,6 @@ public class RestaurantGUI extends JFrame {
 		viewOrderB = new RMenuItem("View Order");
 		createOrderB = new RMenuItem("Create Order");
 		orderListB = new RMenuItem("Order List");
-		logInB = new RMenuItem("Log In");
-		logOutB = new RMenuItem("Log Out");
 		manageB = new RMenuItem("Manage");
 		manageB.add(new PopupMenu("message"));
 		
@@ -128,18 +139,6 @@ public class RestaurantGUI extends JFrame {
                 orderListAction();
             }
         });
-		logInB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                logInAction();
-            }
-        });
-		logOutB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                logOutAction();
-            }
-        });
 		manageB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
@@ -147,13 +146,9 @@ public class RestaurantGUI extends JFrame {
             }
         });
 		
-		loginWindow = new LoginWindow(myDatabase);
-		
-		// Sets view of the program
-		//setCustomerView();
-		//setEmployeeView();
-		//setManagerView();
-		
+		// Creates a new login window
+		loginWindow = new LoginWindow(myDatabase, "Testraunt");
+		 
 	}
 
 	/**
@@ -168,9 +163,6 @@ public class RestaurantGUI extends JFrame {
 		menu.add(createOrderB);
 		//menu.add(orderListB);
 		//menu.add(manageB);
-		
-		// Logs user out
-		logOut();
 	}
 
 	/**
@@ -185,9 +177,6 @@ public class RestaurantGUI extends JFrame {
 		menu.add(orderListB);
 		menu.add(createOrderB);
 		//menu.add(manageB);
-		
-		// Logs user out
-		logOut();
 	}
 
 	/**
@@ -202,33 +191,10 @@ public class RestaurantGUI extends JFrame {
 		menu.add(orderListB);
 		menu.add(createOrderB);
 		menu.add(manageB);
-		
-		// Logs user out
-		logOut();
-	}
-
-	/**
-	 * Sets logOut to be visible
-	 * Will log the user in
-	 */
-	public void logIn() {
-		
-		// Sets the tabs viewed
-		menu.remove(logInB);
-		menu.add(logOutB);
 	}
 	
-	/**
-	 * Sets logIn to be visible
-	 * Will log the user out
-	 */
-	public void logOut() {
-		
-		// Sets the tabs viewed
-		menu.remove(logOutB);
-		menu.add(logInB);
-	}
-
+	
+	
 	/**
 	 * Method that runs when the user presses "View Order"
 	 */
@@ -283,47 +249,21 @@ public class RestaurantGUI extends JFrame {
 		repaint();
 		
 	}
-
-	/**
-	 * Method that runs when the user presses "Log In"
-	 */
-	void logInAction() {
-		// Removes any panels currently in view
-	    removeAllPanels();
-		// Adds the panel selected by the user
-		masterP.add(logInP);
-		// Validates and repaints the changes
-		validate();
-		repaint();
-		
-	}
 	
 	/**
-	 * Method that runs when the user presses "Log Out"
+	 * Removes all panels from the program
 	 */
-	void logOutAction() {
-		// Sets the current panel to the page selected by the user
-	    removeAllPanels();
-		// Adds the panel selected by the user
-		masterP.add(logInP);
-		// Validates and repaints the changes
-		validate();
-		repaint();
-		
-	}
-	
-	
 	void removeAllPanels() {
 	    masterP.remove(viewOrderP);
         masterP.remove(createOrderP);
         masterP.remove(employeeViewOrderP);
         masterP.remove(orderListP);
-        masterP.remove(createAccountP);
-        masterP.remove(logInP);
         masterP.remove(manageUsersP);
 	}
 	
-	
+	/**
+	 * Removes all buttons from the program
+	 */
 	void removeAllButtons() {
 	    menu.remove(viewOrderB);
         menu.remove(createOrderB);
