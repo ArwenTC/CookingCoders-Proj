@@ -10,6 +10,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import java.awt.event.ActionListener;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.event.ActionEvent;
@@ -102,6 +103,48 @@ public class LoginWindow {
 		btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String username = txtUsername.getText();
+				char [] pass = txtPassword.getPassword();
+				String password = new String(pass);
+				
+				if(username.isEmpty() || password.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Please enter both username and password" , "Login Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				try {
+					String query = "SELECT * FROM user WHERE Username = ? AND Password = ?";
+					PreparedStatement pst = myDatabase.con.prepareStatement(query);
+					pst.setString(1, username);
+					pst.setString(2, password);
+					ResultSet rs = pst.executeQuery();
+					
+					if(rs.next()) {
+						JOptionPane.showMessageDialog(null, "Login successful!", "Login", JOptionPane.INFORMATION_MESSAGE);
+						String retrievedUsername = rs.getString("Username");
+						String userType = rs.getString("user_type");
+						
+						loggedInUser = new User(retrievedUsername, password, userType);
+						Arrays.fill(pass, '\0');
+						
+						//Optional For mat when you choose to anther login
+						//frame.setVisible(false);
+						//new MainWindow().setVisible(true);
+						
+						
+					}else {
+						//Login failed
+						JOptionPane.showMessageDialog(null, "Invalid username or password", "Login error", JOptionPane.ERROR_MESSAGE);
+						
+					}
+				}catch (SQLException ex) {
+					//myDatabase.logError("SQL error during login: " + ex);
+					JOptionPane.showMessageDialog(null, "An error occured while trying to log in. Please try again later.", "Login Error", JOptionPane.ERROR_MESSAGE);
+					
+					
+				}
+				
+				
 				
 				
 			}
@@ -164,8 +207,8 @@ public class LoginWindow {
                     /*
                      * Define the available type option between the customer and the employee
                      */
-                    String [] userTypes = {"customer", "employee"};
-                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "User Type", JOptionPane.QUESTION_MESSAGE, null, userTypes, userTypes[0]) ;
+                    String [] user_types = {"customer", "employee"};
+                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "user_type", JOptionPane.QUESTION_MESSAGE, null, user_types, user_types[0]) ;
                     // if the user cancel the selection they will return from the method
                     if (selectedUserType == null) {
                     	return;
@@ -197,9 +240,8 @@ public class LoginWindow {
             
                     JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
                     
-                    User newUser = new User();
-                    newUser.username = username;
-                    newUser.usertype = selectedUserType.toLowerCase();
+                    User newUser = new User(username, new String(password),  selectedUserType.toLowerCase());
+                    
 
                     loggedInUser = newUser;
                 

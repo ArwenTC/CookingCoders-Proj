@@ -1,4 +1,3 @@
-
 package GroupProject;
 
 import java.sql.*;
@@ -16,7 +15,7 @@ public class SQLDatabase {
 	private String password;
 	
 	// SQL Connection
-	private Connection con;
+	public Connection con;
 	
 	/**
 	 * Constructor method

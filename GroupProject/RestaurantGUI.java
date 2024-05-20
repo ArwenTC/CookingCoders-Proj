@@ -1,4 +1,3 @@
-
 package GroupProject;
 
 import javax.swing.*;

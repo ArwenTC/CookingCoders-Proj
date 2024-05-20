@@ -1,4 +1,3 @@
-
 package GroupProject;
 
 public class Driver {
@@ -19,7 +18,7 @@ public class Driver {
 	public int Run() {
 		
 		// Runs the gui
-	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "placeholder");
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/mydb", "root", "password");
 	    
 		RestaurantGUI rgui = new RestaurantGUI(myDatabase);
 		
