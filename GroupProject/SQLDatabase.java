@@ -277,4 +277,42 @@ public class SQLDatabase {
         return exists;
 	}
 	
+	public boolean buildingExists(String BuildingName) {
+		try {
+			String query = "SELECT COUNT(*) FROM BUILDING WHERE BuildingName = ?";
+			PreparedStatement pst= con.prepareStatement(query);
+			pst.setString(1,BuildingName);
+			ResultSet rs = pst. executeQuery();
+			if(rs.next()) {
+				int count = rs.getInt(1);
+				return count >0 ;
+			}
+			
+			return false;
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+	public int addBuilding(String BuildingName, String State, String City, String StreetAddress) {
+		try {
+			String query = "INSERT INTO BUILDING (BuildingName, State, City, StreetAddr1) Values (?,?,?,?)";
+			PreparedStatement pst= con.prepareStatement(query);
+			pst.setString(1,BuildingName);
+			pst.setString(2, State);
+			pst.setString(3, City);
+			pst.setString(4, StreetAddress);
+			
+			return pst.executeUpdate();
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	
+	
 }

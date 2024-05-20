@@ -122,9 +122,10 @@ public class LoginWindow {
 					if(rs.next()) {
 						JOptionPane.showMessageDialog(null, "Login successful!", "Login", JOptionPane.INFORMATION_MESSAGE);
 						String retrievedUsername = rs.getString("Username");
-						String userType = rs.getString("user_type");
+						String Usertype = rs.getString("UserType");
+						String BuidingName = rs.getString("BuildingName");
 						
-						loggedInUser = new User(retrievedUsername, password, userType);
+						loggedInUser = new User(retrievedUsername, password, Usertype, BuidingName);
 						Arrays.fill(pass, '\0');
 						
 						//Optional For mat when you choose to anther login
@@ -207,23 +208,64 @@ public class LoginWindow {
                     /*
                      * Define the available type option between the customer and the employee
                      */
-                    String [] user_types = {"customer", "employee"};
-                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "user_type", JOptionPane.QUESTION_MESSAGE, null, user_types, user_types[0]) ;
+                    String [] user_types = {"customer", "employee", "admin"};
+                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "Usertype", JOptionPane.QUESTION_MESSAGE, null, user_types, user_types[0]) ;
                     // if the user cancel the selection they will return from the method
                     if (selectedUserType == null) {
                     	return;
+                    }
+                    
+                    
+                    String BuildingName = JOptionPane.showInputDialog("Enter Building Name: ");
+                    //Check if the buildingName is empty or not
+                    if(BuildingName == null || BuildingName.trim().isEmpty()) {
+                    	JOptionPane.showMessageDialog(null, "Building name is required", "Sign Up Error", JOptionPane.ERROR_MESSAGE );
+                    }
+                    
+                    String[] state_types = {
+                    	    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", 
+                    	    "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", 
+                    	    "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", 
+                    	    "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+                    	};
+                    String state = (String) JOptionPane.showInputDialog(null, "Select State", "State", JOptionPane.QUESTION_MESSAGE, null, state_types, state_types[0]) ;
+                    if(state == null|| state.trim().isEmpty()) {
+                    	JOptionPane.showMessageDialog(null, "State is required", "Sign Up Error", JOptionPane.ERROR_MESSAGE );
+                    }
+                    
+                    String city = JOptionPane.showInputDialog("Enter City: ");
+                    if(city == null|| city.trim().isEmpty()) {
+                    	JOptionPane.showMessageDialog(null, "City is required", "Sign Up Error", JOptionPane.ERROR_MESSAGE );
+                    }
+                    
+                    String streetAddress = JOptionPane.showInputDialog("Enter streetAdress: ");
+                    if(streetAddress == null|| streetAddress.trim().isEmpty()) {
+                    	JOptionPane.showMessageDialog(null, "State is required", "Sign Up Error", JOptionPane.ERROR_MESSAGE );
+                    }
+                    
+                    
+                    
+                    if(!myDatabase.buildingExists(BuildingName)) {
+                    	int result = myDatabase.addBuilding(BuildingName, state, city, streetAddress);
+                    	if (result == 0) {
+                    		JOptionPane.showMessageDialog(null, "Building does not exist", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                        	return;
+                    	}
+                    	
+                    	
                     }
                     /**
                      * Display a dialog to prompt the user to select a user type
                      */
                     int addResult = myDatabase.addItem(
                         "USER",
-                        new ArrayList<String>(Arrays.asList("Username", "Password", "user_type")),
+                        new ArrayList<String>(Arrays.asList("Username", "Password", "Usertype","BuildingName")),
                         new ArrayList<Object>(
                             Arrays.asList(
                                 username,
                                 password,
-                                selectedUserType.toLowerCase() 
+                                selectedUserType.toLowerCase(), 
+                                BuildingName
                             )
                         )
                     );
@@ -240,7 +282,7 @@ public class LoginWindow {
             
                     JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
                     
-                    User newUser = new User(username, new String(password),  selectedUserType.toLowerCase());
+                    User newUser = new User(username, new String(password),  selectedUserType.toLowerCase(), BuildingName );
                     
 
                     loggedInUser = newUser;

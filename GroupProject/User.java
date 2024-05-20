@@ -6,17 +6,19 @@ public class User {
 
 	public String username;
 	public String password;
-	public String user_type;
+	public String Usertype;
+	public String BuildingName;
 	
 	/**
 	 * Constructor
 	 * @return
 	 */
 	
-	public User(String username, String password, String user_type) {
+	public User(String username, String password, String Usertype, String BuildingName) {
 		this.username = username;
 		this.password = password;
-		this.user_type = user_type;
+		this.Usertype = Usertype;
+		this.BuildingName = BuildingName;
 	}
 	
 	public String getUsername(){
@@ -39,12 +41,21 @@ public class User {
 	
 	
 	public String getUserType() {
-		return user_type;
+		return Usertype;
 		
 	}
 	
 	
-	public void setUserType(String user_type) {
-		this.user_type = user_type;
+	public void setUserType(String Usertype) {
+		this.Usertype = Usertype;
+	}
+	
+	
+	public String getBuildingName() {
+		return BuildingName;
+	}
+	
+	public void setBuildingName(String BuildingName) {
+		this.BuildingName = BuildingName;
 	}
 }
