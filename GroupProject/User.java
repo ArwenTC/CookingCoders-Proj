@@ -4,58 +4,48 @@ import java.sql.*;
 
 public class User {
 
-	public String username;
-	public String password;
-	public String Usertype;
-	public String BuildingName;
+	// User fields
+	public String userName;
+	public String userType;
 	
 	/**
 	 * Constructor
-	 * @return
+	 * @param userName
+	 * @param userType
 	 */
-	
-	public User(String username, String password, String Usertype, String BuildingName) {
-		this.username = username;
-		this.password = password;
-		this.Usertype = Usertype;
-		this.BuildingName = BuildingName;
+	public User(String userName, String userType) {
+		this.userName = userName;
+		this.userType = userType;
 	}
 	
+	/**
+	 * Getter for userName
+	 * @return userName
+	 */
 	public String getUsername(){
-		return username;
+		return userName;
+	}
+	/**
+	 * Setter for userName
+	 * @param username
+	 */
+	public void setUsername(String userName) {
+		this.userName = userName;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
+	/**
+	 * Getter for user type
+	 * @return userType
+	 */
+	public  String getUserType() {
+		return userType;
+	}
+	/**
+	 * Setter for user type
+	 * @param usertype
+	 */
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 	
-	
-	public String getPassword() {
-		return password;
-	}
-	
-	public void setPassWord(String password) {
-		this.password = password;
-	}
-	
-	
-	
-	public String getUserType() {
-		return Usertype;
-		
-	}
-	
-	
-	public void setUserType(String Usertype) {
-		this.Usertype = Usertype;
-	}
-	
-	
-	public String getBuildingName() {
-		return BuildingName;
-	}
-	
-	public void setBuildingName(String BuildingName) {
-		this.BuildingName = BuildingName;
-	}
 }

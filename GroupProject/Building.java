@@ -1,64 +1,29 @@
 package GroupProject;
 import java.sql.*;
 public class Building {
-	public String BuildingName;
-	public char State;
-	public String City;
-	public String StreetAddress;
+	
+	// Create
+	public int buildingID;
+	
 	/**
-	 * 
-	 * @param BuildingName
-	 * @param State
-	 * @param city
-	 * @param StreetAddress
+	 * Constructor for building
 	 */
-	public Building (String BuildingName, char State, String City, String StreetAddress) {
-		this.BuildingName = BuildingName;
-		this.State = State;
-		this.City = City;
-		this.StreetAddress = StreetAddress;
+	public Building(int buildingID) {
+		this.buildingID = buildingID;
 	}
+	
 	/**
-	 * 
-	 * @return
+	 * Getter for building ID
+	 * @return building id
 	 */
-	public String getBuildingID() {
-		return BuildingName;
+	public int getBuildingID() {
+		return buildingID;
 	}
 	/**
-	 * 
-	 * @param BuildingName
+	 * Setter for building ID
+	 * @param buildingID
 	 */
-	public void setBuildingID(String BuildingName) {
-		 this.BuildingName= BuildingName;
+	public void setBuildingID(int buildingID) {
+		 this.buildingID= buildingID;
 	}
-	
-	public char getState() {
-		return State;
-	}
-	
-	public void setState(char State) {
-		this.State = State;
-	}
-	
-	public String getCity() {
-		return City;
-	}
-	
-	public void setCity(String City) {
-		this.City = City;
-	}
-	
-	public String getStreetAddress() {
-		return StreetAddress;
-	}
-	
-	public void setStreetAddress(String StreetAddress) {
-		this.StreetAddress = StreetAddress;
-	}
-	
-	
-	
-	
-	
 }
