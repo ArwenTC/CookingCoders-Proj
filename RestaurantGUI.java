@@ -86,16 +86,10 @@ public class RestaurantGUI extends JFrame {
    		setVisible(true);
 
 		//Sets the program view based on the login window input
-		switch (loginWindow.getProgramView()) {
-			case 0: // Set customer view
-				setCustomerView();
-				break;
-			case 1: // Set employee view
-				setEmployeeView();
-				break;
-			case 2: // Set manager view
-				setManagerView(); 
-				break;
+		switch (loginWindow.getProgramView()) { 
+			case 0: setCustomerView(); break;
+			case 1: setEmployeeView(); break;
+			case 2: setManagerView();  break;
 		}
 	}
 	
