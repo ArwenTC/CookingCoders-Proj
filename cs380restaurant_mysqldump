@@ -38,7 +38,7 @@ CREATE TABLE `building` (
 
 LOCK TABLES `building` WRITE;
 /*!40000 ALTER TABLE `building` DISABLE KEYS */;
-INSERT INTO `building` VALUES ('lowercase name','wa','seattle','54321 test street',NULL),('test name','WA','Seattle','12345 67th street',NULL);
+INSERT INTO `building` VALUES ('lowercase name','wa','seattle','54321 test street',NULL),('test name','WA','Seattle','12345 67th street',NULL),('testraunt','wa','ellensburg','1400 coconut ln.','unit 2');
 /*!40000 ALTER TABLE `building` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -86,7 +86,9 @@ CREATE TABLE `order` (
   `Completed` tinyint NOT NULL,
   PRIMARY KEY (`OrderId`),
   KEY `fk_ORDER_BUILDING1_idx` (`BuildingName`),
-  CONSTRAINT `order_fk_building` FOREIGN KEY (`BuildingName`) REFERENCES `building` (`BuildingName`)
+  KEY `CustomerUsername` (`CustomerUsername`),
+  CONSTRAINT `order_fk_building` FOREIGN KEY (`BuildingName`) REFERENCES `building` (`BuildingName`),
+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`CustomerUsername`) REFERENCES `user` (`Username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -206,6 +208,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('idk','123','customer','testraunt'),('testuser','123','customer','Testraunt');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -218,4 +221,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-20 17:43:19
+-- Dump completed on 2024-05-21  9:03:36
