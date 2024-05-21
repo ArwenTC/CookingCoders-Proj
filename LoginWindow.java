@@ -104,6 +104,43 @@ public class LoginWindow extends JFrame {
 		btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+<<<<<<< Updated upstream
+=======
+				String Username = txtUsername.getText();
+				char [] Password = txtPassword.getPassword();
+				
+			
+				try {
+					
+					if("Admin".equals(Username)&& new String(Password).equals("1")) {
+						JOptionPane.showMessageDialog(null, "Login successful");
+						loggedInUser = new User("Admin", "Admin");
+						if("admin".equals(loggedInUser.getUserType())) {
+							programView = 3;
+						}
+					}else if( myDatabase.verifyLogin(Username, Password)) {
+						JOptionPane.showMessageDialog(null, "Login successful!");
+						
+						String UserType = myDatabase.getUserType(Username);
+						
+						loggedInUser = new User(Username,UserType );
+						
+						if("customer".equals(loggedInUser.getUserType())) {
+							programView = 0;
+							
+						}else if("employee".equals(loggedInUser.getUserType())) {
+							programView = 1;
+						}else {
+							JOptionPane.showInputDialog(null,"Invalid user type", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					}else {
+						JOptionPane.showMessageDialog(null, "Invalid Username or password");
+					}
+				}catch (SQLException ex) {
+					JOptionPane.showMessageDialog(null, "an error occurred while trying to log in. Please try again later.", "Login Error", JOptionPane.ERROR_MESSAGE);
+				}
+>>>>>>> Stashed changes
 				
 				
 			}
