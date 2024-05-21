@@ -39,9 +39,9 @@ public class Order {
 		try {
 			results.next();
 			// Sets the values of self from the data in the result set
-			this.buildingName = results.getString(1);
-			this.customerUserName = results.getString(2);
-			this.completed = results.getBoolean(3);
+			this.buildingName = results.getString(2);
+			this.customerUserName = results.getString(3);
+			this.completed = results.getBoolean(4);
 		} catch (Exception e) {
 			System.out.println("Unable to initialize order");
 		}

@@ -60,6 +60,7 @@ public class RestaurantGUI extends JFrame {
    		// Build and add the panel that contains the other components.
    		build();
 
+   		// Toggles the visibility of the login window
         loginWindow.toggleVisibility();
 
         // wait for user login
@@ -74,8 +75,6 @@ public class RestaurantGUI extends JFrame {
         
         // Makes the login window invisible
         loginWindow.toggleVisibility();
-		
-		System.out.println(loginWindow.getProgramView());
    		
    		// Adds the master panel
    		add(masterP);
@@ -87,10 +86,16 @@ public class RestaurantGUI extends JFrame {
    		setVisible(true);
 
 		//Sets the program view based on the login window input
-		switch (loginWindow.getProgramView()) { 
-			case 0: setCustomerView();
-			case 1: setEmployeeView();
-			case 2: setManagerView(); 
+		switch (loginWindow.getProgramView()) {
+			case 0: // Set customer view
+				setCustomerView();
+				break;
+			case 1: // Set employee view
+				setEmployeeView();
+				break;
+			case 2: // Set manager view
+				setManagerView(); 
+				break;
 		}
 	}
 	
@@ -104,7 +109,7 @@ public class RestaurantGUI extends JFrame {
 		viewOrderP = new ViewOrderPanel();
 		createOrderP = new RPanel();
 		employeeViewOrderP = new RPanel();
-		orderListP = new OrderListPanel();
+		orderListP = new OrderListPanel(this.myDatabase);
 		manageUsersP = new RPanel();
 		settingsP = new RPanel();
 		
