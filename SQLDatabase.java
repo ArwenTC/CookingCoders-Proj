@@ -52,7 +52,7 @@ public class SQLDatabase {
 		
 		try {
 			// Creates selection statement
-			String sqlCommand = "SELECT * FROM " + table;
+			String sqlCommand = "SELECT * FROM `" + table + "`";
 			Statement statement = con.createStatement();
 			
 			// Returns the set of results
@@ -135,7 +135,7 @@ public class SQLDatabase {
 		// Tries to remove an item from the database using a query
 		try {
 			// Creates selection statement
-			String sqlCommand = "INSERT INTO " + table + " ( " + elementsSB.toString()  + " ) VALUES ( " + valuesSB.toString() + " )";
+			String sqlCommand = "INSERT INTO `" + table + "` ( " + elementsSB.toString()  + " ) VALUES ( " + valuesSB.toString() + " )";
 			Statement statement = con.createStatement();
 			
 			// Executes the deletion
@@ -166,9 +166,9 @@ public class SQLDatabase {
 			// Creates selection statement (either using string or non-string as key)
 			String sqlCommand;
 			if (keyValue instanceof String) {
-				sqlCommand = "DELETE FROM " + table + " WHERE " + keyName + " = \"" + keyValue + "\"";
+				sqlCommand = "DELETE FROM `" + table + "` WHERE " + keyName + " = \"" + keyValue + "\"";
 			} else {
-				sqlCommand = "DELETE FROM " + table + " WHERE " + keyName + " = " + keyValue.toString();
+				sqlCommand = "DELETE FROM `" + table + "` WHERE " + keyName + " = " + keyValue.toString();
 			}
 			Statement statement = con.createStatement();
 			
@@ -233,9 +233,9 @@ public class SQLDatabase {
 			// Creates selection statement (either using string or non-string as key)
 			String sqlCommand;
 			if (keyValue instanceof String) {
-				sqlCommand = "UPDATE " + table + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = \"" + keyValue + "\"";
+				sqlCommand = "UPDATE `" + table + "` SET " + elementsSB.toString()  + " WHERE " + keyName + " = \"" + keyValue + "\"";
 			} else {
-				sqlCommand = "UPDATE " + table + " SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue.toString();
+				sqlCommand = "UPDATE `" + table + "` SET " + elementsSB.toString()  + " WHERE " + keyName + " = " + keyValue.toString();
 			}
 			Statement statement = con.createStatement();
 			
@@ -259,7 +259,7 @@ public class SQLDatabase {
 	 * @return int 0 = doesn't exist 1 = exists >1 = error code
 	 */
 	public int valueExists(String table, String column, String value) {
-	    String sqlString = "SELECT 1 FROM " + table + " WHERE " + column + " = " + value + ";";
+	    String sqlString = "SELECT 1 FROM `" + table + "` WHERE " + column + " = " + value + ";";
         
         int exists = 0;
         
@@ -276,6 +276,40 @@ public class SQLDatabase {
         }
         
         return exists;
+	}
+	
+	/**
+	 * Calls and returns an error value
+	 * @return 0 = pass, 1+ = error code
+	 */
+	public int execute(String command) {
+		try {
+			// Creates a statement and executes
+			Statement statement = con.createStatement();
+			statement.execute(command);
+		} catch (SQLException e) {
+			// SQL Error
+			return 1;
+		}
+		// Pass
+		return 0;
+	}
+	
+	/**
+	 * Calls an returns a result set
+	 * @return 0 = pass, 1+ = error code
+	 */
+	public ResultSet executeQuery(String command) {
+		try {
+			// Creates a statement and executes
+			Statement statement = con.createStatement();
+			// Returns the set of results
+			return statement.executeQuery(command);
+		}
+		catch (SQLException e) {
+			System.out.println("Error accessing database: " + e);
+			return null;
+		}
 	}
 	
 }
