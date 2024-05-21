@@ -43,6 +43,13 @@ public class RestaurantGUI extends JFrame {
     private JTextField usernameField;
     private JTextField passwordField;
     private JTextField textField;
+    private JScrollPane scrollPaneMenu;
+    private JList<String> menuList;
+    private JLabel lblCustomerTotal;
+    private JLabel lblOrderID;
+    private JScrollPane scrollPaneNote;
+    private JLabel lblNote;
+    private JTextArea textArea;
 
 	/**
 	 * Creates the RestaurantGUI
@@ -78,7 +85,51 @@ public class RestaurantGUI extends JFrame {
 		System.out.println(loginWindow.getProgramView());
    		
    		// Adds the master panel
-   		add(masterP);
+   		getContentPane().add(masterP);
+   		createOrderP.setLayout(null);
+   		
+   		
+   		String[] foodMenuTestData = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+        
+        scrollPaneMenu = new JScrollPane();
+        scrollPaneMenu.setBounds(376, 63, 100, 100);
+        createOrderP.add(scrollPaneMenu);
+        
+        menuList = new JList<String>(foodMenuTestData);
+        
+        scrollPaneMenu.setViewportView(menuList);
+        
+        JLabel lblMenuList = new JLabel("Menu");
+        lblMenuList.setBounds(385, 48, 46, 14);
+        createOrderP.add(lblMenuList);
+        
+        JLabel lblCustomerName = new JLabel("Name:");
+        lblCustomerName.setBounds(386, 174, 65, 14);
+        createOrderP.add(lblCustomerName);
+        
+        lblCustomerTotal = new JLabel("Total:");
+        lblCustomerTotal.setBounds(385, 199, 66, 14);
+        createOrderP.add(lblCustomerTotal);
+        
+        lblOrderID = new JLabel("Order ID:");
+        lblOrderID.setBounds(385, 224, 66, 14);
+        createOrderP.add(lblOrderID);
+        
+        scrollPaneNote = new JScrollPane();
+        scrollPaneNote.setBounds(37, 224, 200, 70);
+        createOrderP.add(scrollPaneNote);
+        
+        textArea = new JTextArea();
+        scrollPaneNote.setViewportView(textArea);
+        
+        lblNote = new JLabel("Note:");
+        lblNote.setBounds(47, 209, 46, 14);
+        createOrderP.add(lblNote);
+        
+        JButton btnSubmitOrder = new JButton("Submit Order");
+        btnSubmitOrder.setBounds(330, 249, 188, 45);
+        createOrderP.add(btnSubmitOrder);
+   		
    		// Sets the menu bar created by the build
    		setJMenuBar(menu);
    		
@@ -88,9 +139,9 @@ public class RestaurantGUI extends JFrame {
 
 		//Sets the program view based on the login window input
 		switch (loginWindow.getProgramView()) { 
-			case 0: setCustomerView();
-			case 1: setEmployeeView();
-			case 2: setManagerView(); 
+			case 0: setCustomerView(); break;
+			case 1: setEmployeeView(); break;
+			case 2: setManagerView();  break;
 		}
 	}
 	
@@ -227,9 +278,9 @@ public class RestaurantGUI extends JFrame {
 	 */
 	void createOrderAction() {
 		// Removes any panels currently in view
-	    removeAllPanels();
+	    removeAllPanelsFromContentPane();
 		// Adds the panel selected by the user
-		masterP.add(createOrderP);
+	    getContentPane().add(createOrderP);
 		// Validates and repaints the changes
 		validate();
 		repaint();
@@ -249,6 +300,17 @@ public class RestaurantGUI extends JFrame {
 		repaint();
 		
 	}
+	
+	
+	void removeAllPanelsFromContentPane() {
+	    getContentPane().remove(viewOrderP);
+	    getContentPane().remove(createOrderP);
+	    getContentPane().remove(employeeViewOrderP);
+	    getContentPane().remove(orderListP);
+	    getContentPane().remove(manageUsersP);
+	    getContentPane().remove(masterP);
+	}
+	
 	
 	/**
 	 * Removes all panels from the program
@@ -270,5 +332,4 @@ public class RestaurantGUI extends JFrame {
         menu.remove(orderListB);
         menu.remove(manageB);
 	}
-	
 }
