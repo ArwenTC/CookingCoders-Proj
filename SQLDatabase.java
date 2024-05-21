@@ -16,7 +16,7 @@ public class SQLDatabase {
 	private String password;
 	
 	// SQL Connection
-	private Connection con;
+	public Connection con;
 	
 	/**
 	 * Constructor method
@@ -311,5 +311,37 @@ public class SQLDatabase {
 			return null;
 		}
 	}
+	
+	public boolean verifyLogin(String Username, char[] Password) throws SQLException {
+        String query = "SELECT password FROM USER WHERE Username = ? AND Password = ?";
+        try (PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, Username);
+            pst.setString(2, new String(Password));
+            try (ResultSet rs = pst.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+	
+	public String getUserType(String Username) {
+		String query = "SELECT Usertype FROM USER WHERE Username = ?";
+		try (PreparedStatement pst = con.prepareStatement(query)) {
+			pst.setString(1, Username);
+			try( ResultSet rs = pst.executeQuery()) {
+				if(rs.next()) {
+					return rs.getString("Usertype");
+				}
+			}
+		}catch (SQLException e) {
+			System.out.println("Error retrieving user type: "  + e.getMessage());
+		}
+		return null;
+	}
+	
+	
+
+	
+
+	
 	
 }
