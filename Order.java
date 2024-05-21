@@ -1,8 +1,11 @@
 package GroupProject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.random.*;
+
+import java.sql.*;
 
 public class Order {
 
@@ -10,33 +13,52 @@ public class Order {
 	private String buildingName;
 	private ArrayList<OrderLine> items;
 	private String customerUserName;
-	private boolean completed;
+	private Boolean completed;
+	private SQLDatabase database_;
 	
 	/**
 	 * Constructor for creating an order from data in the SQL Database
 	 * @param orderID
 	 * @param buildingName
 	 */
-	public Order(int orderID, String buildingName, String customerUserName, boolean completed, SQLDatabase database_) {
+	public Order(int orderID, SQLDatabase database_) {
 		this.orderID = orderID;
-		this.buildingName = buildingName;
-		this.customerUserName = customerUserName;
-		this.completed = completed;
+		this.buildingName = "";
+		this.customerUserName = "";
+		this.completed = false;
+		this.database_ = database_;
 		
 		// Creates empty list to populate with OrderLines
 		items = new ArrayList<OrderLine>();
 		
 		// PSEUDO - FROM SQL DATABASE
 		// Gets all OrderLines associated with the orderID
+		ResultSet results = database_.executeQuery("SELECT * FROM `order` WHERE OrderID = " + this.orderID);
+		
+		// Gets the next item in the result set.
+		try {
+			results.next();
+			// Sets the values of self from the data in the result set
+			this.buildingName = results.getString(1);
+			this.customerUserName = results.getString(2);
+			this.completed = results.getBoolean(3);
+		} catch (Exception e) {
+			System.out.println("Unable to initialize order");
+		}
 	}
 	
 	/**
-	 * Constructor for creating a new order from scratch
+	 * Constructor for creating a new order from scratch.
+	 * Adds order to the database
+	 * @param buildingName
+	 * @param customerUserName
+	 * @param database_
 	 */
 	public Order(String buildingName, String customerUserName, SQLDatabase database_) {
 		this.buildingName = buildingName;
 		this.customerUserName = customerUserName;
 		this.completed = false;
+		this.database_ = database_;
 		
 		// Creates empty list to populate with OrderLines
 		items = new ArrayList<OrderLine>();
@@ -49,7 +71,17 @@ public class Order {
 		
 		// PSEUDO - FROM SQL DATABASE
 		// Adds new order to the SQL Database
-		
+		database_.addItem(
+            	// Table Name
+                "ORDER",
+                // Columns
+                new ArrayList<String>(
+                	Arrays.asList( "OrderID", "BuildingName", "CustomerUsername", "Completed" )),
+                // Values
+                new ArrayList<Object>(
+                    Arrays.asList( this.orderID, this.buildingName , this.customerUserName, this.completed)
+                )
+		);
 	}
 
 	/**
