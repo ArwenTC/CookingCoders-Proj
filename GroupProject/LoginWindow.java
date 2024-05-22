@@ -109,10 +109,9 @@ public class LoginWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String Username = txtUsername.getText();
 				char [] Password = txtPassword.getPassword();
+				
+			
 				try {
-<<<<<<< Updated upstream:GroupProject/LoginWindow.java
-					if( myDatabase.verifyLogin(Username, Password)) {
-=======
 					
 					if("Manager".equals(Username)&& new String(Password).equals("1")) {
 						JOptionPane.showMessageDialog(null, "Login successful");
@@ -122,24 +121,20 @@ public class LoginWindow extends JFrame {
 						}
 					}else if( myDatabase.verifyLogin(Username, Password)) {
 						JOptionPane.showMessageDialog(null, "Login successful!");
->>>>>>> Stashed changes:LoginWindow.java
 						
-						
-						JOptionPane.showMessageDialog(null, "Login successful!");
 						String UserType = myDatabase.getUserType(Username);
 						
 						loggedInUser = new User(Username,UserType );
-						switch (loggedInUser.getUserType()) {
-							case "customer":
-								
-								break;
-							case "employee":
-								
-								break;
-							default: 
-								JOptionPane.showInputDialog(null, "Invalid user type", JOptionPane.ERROR_MESSAGE);
-								break;
+						
+						if("customer".equals(loggedInUser.getUserType())) {
+							programView = 0;
+							
+						}else if("employee".equals(loggedInUser.getUserType())) {
+							programView = 1;
+						}else {
+							JOptionPane.showInputDialog(null,"Invalid user type", JOptionPane.ERROR_MESSAGE);
 						}
+						
 					}else {
 						JOptionPane.showMessageDialog(null, "Invalid Username or password");
 					}

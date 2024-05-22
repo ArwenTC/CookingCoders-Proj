@@ -78,7 +78,7 @@ public class RestaurantGUI extends JFrame {
         loginWindow.toggleVisibility();
    		
    		// Adds the master panel
-   		add(masterP);
+   		getContentPane().add(masterP);
    		// Sets the menu bar created by the build
    		setJMenuBar(menu);
    		
@@ -240,22 +240,62 @@ public class RestaurantGUI extends JFrame {
 	 * Method that runs when the user presses "Manage"
 	 */
 	void manageAction () {
+		
 		List<User> userList = myDatabase.getAllUser();
 		
 		// Removes any panels currently in view
 	    removeAllPanels();
-	    for(User user : userList) {
-	    	JLabel UsernameLabel = new JLabel("Username: " + user.getUsername());
-	    	JLabel UsertypeLabel = new JLabel("Usertype: " + user.getUserType());
-	    	
-	    	manageUsersP.add(UsernameLabel);
-	    	manageUsersP.add(UsertypeLabel);
-	    }
-	    JButton addUser = new JButton("Add User");
 	    JButton removeUser = new JButton("Remove User");
-	    JButton editUser = new JButton("Edit User");
+	    manageUsersP.setLayout(new BoxLayout(manageUsersP,BoxLayout.Y_AXIS));
+	    manageUsersP.setBackground(new Color(255, 255, 224));
+	    
+	    JPanel headerPanel = new JPanel();
+	    //headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+	    headerPanel.setLayout(new GridLayout(1,3,10,10));
+	    headerPanel.setBackground(new Color(255, 255, 224));
+	    
+	    JLabel usernameHeader = new JLabel("Username");
+	    usernameHeader.setFont(new Font("Arial", Font.BOLD,12));
+	 
+	    headerPanel.add(usernameHeader);
+	    JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
+	    manageUsersP.add(sep1);
+	    
+	   
 	    
 	    
+	    JLabel userTypeHeader = new JLabel("Usertype");
+	    userTypeHeader.setFont(new Font("Arial", Font.BOLD,12));
+	    
+	    headerPanel.add(userTypeHeader);
+	    manageUsersP.add(headerPanel);
+	    
+	  
+	    
+	    //manageUsersP.add(removeUser);
+	    
+	    for(User user : userList) {
+	    	JPanel  userPanel = new JPanel();
+	    	userPanel.setLayout(new GridLayout(1,2,10,10));
+	    	userPanel.setBackground(new Color(144, 238, 144));
+	    	JLabel UsernameLabel = new JLabel(user.getUsername());
+	    	userPanel.add(UsernameLabel);
+	    	
+	    	JLabel UsertypeLabel = new JLabel( user.getUserType());
+	    	userPanel.add(UsertypeLabel);
+	        String[] userTypeOptions = {"Customer", "Employee"};
+	        JComboBox<String> userTypeComboBox = new JComboBox<>(userTypeOptions);
+	        userTypeComboBox.setSelectedItem(user.getUserType()); // Set selected item based on user's current type
+	        userPanel.add(userTypeComboBox);
+
+	          userPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+	          manageUsersP.add(userPanel);
+
+	          JSeparator now = new JSeparator(SwingConstants.HORIZONTAL);
+	          manageUsersP.add(now);
+	 	
+	    	
+	    }
 	    
 		// Adds the panel selected by the user
 		masterP.add(manageUsersP);
@@ -269,12 +309,16 @@ public class RestaurantGUI extends JFrame {
 	 * Removes all panels from the program
 	 */
 	void removeAllPanels() {
+		
 	    masterP.remove(viewOrderP);
         masterP.remove(createOrderP);
         masterP.remove(employeeViewOrderP);
         masterP.remove(orderListP);
         masterP.remove(manageUsersP);
+        
+		
 	}
+	
 	
 	/**
 	 * Removes all buttons from the program

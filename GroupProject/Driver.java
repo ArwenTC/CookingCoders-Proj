@@ -18,7 +18,7 @@ public class Driver {
 	public int Run() {
 		
 		// Runs the gui
-	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/mydb", "root", "password");
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "password");
 	    
 		RestaurantGUI rgui = new RestaurantGUI(myDatabase);
 		
