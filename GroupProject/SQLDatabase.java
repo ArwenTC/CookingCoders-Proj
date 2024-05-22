@@ -3,6 +3,7 @@ package GroupProject;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 // TODO: use char arrays instead of strings so the SQL queries can be overwritten.
 // The above TODO probably isn't necessary since this isn't a security class.
@@ -337,6 +338,23 @@ public class SQLDatabase {
 		}
 		return null;
 	}
+
+	public List<User> getAllUser() {
+        List <User> userList = new ArrayList<>();
+        String query = "SELECT Username, Usertype FROM USER";
+        try(PreparedStatement pst = con.prepareStatement(query);
+            ResultSet rs = pst.executeQuery()) {
+            while(rs.next()) {
+                String Username = rs.getString("Username");
+                String Usertype = rs.getString("Usertype");
+                userList.add(new User(Username,Usertype));
+
+            }
+        }catch(SQLException e) {
+            System.out.println("Error retrieving users: " + e.getMessage());
+        }
+        return userList;
+    }
 	
 	
 

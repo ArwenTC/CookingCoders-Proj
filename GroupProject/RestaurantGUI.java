@@ -2,6 +2,7 @@
 package GroupProject;
 
 import javax.swing.*;
+import java.util.List;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -239,8 +240,23 @@ public class RestaurantGUI extends JFrame {
 	 * Method that runs when the user presses "Manage"
 	 */
 	void manageAction () {
+		List<User> userList = myDatabase.getAllUser();
+		
 		// Removes any panels currently in view
 	    removeAllPanels();
+	    for(User user : userList) {
+	    	JLabel UsernameLabel = new JLabel("Username: " + user.getUsername());
+	    	JLabel UsertypeLabel = new JLabel("Usertype: " + user.getUserType());
+	    	
+	    	manageUsersP.add(UsernameLabel);
+	    	manageUsersP.add(UsertypeLabel);
+	    }
+	    JButton addUser = new JButton("Add User");
+	    JButton removeUser = new JButton("Remove User");
+	    JButton editUser = new JButton("Edit User");
+	    
+	    
+	    
 		// Adds the panel selected by the user
 		masterP.add(manageUsersP);
 		// Validates and repaints the changes

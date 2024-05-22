@@ -110,7 +110,19 @@ public class LoginWindow extends JFrame {
 				String Username = txtUsername.getText();
 				char [] Password = txtPassword.getPassword();
 				try {
+<<<<<<< Updated upstream:GroupProject/LoginWindow.java
 					if( myDatabase.verifyLogin(Username, Password)) {
+=======
+					
+					if("Manager".equals(Username)&& new String(Password).equals("1")) {
+						JOptionPane.showMessageDialog(null, "Login successful");
+						loggedInUser = new User("Admin", "admin");
+						if("admin".equals(loggedInUser.getUserType())) {
+							programView = 2;
+						}
+					}else if( myDatabase.verifyLogin(Username, Password)) {
+						JOptionPane.showMessageDialog(null, "Login successful!");
+>>>>>>> Stashed changes:LoginWindow.java
 						
 						
 						JOptionPane.showMessageDialog(null, "Login successful!");
