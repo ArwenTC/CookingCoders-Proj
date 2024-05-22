@@ -3,17 +3,17 @@ package GroupProject;
 public class OrderLine {
 	
 	// Order item values
-	private int orderID;
+	private Integer orderID;
 	private Item product;
 	private int quantity;
 	
 	/**
 	 * Constructor
-	 * @param orderID
+	 * @param orderID The order's ID, or null if no order ID has been assigned yet
 	 * @param product
 	 * @param quantity
 	 */
-	public OrderLine(int orderID, Item product, int quantity) { 
+	public OrderLine(Integer orderID, Item product, int quantity) { 
 		this.orderID = orderID;
 		this.product = product;
 		this.quantity = quantity;
@@ -48,7 +48,7 @@ public class OrderLine {
 	 * Getter for product
 	 * @return product
 	 */
-	public Item product() {
+	public Item getProduct() {
 		return this.product;
 	}
 	
@@ -56,7 +56,7 @@ public class OrderLine {
 	 * Getter for quantity
 	 * @return quantity
 	 */
-	public int quantity() {
+	public int getQuantity() {
 		return this.quantity;
 	}
 	

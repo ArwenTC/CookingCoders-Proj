@@ -3,7 +3,7 @@ package GroupProject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.random.*;
+
 
 import java.sql.*;
 
@@ -12,7 +12,7 @@ public class Order {
 	private int orderID;
 	private String buildingName;
 	private ArrayList<OrderLine> items;
-	private String customerUserName;
+	private String customerUsername;
 	private Boolean completed;
 	private SQLDatabase database_;
 	
@@ -24,7 +24,7 @@ public class Order {
 	public Order(int orderID, SQLDatabase database_) {
 		this.orderID = orderID;
 		this.buildingName = "";
-		this.customerUserName = "";
+		this.customerUsername = "";
 		this.completed = false;
 		this.database_ = database_;
 		
@@ -40,7 +40,7 @@ public class Order {
 			results.next();
 			// Sets the values of self from the data in the result set
 			this.buildingName = results.getString(2);
-			this.customerUserName = results.getString(3);
+			this.customerUsername = results.getString(3);
 			this.completed = results.getBoolean(4);
 		} catch (Exception e) {
 			System.out.println("Unable to initialize order");
@@ -54,9 +54,9 @@ public class Order {
 	 * @param customerUserName
 	 * @param database_
 	 */
-	public Order(String buildingName, String customerUserName, SQLDatabase database_) {
+	public Order(String buildingName, String customerUsername, SQLDatabase database_) {
 		this.buildingName = buildingName;
-		this.customerUserName = customerUserName;
+		this.customerUsername = customerUsername;
 		this.completed = false;
 		this.database_ = database_;
 		
@@ -79,7 +79,7 @@ public class Order {
                 	Arrays.asList( "OrderID", "BuildingName", "CustomerUsername", "Completed" )),
                 // Values
                 new ArrayList<Object>(
-                    Arrays.asList( this.orderID, this.buildingName , this.customerUserName, this.completed)
+                    Arrays.asList( this.orderID, this.buildingName , this.customerUsername, this.completed)
                 )
 		);
 	}
@@ -138,8 +138,8 @@ public class Order {
 	 * Getter for customer user name
 	 * @return customerUserName
 	 */
-	public String getCustomerUserName() {
-		return customerUserName;
+	public String getCustomerUsername() {
+		return customerUsername;
 	}
 	/**
 	 * Getter for building name

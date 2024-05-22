@@ -34,7 +34,7 @@ public class OrderListPanel extends RPanel {
 		// Initializes 
 		orderScroll = new JScrollPane();
 		
-		ResultSet orders = database_.getDatabaseInfo("order");
+		ResultSet orders = database_.getDatabaseInfo("order", null);
 		try {
 			int index = 0;
 			// Iterates through the result set and adds items to the order panel

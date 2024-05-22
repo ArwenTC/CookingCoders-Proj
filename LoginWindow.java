@@ -10,8 +10,11 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeMap;
 import java.awt.event.ActionEvent;
 
 
@@ -42,6 +45,9 @@ public class LoginWindow extends JFrame {
     // Creates a database myDatabase
 	private SQLDatabase myDatabase;
 	
+	// information about this instance of the program
+	InfoHandler infoHandler;
+	
 	/**
 	 * Constructor, creates the application
 	 * @param myDatabase_
@@ -53,6 +59,65 @@ public class LoginWindow extends JFrame {
 	    
 	    // Initializes the frame
 		initialize();
+	}
+	
+	
+	public InfoHandler makeInfoHandler() {
+	    try {
+	        
+	        // getting the building name
+    	    ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'");
+    	    
+    	    if (rs == null) {
+                return null;
+            }
+    	    
+    	    rs.next();
+    	    String buildingName = rs.getString("BuildingName");
+    	    
+    	    // getting the building information
+    	    rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'");
+    	    
+    	    if (rs == null) {
+                return null;
+            }
+    	    
+    	    rs.next();
+    	    String buildingState = rs.getString("state");
+    	    String buildingCity = rs.getString("city");
+    	    String buildingStreetAddr1 = rs.getString("streetaddr1");
+    	    String buildingStreetAddr2 = rs.getString("streetaddr2");
+    	    
+    	    // getting the product information
+    	    rs = myDatabase.getDatabaseInfo("product", null);
+            
+            if (rs == null) {
+                return null;
+            }
+            
+            TreeMap<String, Double> products = new TreeMap<String, Double>();
+            
+            while (rs.next()) {
+                products.put(rs.getString("name"), rs.getDouble("price"));
+            }
+            
+            return new InfoHandler(
+                myDatabase,
+                products,
+                loggedInUser.getUsername(),
+                loggedInUser.getUserType(),
+                buildingName,
+                buildingState,
+                buildingCity,
+                buildingStreetAddr1,
+                buildingStreetAddr2
+            );
+    	    
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(null, "Error when getting info for InfoHandler creation" + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	    
+	    return null;
 	}
 	
 	
@@ -104,8 +169,7 @@ public class LoginWindow extends JFrame {
 		btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< Updated upstream
-=======
+			    
 				String Username = txtUsername.getText();
 				char [] Password = txtPassword.getPassword();
 				
@@ -138,9 +202,8 @@ public class LoginWindow extends JFrame {
 						JOptionPane.showMessageDialog(null, "Invalid Username or password");
 					}
 				}catch (SQLException ex) {
-					JOptionPane.showMessageDialog(null, "an error occurred while trying to log in. Please try again later.", "Login Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "an error occurred while trying to log in.", "Login Error", JOptionPane.ERROR_MESSAGE);
 				}
->>>>>>> Stashed changes
 				
 				
 			}
@@ -163,14 +226,14 @@ public class LoginWindow extends JFrame {
 		btnSignUp = new JButton("Sign Up");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
-            	// Creates password and confirmed password strings
+                
+                // Creates password and confirmed password strings
                 char[] password = {};
                 char[] confirmedPassword = {};
                 
                 try {
-                	
-                	// Collects user input from the text fields
+                    
+                    // Collects user input from the text fields
                     String userName = txtUsername.getText();
                     password = txtPassword.getPassword();
                     confirmedPassword = txtConfirm.getPassword();
@@ -198,14 +261,14 @@ public class LoginWindow extends JFrame {
                     // Checks if the userName is available in the database
                     // Switches based on the error value
                     switch(myDatabase.valueExists("USER", "Username", "'" + userName + "'")) {
-                    	case 0:
-                    		break;
-                    	case 1:
-                    		JOptionPane.showMessageDialog(null, "username not available", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                    		return;
-                    	case 2:
-                    		JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                    		return;
+                        case 0:
+                            break;
+                        case 1:
+                            JOptionPane.showMessageDialog(null, "username not available", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        case 2:
+                            JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                            return;
                     }
                     
                     
@@ -216,41 +279,41 @@ public class LoginWindow extends JFrame {
                     
                     // Sets customer view based on the selection by the user
                     if (selectedUserType.equals("customer")) {
-                    	programView = 0;
+                        programView = 0;
                     } else if (selectedUserType.equals("employee")) { 
-                    	programView = 1;
+                        programView = 1;
                     } else if (selectedUserType.equals("admin")) {
-                    	programView = 2;
+                        programView = 2;
                     } else {
-                    	// Returns the function in case the user exits the prompt
-                    	return;
+                        // Returns the function in case the user exits the prompt
+                        return;
                     }
 
                     // 
-                	System.out.println(selectedUserType + ": " + programView);
+                    System.out.println(selectedUserType + ": " + programView);
                     
-                	
-                	
+                    
+                    
                     // Display a dialog to prompt the user to select a user type
                     switch (myDatabase.addItem(
-                    	// Table Name
+                        // Table Name
                         "USER",
                         // Columns
                         new ArrayList<String>(
-                        	Arrays.asList( "Username", "Password", "Usertype", "BuildingName" )),
+                            Arrays.asList( "Username", "Password", "Usertype", "BuildingName" )),
                         // Values
                         new ArrayList<Object>(
                             Arrays.asList( userName, password, selectedUserType.toLowerCase(), buildingName ))
                     )) {
-                    	// Gives an error depending on the result
-                    	case 0:
-                    		break;
-                    	case 1:
-                    		JOptionPane.showMessageDialog(null, "Java error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                    		return;
-                    	case 2:
-                    		JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                    		return;
+                        // Gives an error depending on the result
+                        case 0:
+                            break;
+                        case 1:
+                            JOptionPane.showMessageDialog(null, "Java error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        case 2:
+                            JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                            return;
                     }
                     
                     

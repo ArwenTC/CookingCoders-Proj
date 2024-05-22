@@ -30,9 +30,9 @@ public class RestaurantGUI extends JFrame {
 	JMenuItem orderListB;
 	JMenuItem manageB;
 	
-	LoginWindow loginWindow;
-	
 	SQLDatabase myDatabase;
+	
+	InfoHandler infoHandler;
     
     User loggedInUser;
 
@@ -59,6 +59,8 @@ public class RestaurantGUI extends JFrame {
    		
    		// Build and add the panel that contains the other components.
    		build();
+   		
+   		LoginWindow loginWindow = new LoginWindow(myDatabase, "Testraunt");
 
    		// Toggles the visibility of the login window
         loginWindow.toggleVisibility();
@@ -72,6 +74,8 @@ public class RestaurantGUI extends JFrame {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        infoHandler = loginWindow.makeInfoHandler();
         
         // Makes the login window invisible
         loginWindow.toggleVisibility();
@@ -145,9 +149,6 @@ public class RestaurantGUI extends JFrame {
             }
         });
 		
-		// Creates a new login window
-		loginWindow = new LoginWindow(myDatabase, "Testraunt");
-		 
 	}
 
 	/**

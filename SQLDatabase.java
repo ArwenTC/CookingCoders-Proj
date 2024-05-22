@@ -4,6 +4,8 @@ package GroupProject;
 import java.sql.*;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 // TODO: use char arrays instead of strings so the SQL queries can be overwritten.
 // The above TODO probably isn't necessary since this isn't a security class.
 
@@ -11,12 +13,11 @@ public class SQLDatabase {
 	
 	// Database info to be used when connecting / getting data
 	private String databaseURL;
-	private String tableName;
 	private String username;
 	private String password;
 	
 	// SQL Connection
-	public Connection con;
+	private Connection con;
 	
 	/**
 	 * Constructor method
@@ -39,27 +40,36 @@ public class SQLDatabase {
 			// Prints out if the database could not connect
 			System.out.println("Error connecting to database: " + e);
 		}
-		
 	}
+	
+	
+	public Connection getCon() {
+	    return con;
+	}
+	
 	
 	/**
 	 * Returns the data set inside a given table.
 	 * @param table
+	 * @param condition
 	 * @return Result set containing info
 	 * @return null upon error
 	 */
-	public ResultSet getDatabaseInfo(String table) {
+	public ResultSet getDatabaseInfo(String table, String condition) {
+	    if (condition == null || condition.equals("")) {
+	        condition = "TRUE";
+	    }
 		
 		try {
 			// Creates selection statement
-			String sqlCommand = "SELECT * FROM `" + table + "`";
+			String sqlCommand = "SELECT * FROM `" + table + "`" + " WHERE " + condition + ";";
 			Statement statement = con.createStatement();
 			
 			// Returns the set of results
 			return statement.executeQuery(sqlCommand);
 		}
 		catch (SQLException e) {
-			System.out.println("Error accessing database: " + e);
+		    JOptionPane.showMessageDialog(null, "Error accessing database: " + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
@@ -337,11 +347,5 @@ public class SQLDatabase {
 		}
 		return null;
 	}
-	
-	
-
-	
-
-	
 	
 }
