@@ -88,9 +88,9 @@ public class Order {
 	 * Adds an item to the order
 	 * @param product
 	 */
-	public void addItem(Item product) {
+	public void addItem(String productName) {
 		// Adds a new item to the order line
-		items.add(new OrderLine(this.orderID,product,1));
+		items.add(new OrderLine(this.orderID,productName,1));
 	}
 	
 	/**

@@ -2,50 +2,51 @@ package GroupProject;
 
 import java.sql.*;
 
+
 public class User {
 
 	// User fields
-	private String userName;
-	private String userType;
+	private String username;
+	private String usertype;
 	
 	/**
 	 * Constructor
-	 * @param userName
-	 * @param userType
+	 * @param username
+	 * @param usertype
 	 */
-	public User(String userName, String userType) {
-		this.userName = userName;
-		this.userType = userType;
+	public User(String userName, String usertype) {
+		this.username = userName;
+		this.usertype = usertype;
 	}
 	
 	/**
 	 * Getter for userName
-	 * @return userName
+	 * @return username
 	 */
 	public String getUsername(){
-		return userName;
+		return username;
 	}
 	/**
 	 * Setter for userName
 	 * @param username
 	 */
-	public void setUsername(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	/**
 	 * Getter for user type
-	 * @return userType
+	 * @return usertype
 	 */
-	public String getUserType() {
-		return userType;
+	public String getUsertype() {
+		return usertype;
 	}
 	/**
 	 * Setter for user type
 	 * @param usertype
 	 */
-	public void setUserType(String userType) {
-		this.userType = userType;
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
 	}
 	
 }

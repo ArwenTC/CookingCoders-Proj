@@ -322,7 +322,7 @@ public class SQLDatabase {
 		}
 	}
 	
-	public boolean verifyLogin(String Username, char[] Password) throws SQLException {
+	public boolean verifyLogin(String Username, char[] Password) {
         String query = "SELECT password FROM USER WHERE Username = ? AND Password = ?";
         try (PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(1, Username);
@@ -330,7 +330,11 @@ public class SQLDatabase {
             try (ResultSet rs = pst.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "error verifying user password: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        return false;
     }
 	
 	public String getUserType(String Username) {
@@ -342,8 +346,8 @@ public class SQLDatabase {
 					return rs.getString("Usertype");
 				}
 			}
-		}catch (SQLException e) {
-			System.out.println("Error retrieving user type: "  + e.getMessage());
+		} catch (SQLException e) {
+		    JOptionPane.showMessageDialog(null, "Error retrieving user type: "  + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 	}

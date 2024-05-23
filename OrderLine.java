@@ -4,7 +4,7 @@ public class OrderLine {
 	
 	// Order item values
 	private Integer orderID;
-	private Item product;
+	private String productName;
 	private int quantity;
 	
 	/**
@@ -13,9 +13,9 @@ public class OrderLine {
 	 * @param product
 	 * @param quantity
 	 */
-	public OrderLine(Integer orderID, Item product, int quantity) { 
+	public OrderLine(Integer orderID, String productName, int quantity) { 
 		this.orderID = orderID;
-		this.product = product;
+		this.productName = productName;
 		this.quantity = quantity;
 
 		// PSEUDO - FROM SQL DATABASE
@@ -48,8 +48,8 @@ public class OrderLine {
 	 * Getter for product
 	 * @return product
 	 */
-	public Item getProduct() {
-		return this.product;
+	public String getProductName() {
+		return this.productName;
 	}
 	
 	/**

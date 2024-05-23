@@ -34,8 +34,7 @@ public class LoginWindow extends JFrame {
 	private JButton btnSignUp;
 	private JLabel lblConfirm;
     private JPasswordField txtConfirm;
-    // Name of the building
-    private String buildingName;
+    
     
     // Returns a view of the program
     private int programView;
@@ -47,6 +46,7 @@ public class LoginWindow extends JFrame {
 	
 	// information about this instance of the program
 	InfoHandler infoHandler;
+	private JTextField txtBuilding;
 	
 	/**
 	 * Constructor, creates the application
@@ -55,7 +55,6 @@ public class LoginWindow extends JFrame {
 	 */
 	public LoginWindow(SQLDatabase myDatabase_, String buildingName) {
 	    myDatabase = myDatabase_;
-	    this.buildingName = buildingName;
 	    
 	    // Initializes the frame
 		initialize();
@@ -101,17 +100,23 @@ public class LoginWindow extends JFrame {
                 products.put(rs.getString("name"), rs.getDouble("price"));
             }
             
-            return new InfoHandler(
+            InfoHandler infoHandler = new InfoHandler(
                 myDatabase,
-                products,
                 loggedInUser.getUsername(),
-                loggedInUser.getUserType(),
+                loggedInUser.getUsertype(),
                 buildingName,
                 buildingState,
                 buildingCity,
                 buildingStreetAddr1,
                 buildingStreetAddr2
             );
+            
+            infoHandler.refreshProductMap();
+            
+            if (infoHandler.usertype != "customer") {
+                infoHandler.refreshOrdersInProgress();
+                infoHandler.refreshUserInfo();
+            }
     	    
 	    } catch (SQLException e) {
 	        JOptionPane.showMessageDialog(null, "Error when getting info for InfoHandler creation" + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -145,25 +150,25 @@ public class LoginWindow extends JFrame {
 		// Sets the login label
 		JLabel lbLogin = new JLabel("Login Systems");
 		lbLogin.setBounds(238, 30, 98, 14);
-		add(lbLogin);
+		getContentPane().add(lbLogin);
 		
 		JLabel lblUsername = new JLabel("Username");
-		lblUsername.setBounds(96, 123, 71, 14);
-		add(lblUsername);
+		lblUsername.setBounds(96, 88, 71, 14);
+		getContentPane().add(lblUsername);
 		
 		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(96, 154, 71, 14);
-		add(lblPassword);
+		lblPassword.setBounds(96, 113, 71, 14);
+		getContentPane().add(lblPassword);
 		
 		
 		// Text Field Button
 		txtUsername = new JTextField();
-		txtUsername.setBounds(215, 120, 254, 20);
+		txtUsername.setBounds(215, 85, 254, 20);
 		txtUsername.setColumns(10);
 		
 		// Password Button
 		txtPassword = new JPasswordField();
-		txtPassword.setBounds(215, 151, 254, 20);
+		txtPassword.setBounds(215, 110, 254, 20);
 		
 		// Login Button
 		btnLogin = new JButton("Login");
@@ -173,38 +178,32 @@ public class LoginWindow extends JFrame {
 				String Username = txtUsername.getText();
 				char [] Password = txtPassword.getPassword();
 				
-			
-				try {
+				if ("Admin".equals(Username) && new String(Password).equals("1")) {
+					JOptionPane.showMessageDialog(null, "Login successful");
+					loggedInUser = new User("Admin", "Admin");
 					
-					if("Admin".equals(Username)&& new String(Password).equals("1")) {
-						JOptionPane.showMessageDialog(null, "Login successful");
-						loggedInUser = new User("Admin", "Admin");
-						if("admin".equals(loggedInUser.getUserType())) {
-							programView = 3;
-						}
-					}else if( myDatabase.verifyLogin(Username, Password)) {
-						JOptionPane.showMessageDialog(null, "Login successful!");
-						
-						String UserType = myDatabase.getUserType(Username);
-						
-						loggedInUser = new User(Username,UserType );
-						
-						if("customer".equals(loggedInUser.getUserType())) {
-							programView = 0;
-							
-						}else if("employee".equals(loggedInUser.getUserType())) {
-							programView = 1;
-						}else {
-							JOptionPane.showInputDialog(null,"Invalid user type", JOptionPane.ERROR_MESSAGE);
-						}
-						
-					}else {
-						JOptionPane.showMessageDialog(null, "Invalid Username or password");
+					if ("admin".equals(loggedInUser.getUsertype())) {
+						programView = 3;
 					}
-				}catch (SQLException ex) {
-					JOptionPane.showMessageDialog(null, "an error occurred while trying to log in.", "Login Error", JOptionPane.ERROR_MESSAGE);
+				} else if (myDatabase.verifyLogin(Username, Password)) {
+				    
+					JOptionPane.showMessageDialog(null, "Login successful!");
+					
+					String UserType = myDatabase.getUserType(Username);
+					
+					loggedInUser = new User(Username, UserType);
+					
+					if ("customer".equals(loggedInUser.getUsertype())) {
+						programView = 0;
+					} else if ("employee".equals(loggedInUser.getUsertype())) {
+						programView = 1;
+					} else {
+					    programView = 2;
+					}
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "Invalid Username or password");
 				}
-				
 				
 			}
 		});
@@ -235,6 +234,7 @@ public class LoginWindow extends JFrame {
                     
                     // Collects user input from the text fields
                     String userName = txtUsername.getText();
+                    String buildingName = txtBuilding.getText();
                     password = txtPassword.getPassword();
                     confirmedPassword = txtConfirm.getPassword();
                     
@@ -254,6 +254,10 @@ public class LoginWindow extends JFrame {
                     }
                     if (password.length > 31) {
                         JOptionPane.showMessageDialog(null, "password too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (myDatabase.valueExists("building", "buildingname", "'" + buildingName + "'") != 1) {
+                        JOptionPane.showMessageDialog(null, "building \"" + buildingName + "\" not found", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -359,13 +363,13 @@ public class LoginWindow extends JFrame {
 		
 		
 		JLabel lblSigningUpMsg = new JLabel("If signing up:");
-		lblSigningUpMsg.setBounds(96, 200, 110, 14);
+		lblSigningUpMsg.setBounds(96, 160, 110, 14);
 		
 		lblConfirm = new JLabel("Confirm Password");
-		lblConfirm.setBounds(96, 228, 128, 14);
+		lblConfirm.setBounds(96, 225, 128, 14);
 		
 		txtConfirm = new JPasswordField();
-		txtConfirm.setBounds(215, 225, 254, 20);
+		txtConfirm.setBounds(215, 222, 254, 20);
 		
 		
 		
@@ -382,6 +386,15 @@ public class LoginWindow extends JFrame {
 		getContentPane().add(lblConfirm);
 		getContentPane().add(txtConfirm);
 		
+		JLabel lblBuilding = new JLabel("Choose Building");
+		lblBuilding.setBounds(96, 200, 110, 14);
+		getContentPane().add(lblBuilding);
+		
+		txtBuilding = new JTextField();
+		txtBuilding.setBounds(215, 197, 254, 20);
+		getContentPane().add(txtBuilding);
+		txtBuilding.setColumns(10);
+		
 		
 	}
 	
@@ -392,5 +405,4 @@ public class LoginWindow extends JFrame {
 	public int getProgramView() {
 		return programView;
 	}
-	
 }

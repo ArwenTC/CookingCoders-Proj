@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
@@ -16,19 +19,27 @@ public class InfoHandler {
     
     public final SQLDatabase myDatabase;
     
-    // product information
-    public final TreeMap<String, Double> products;
-    
     // user values
     public final String username;
     public final String usertype;
     
-    // building values
-    public final String buildingName;
-    public final String state;
-    public final String city;
-    public final String streetAddr1;
-    public final String streetAddr2;
+    // product information
+    private TreeMap<String, Double> products = new TreeMap<String, Double>();
+    
+    // order information
+    private TreeMap<Integer, ArrayList<OrderLine>> ordersInProgress = new TreeMap<Integer, ArrayList<OrderLine>>();
+    
+    // user information
+    // TreeMap<userName, String[password, userType]>
+    private TreeMap<String, String[]> userInfo = new TreeMap<String, String[]>();
+    
+    
+    // this building values
+    private String buildingName;
+    private String state;
+    private String city;
+    private String streetAddr1;
+    private String streetAddr2;
     
     
     // current order
@@ -37,7 +48,6 @@ public class InfoHandler {
     
     public InfoHandler(
         SQLDatabase myDatabase,
-        TreeMap<String, Double> products,
         String username,
         String usertype,
         String buildingName,
@@ -46,7 +56,6 @@ public class InfoHandler {
         String streetAddr1,
         String streetAddr2) {
         this.myDatabase = myDatabase;
-        this.products = products;
         this.username = username;
         this.usertype = usertype;
         this.buildingName = buildingName;
@@ -54,6 +63,85 @@ public class InfoHandler {
         this.city = city;
         this.streetAddr1 = streetAddr1;
         this.streetAddr2 = streetAddr2;
+        
+        
+    }
+    
+    
+    public Set<Map.Entry<String, Double>> getProductMapView() {
+    	return products.entrySet();
+    }
+    
+    
+    public Set<Map.Entry<Integer, ArrayList<OrderLine>>> getOrdersInProgressMapView() {
+    	return ordersInProgress.entrySet();
+    }
+    
+    
+    public Set<Map.Entry<String, String[]>> getUserMapView() {
+    	return userInfo.entrySet();
+    }
+    
+    
+    public String[] getBuildingInfo() {
+    	return new String[] {buildingName, state, city, streetAddr1, streetAddr2};
+    }
+    
+    
+    public static TreeMap<String, String[]> getBuildingInfoMap(SQLDatabase myDatabase) {
+    	try {
+    		
+    		ResultSet rs = myDatabase.getDatabaseInfo("building", null);
+    		
+    		if (rs == null || !rs.next()) {
+				return null;
+			}
+    		
+    		TreeMap<String, String[]> buildingInfo = new TreeMap<String, String[]>();
+    		
+    		do {
+		    	
+    			buildingInfo.put(
+		        	rs.getString("buildingname"),
+		        	new String[] {rs.getString("state"), rs.getString("city"), rs.getString("streetaddr1"), rs.getString("streetaddr2")}
+		        );
+		        
+		    } while (rs.next());
+    		
+    		return buildingInfo;
+    		
+    	} catch (SQLException e) {
+    		JOptionPane.showMessageDialog(null, "Couldn't refresh buildings map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    	
+    	return null;
+    }
+    
+    
+    public void setThisBuildingInfo(String newBuildingName) {
+    	try {
+    		
+    		ResultSet rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + newBuildingName + "'");
+    		
+    		if (rs == null || !rs.next()) {
+				return;
+			}
+    		
+    		this.buildingName = newBuildingName;
+            this.state = rs.getString("state");
+            this.city = rs.getString("city");
+            this.streetAddr1 = rs.getString("streetaddr1");
+            this.streetAddr2 = rs.getString("streetaddr2");
+            
+            String sqlString = "UPDATE user SET buildingname = ? WHERE username = ?;";
+    		PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+    		
+    		pst.setString(1, newBuildingName);
+    		pst.setString(2, this.username);
+    		
+    	} catch (SQLException e) {
+    		JOptionPane.showMessageDialog(null, "Couldn't refresh buildings map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    	}
     }
     
     
@@ -84,7 +172,7 @@ public class InfoHandler {
                 
                 pst.setInt(1, userOrderID);
                 pst.setInt(2, i + 1);
-                pst.setString(3, orderLine.getProduct().getName());
+                pst.setString(3, orderLine.getProductName());
                 pst.setInt(4, orderLine.getQuantity());
                 
                 pst.executeUpdate();
@@ -117,7 +205,7 @@ public class InfoHandler {
             orderID = -1;
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Couldn't delete order", "SQL Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Couldn't delete order: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -142,7 +230,7 @@ public class InfoHandler {
             result = rs.getInt("completed");
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Couldn't check if order was complete", "SQL Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Couldn't check if order was complete: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
             return -1;
         }
         
@@ -159,7 +247,137 @@ public class InfoHandler {
             pst.executeUpdate();
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Couldn't mark order as completed", "SQL Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Couldn't mark order as completed: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    
+    public void refreshProductMap() {
+    	try {
+    		
+			ResultSet rs = myDatabase.getDatabaseInfo("product", null);
+		    
+		    if (rs == null || !rs.next()) { // don't clear the map unless the ResultSet works
+		        return;
+		    }
+		    
+		    products.clear();
+		    
+		    do {
+		    	
+		        products.put(rs.getString("name"), rs.getDouble("price"));
+		        
+		    } while (rs.next());
+		    
+    	} catch (SQLException e) {
+    		JOptionPane.showMessageDialog(null, "Couldn't refresh product map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
+    
+    public void refreshOrdersInProgress() {
+    	try {
+			
+			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE");
+			
+			if (rsOrders == null || !rsOrders.next()) { // don't clear the map unless the ResultSet works
+				return;
+			}
+			
+			ordersInProgress.clear();
+			
+			do {
+				
+				int orderID = rsOrders.getInt("orderID");
+				
+				ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID);
+				
+				if (rsOrderLines == null) {
+					return;
+				}
+				
+				ArrayList<OrderLine> orderLines = new ArrayList<OrderLine>();
+				
+				while (rsOrderLines.next()) {
+					String productName = rsOrderLines.getString("productname");
+					int quantity = rsOrderLines.getInt("quantity");
+					
+					orderLines.add(new OrderLine(orderID, productName, quantity));
+				}
+				
+				ordersInProgress.put(orderID, orderLines);
+				
+			} while (rsOrders.next());
+			
+    	} catch (SQLException e) {
+    		JOptionPane.showMessageDialog(null, "Couldn't refresh orders map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
+    
+    public void refreshUserInfo() {
+    	try {
+    		
+    		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'");
+			
+			if (rs == null || !rs.next()) { // don't clear the map unless the ResultSet works
+				return;
+			}
+			
+			userInfo.clear();
+			
+			do {
+		    	
+				userInfo.put(
+					rs.getString("username"),
+					new String[] {rs.getString("password"), rs.getString("usertype")}
+				);
+		        
+		    } while (rs.next());
+    		
+    	} catch (SQLException e) {
+    		JOptionPane.showMessageDialog(null, "Couldn't refresh users map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    	}
+    }
+    
+    
+    public String getUsertype(String username) {
+        try {
+            
+            ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'");
+            
+            if (rs == null || !rs.next()) {
+                return null;
+            }
+            
+            return rs.getString("useretype");
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Couldn't get usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return null;
+    }
+    
+    
+    public void setUsertype(String username, String newUsertype) {
+        if (!newUsertype.equals("customer") || !newUsertype.equals("employee")) {
+            JOptionPane.showMessageDialog(null, "invalid usertype: " + newUsertype, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        try {
+        
+        String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
+        PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+        
+        pst.setString(1, newUsertype);
+        pst.setString(2, username);
+        
+        pst.executeUpdate();
+        
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
 }
