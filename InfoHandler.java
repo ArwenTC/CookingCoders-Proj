@@ -350,7 +350,7 @@ public class InfoHandler {
                 return null;
             }
             
-            return rs.getString("useretype");
+            return rs.getString("usertype");
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't get usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
