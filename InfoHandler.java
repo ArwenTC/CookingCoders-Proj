@@ -366,14 +366,17 @@ public class InfoHandler {
         }
         
         try {
-        
-        String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
-        PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
-        
-        pst.setString(1, newUsertype);
-        pst.setString(2, username);
-        
-        pst.executeUpdate();
+            
+            String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
+            PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+            
+            pst.setString(1, newUsertype);
+            pst.setString(2, username);
+            
+            pst.executeUpdate();
+	    
+	    String[] oldInfo = userInfo.get(username);
+	    userInfo.put(username, new String[] {oldInfo[0], oldInfo[1]});
         
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
