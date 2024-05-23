@@ -376,7 +376,7 @@ public class InfoHandler {
             pst.executeUpdate();
 	    
 	    String[] oldInfo = userInfo.get(username);
-	    userInfo.put(username, new String[] {oldInfo[0], oldInfo[1]});
+	    userInfo.put(username, new String[] {oldInfo[0], newUsertype});
         
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
