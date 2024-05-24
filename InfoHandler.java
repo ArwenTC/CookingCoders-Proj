@@ -30,8 +30,8 @@ public class InfoHandler {
     private TreeMap<Integer, ArrayList<OrderLine>> ordersInProgress = new TreeMap<Integer, ArrayList<OrderLine>>();
     
     // user information
-    // TreeMap<userName, String[password, userType]>
-    private TreeMap<String, String[]> userInfo = new TreeMap<String, String[]>();
+    // TreeMap<username, String[username, usertype]>
+    private TreeMap<String, User> userInfo = new TreeMap<String, User>();
     
     
     // this building values
@@ -40,6 +40,10 @@ public class InfoHandler {
     private String city;
     private String streetAddr1;
     private String streetAddr2;
+    
+    // this user's order info
+    private int myOrderID;
+    private ArrayList<OrderLine> myCurrentOrder;
     
     
     // current order
@@ -78,8 +82,29 @@ public class InfoHandler {
     }
     
     
-    public Set<Map.Entry<String, String[]>> getUserMapView() {
+    public Set<Map.Entry<String, User>> getUserMapView() {
     	return userInfo.entrySet();
+    }
+    
+    
+    public ArrayList<OrderLine> getMyCurrentOrder() {
+        return myCurrentOrder;
+    }
+    
+    
+    public int getMyOrderID() {
+        return myOrderID;
+    }
+    
+    
+    public double getMyTotalCharge() {
+        double totalCharge = 0.0;
+        
+        for (OrderLine orderLine : myCurrentOrder) {
+            totalCharge += products.get(orderLine.getProductName()) * orderLine.getQuantity();
+        }
+        
+        return totalCharge;
     }
     
     
@@ -88,7 +113,7 @@ public class InfoHandler {
     }
     
     
-    public static TreeMap<String, String[]> getBuildingInfoMap(SQLDatabase myDatabase) {
+    public static TreeMap<String, String[]> getAllBuildingInfo(SQLDatabase myDatabase) {
     	try {
     		
     		ResultSet rs = myDatabase.getDatabaseInfo("building", null);
@@ -111,7 +136,7 @@ public class InfoHandler {
     		return buildingInfo;
     		
     	} catch (SQLException e) {
-    		JOptionPane.showMessageDialog(null, "Couldn't refresh buildings map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+    		JOptionPane.showMessageDialog(null, "Couldn't get building info: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
     	}
     	
     	return null;
@@ -307,6 +332,11 @@ public class InfoHandler {
 				
 				ordersInProgress.put(orderID, orderLines);
 				
+				if (rsOrders.getString("customerusername").equals(this.username)) {
+				    myOrderID = orderID;
+				    myCurrentOrder = orderLines;
+				}
+				
 			} while (rsOrders.next());
 			
     	} catch (SQLException e) {
@@ -330,7 +360,7 @@ public class InfoHandler {
 		    	
 				userInfo.put(
 					rs.getString("username"),
-					new String[] {rs.getString("password"), rs.getString("usertype")}
+					new User(rs.getString("username"), rs.getString("usertype"))
 				);
 		        
 		    } while (rs.next());
@@ -350,7 +380,7 @@ public class InfoHandler {
                 return null;
             }
             
-            return rs.getString("usertype");
+            return rs.getString("useretype");
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't get usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -366,17 +396,14 @@ public class InfoHandler {
         }
         
         try {
-            
-            String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
-            PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
-            
-            pst.setString(1, newUsertype);
-            pst.setString(2, username);
-            
-            pst.executeUpdate();
-	    
-	    String[] oldInfo = userInfo.get(username);
-	    userInfo.put(username, new String[] {oldInfo[0], newUsertype});
+        
+        String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
+        PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+        
+        pst.setString(1, newUsertype);
+        pst.setString(2, username);
+        
+        pst.executeUpdate();
         
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
