@@ -117,7 +117,9 @@ public class LoginWindow extends JFrame {
                 infoHandler.refreshOrdersInProgress();
                 infoHandler.refreshUserInfo();
             }
-    	    
+
+            return infoHandler;
+            
 	    } catch (SQLException e) {
 	        JOptionPane.showMessageDialog(null, "Error when getting info for InfoHandler creation" + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
 	    }
