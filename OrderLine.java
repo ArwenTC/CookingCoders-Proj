@@ -2,8 +2,6 @@ package GroupProject;
 
 public class OrderLine {
 	
-	// Order item values
-	private Integer orderID;
 	private String productName;
 	private int quantity;
 	
@@ -13,8 +11,7 @@ public class OrderLine {
 	 * @param product
 	 * @param quantity
 	 */
-	public OrderLine(Integer orderID, String productName, int quantity) { 
-		this.orderID = orderID;
+	public OrderLine(String productName, int quantity) { 
 		this.productName = productName;
 		this.quantity = quantity;
 
@@ -32,17 +29,6 @@ public class OrderLine {
 		
 	}
 	
-	
-	//
-	// GETTER METHODS
-	//
-	/**
-	 * Getter for order id
-	 * @return orderID
-	 */
-	public int getOrderID() {
-		return this.orderID;
-	}
 	
 	/**
 	 * Getter for product

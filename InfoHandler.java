@@ -120,7 +120,7 @@ public class InfoHandler {
     }
     
     
-    public int getUserOrderID() {
+    public int getMyOrderID() {
         return myOrderID;
     }
     
@@ -135,14 +135,12 @@ public class InfoHandler {
     }
     
     
-    public double getMyTotalCharge(boolean waitingOrder) {
+    public double getTotalCharge(ArrayList<OrderLine> chargeSource) {
         if (myCurrentOrder == null) {
             return 0.0;
         }
         
         double totalCharge = 0.0;
-        
-        ArrayList<OrderLine> chargeSource = waitingOrder ? myWaitingOrder : myCurrentOrder;
         
         for (OrderLine orderLine : chargeSource) {
             totalCharge += products.get(orderLine.getProductName()) * orderLine.getQuantity();
@@ -376,7 +374,7 @@ public class InfoHandler {
 					String productName = rsOrderLines.getString("productname");
 					int quantity = rsOrderLines.getInt("quantity");
 					
-					orderLines.add(new OrderLine(orderID, productName, quantity));
+					orderLines.add(new OrderLine(productName, quantity));
 				}
 				
 				refreshedOrdersInProgress.add(orderLines);

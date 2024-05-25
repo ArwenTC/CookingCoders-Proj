@@ -90,7 +90,7 @@ public class Order {
 	 */
 	public void addItem(String productName) {
 		// Adds a new item to the order line
-		items.add(new OrderLine(this.orderID,productName,1));
+		items.add(new OrderLine(productName, 1));
 	}
 	
 	/**
