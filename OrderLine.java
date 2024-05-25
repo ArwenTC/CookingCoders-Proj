@@ -61,4 +61,12 @@ public class OrderLine {
 	}
 	
 	
+	/**
+	 * Setter for quantity
+	 * @param newQuantity
+	 */
+	public void setQuantity(int newQuantity) {
+	    this.quantity = newQuantity;
+	}
+	
 }

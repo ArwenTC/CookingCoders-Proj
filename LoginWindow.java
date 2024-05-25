@@ -65,7 +65,7 @@ public class LoginWindow extends JFrame {
 	    try {
 	        
 	        // getting the building name
-    	    ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'");
+    	    ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'", null);
     	    
     	    if (rs == null) {
                 return null;
@@ -75,7 +75,7 @@ public class LoginWindow extends JFrame {
     	    String buildingName = rs.getString("BuildingName");
     	    
     	    // getting the building information
-    	    rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'");
+    	    rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'", null);
     	    
     	    if (rs == null) {
                 return null;
@@ -86,19 +86,6 @@ public class LoginWindow extends JFrame {
     	    String buildingCity = rs.getString("city");
     	    String buildingStreetAddr1 = rs.getString("streetaddr1");
     	    String buildingStreetAddr2 = rs.getString("streetaddr2");
-    	    
-    	    // getting the product information
-    	    rs = myDatabase.getDatabaseInfo("product", null);
-            
-            if (rs == null) {
-                return null;
-            }
-            
-            TreeMap<String, Double> products = new TreeMap<String, Double>();
-            
-            while (rs.next()) {
-                products.put(rs.getString("name"), rs.getDouble("price"));
-            }
             
             InfoHandler infoHandler = new InfoHandler(
                 myDatabase,

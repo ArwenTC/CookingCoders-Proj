@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,11 +26,10 @@ public class InfoHandler {
     private TreeMap<String, Double> products = new TreeMap<String, Double>();
     
     // order information
-    private TreeMap<Integer, ArrayList<OrderLine>> ordersInProgress = new TreeMap<Integer, ArrayList<OrderLine>>();
+    private OrderLine[][] ordersInProgress;
     
     // user information
-    // TreeMap<username, String[username, usertype]>
-    private TreeMap<String, User> userInfo = new TreeMap<String, User>();
+    private User[] users;
     
     
     // this building values
@@ -42,12 +40,10 @@ public class InfoHandler {
     private String streetAddr2;
     
     // this user's order info
-    private int myOrderID;
-    private ArrayList<OrderLine> myCurrentOrder;
+    private ArrayList<OrderLine> myCurrentOrder = new ArrayList<OrderLine>();
     
-    
-    // current order
-    private int userOrderID = -1; // -1 means the user has no pending order
+    // this user's order ID
+    private int userOrderID = -1;
     
     
     public InfoHandler(
@@ -67,23 +63,47 @@ public class InfoHandler {
         this.city = city;
         this.streetAddr1 = streetAddr1;
         this.streetAddr2 = streetAddr2;
+    }
+    
+    
+    private void makePage(Object[] pageSource, int pageNumber, int itemsPerPage, Object[] page) {
+        if (pageSource == null || pageSource.length == 0) {
+            return;
+        }
         
-        
+        pageNumber -= 1;
+        for (
+            int i = pageNumber * itemsPerPage;
+            i < ((pageNumber * itemsPerPage) + itemsPerPage) && i < pageSource.length;
+            i++) {
+            page[i - (pageNumber * itemsPerPage)] = pageSource[i];
+        }
     }
     
     
-    public Set<Map.Entry<String, Double>> getProductMapView() {
-    	return products.entrySet();
+    public Set<Map.Entry<String, Double>> getProductEntrySet() {
+        return products.entrySet();
     }
     
     
-    public Set<Map.Entry<Integer, ArrayList<OrderLine>>> getOrdersInProgressMapView() {
-    	return ordersInProgress.entrySet();
+    public OrderLine[] getOrderLinePage(OrderLine[] orderLines, int pageNumber, int itemsPerPage) {
+        OrderLine[] page = new OrderLine[itemsPerPage];
+        makePage(orderLines, pageNumber, itemsPerPage, page);
+        return page;
     }
     
     
-    public Set<Map.Entry<String, User>> getUserMapView() {
-    	return userInfo.entrySet();
+    public OrderLine[][] getOrderPage(int pageNumber, int itemsPerPage) {
+        OrderLine[][] page = new OrderLine[itemsPerPage][];
+        makePage(ordersInProgress, pageNumber, itemsPerPage, page);
+        return page;
+    }
+    
+    
+    public User[] getUserPage(int pageNumber, int itemsPerPage) {
+        User[] page = new User[itemsPerPage];
+        makePage(users, pageNumber, itemsPerPage, page);
+        return page;
     }
     
     
@@ -92,12 +112,21 @@ public class InfoHandler {
     }
     
     
-    public int getMyOrderID() {
-        return myOrderID;
+    public int getUserOrderID() {
+        return userOrderID;
+    }
+    
+    
+    public double getProductValue(String productName) {
+        return products.get(productName);
     }
     
     
     public double getMyTotalCharge() {
+        if (myCurrentOrder == null) {
+            return 0.0;
+        }
+        
         double totalCharge = 0.0;
         
         for (OrderLine orderLine : myCurrentOrder) {
@@ -116,7 +145,7 @@ public class InfoHandler {
     public static TreeMap<String, String[]> getAllBuildingInfo(SQLDatabase myDatabase) {
     	try {
     		
-    		ResultSet rs = myDatabase.getDatabaseInfo("building", null);
+    		ResultSet rs = myDatabase.getDatabaseInfo("building", null, "buildingname");
     		
     		if (rs == null || !rs.next()) {
 				return null;
@@ -146,7 +175,7 @@ public class InfoHandler {
     public void setThisBuildingInfo(String newBuildingName) {
     	try {
     		
-    		ResultSet rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + newBuildingName + "'");
+    		ResultSet rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + newBuildingName + "'", null);
     		
     		if (rs == null || !rs.next()) {
 				return;
@@ -214,6 +243,11 @@ public class InfoHandler {
     }
     
     
+    public void addOrderLine(OrderLine newOrderLine) {
+        
+    }
+    
+    
     public void removeOrder(int orderID) {
         try {
             
@@ -245,7 +279,7 @@ public class InfoHandler {
         
         try {
             
-            ResultSet rs = myDatabase.getDatabaseInfo("order", "orderid = " + orderID);
+            ResultSet rs = myDatabase.getDatabaseInfo("order", "orderid = " + orderID, null);
             
             if (rs == null) {
                 return -1;
@@ -280,7 +314,7 @@ public class InfoHandler {
     public void refreshProductMap() {
     	try {
     		
-			ResultSet rs = myDatabase.getDatabaseInfo("product", null);
+			ResultSet rs = myDatabase.getDatabaseInfo("product", null, "name");
 		    
 		    if (rs == null || !rs.next()) { // don't clear the map unless the ResultSet works
 		        return;
@@ -303,19 +337,19 @@ public class InfoHandler {
     public void refreshOrdersInProgress() {
     	try {
 			
-			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE");
+			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE", "orderID");
 			
 			if (rsOrders == null || !rsOrders.next()) { // don't clear the map unless the ResultSet works
 				return;
 			}
 			
-			ordersInProgress.clear();
+			ArrayList<ArrayList<OrderLine>> refreshedOrdersInProgress = new ArrayList<ArrayList<OrderLine>>();
 			
 			do {
 				
 				int orderID = rsOrders.getInt("orderID");
 				
-				ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID);
+				ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
 				
 				if (rsOrderLines == null) {
 					return;
@@ -330,14 +364,19 @@ public class InfoHandler {
 					orderLines.add(new OrderLine(orderID, productName, quantity));
 				}
 				
-				ordersInProgress.put(orderID, orderLines);
+				refreshedOrdersInProgress.add(orderLines);
 				
 				if (rsOrders.getString("customerusername").equals(this.username)) {
-				    myOrderID = orderID;
 				    myCurrentOrder = orderLines;
 				}
 				
 			} while (rsOrders.next());
+			
+			ordersInProgress = new OrderLine[refreshedOrdersInProgress.size()][];
+			
+			for (int i = 0; i < refreshedOrdersInProgress.size(); i++) {
+			    ordersInProgress[i] = refreshedOrdersInProgress.get(i).toArray(OrderLine[]::new);
+			}
 			
     	} catch (SQLException e) {
     		JOptionPane.showMessageDialog(null, "Couldn't refresh orders map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -348,22 +387,21 @@ public class InfoHandler {
     public void refreshUserInfo() {
     	try {
     		
-    		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'");
+    		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'", "username");
 			
 			if (rs == null || !rs.next()) { // don't clear the map unless the ResultSet works
 				return;
 			}
 			
-			userInfo.clear();
+			ArrayList<User> refreshedUserInfo = new ArrayList<User>();
 			
 			do {
 		    	
-				userInfo.put(
-					rs.getString("username"),
-					new User(rs.getString("username"), rs.getString("usertype"))
-				);
+			    refreshedUserInfo.add(new User(rs.getString("username"), rs.getString("usertype")));
 		        
 		    } while (rs.next());
+			
+			users = refreshedUserInfo.toArray(User[]::new);
     		
     	} catch (SQLException e) {
     		JOptionPane.showMessageDialog(null, "Couldn't refresh users map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -374,13 +412,13 @@ public class InfoHandler {
     public String getUsertype(String username) {
         try {
             
-            ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'");
+            ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + username + "'", null);
             
             if (rs == null || !rs.next()) {
                 return null;
             }
             
-            return rs.getString("useretype");
+            return rs.getString("usertype");
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't get usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);

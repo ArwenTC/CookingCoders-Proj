@@ -55,14 +55,20 @@ public class SQLDatabase {
 	 * @return Result set containing info
 	 * @return null upon error
 	 */
-	public ResultSet getDatabaseInfo(String table, String condition) {
-	    if (condition == null || condition.equals("")) {
+	public ResultSet getDatabaseInfo(String table, String condition, String orderBy) {
+	    if (condition == null || condition.isEmpty()) {
 	        condition = "TRUE";
+	    }
+	    
+	    if (orderBy == null || orderBy.isEmpty()) {
+	        orderBy = "";
+	    } else {
+	        orderBy = " ORDER BY " + orderBy;
 	    }
 		
 		try {
 			// Creates selection statement
-			String sqlCommand = "SELECT * FROM `" + table + "`" + " WHERE " + condition + ";";
+			String sqlCommand = "SELECT * FROM `" + table + "`" + " WHERE " + condition + orderBy + ";";
 			Statement statement = con.createStatement();
 			
 			// Returns the set of results
