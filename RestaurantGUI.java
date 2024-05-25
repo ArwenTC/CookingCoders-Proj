@@ -642,7 +642,7 @@ public class RestaurantGUI extends JFrame {
         lblOrderInProgress.setText(infoHandler.getUserOrderID() == -1 ? "No Order In Progress" : "Order In Progress");
         lblOrderInProgress.setVisible(true);
         
-        txtWaitingOrderNote.setText(infoHandler.getMyWaitingOrderNote());
+        txtWaitingOrderNote.setText(orderNote);
         
         validate();
         repaint();
