@@ -42,6 +42,7 @@ public class InfoHandler {
     // this user's order info
     private ArrayList<OrderLine> myWaitingOrder = new ArrayList<OrderLine>();
     private ArrayList<OrderLine> myCurrentOrder = new ArrayList<OrderLine>();
+    private String myWaitingOrderNote = "";
     
     // this user's current order ID
     // -1 means no order currently in progress
@@ -114,8 +115,18 @@ public class InfoHandler {
     }
     
     
+    public ArrayList<OrderLine> getMyWaitingOrder() {
+        return myWaitingOrder;
+    }
+    
+    
     public int getUserOrderID() {
         return myOrderID;
+    }
+    
+    
+    public String getMyWaitingOrderNote() {
+        return myWaitingOrderNote;
     }
     
     
@@ -124,14 +135,16 @@ public class InfoHandler {
     }
     
     
-    public double getMyTotalCharge() {
+    public double getMyTotalCharge(boolean waitingOrder) {
         if (myCurrentOrder == null) {
             return 0.0;
         }
         
         double totalCharge = 0.0;
         
-        for (OrderLine orderLine : myCurrentOrder) {
+        ArrayList<OrderLine> chargeSource = waitingOrder ? myWaitingOrder : myCurrentOrder;
+        
+        for (OrderLine orderLine : chargeSource) {
             totalCharge += products.get(orderLine.getProductName()) * orderLine.getQuantity();
         }
         
@@ -238,6 +251,7 @@ public class InfoHandler {
             
             myWaitingOrder = new ArrayList<OrderLine>(myCurrentOrder);
             myCurrentOrder.clear();
+            myWaitingOrderNote = note;
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't insert order: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -370,6 +384,7 @@ public class InfoHandler {
 				if (rsOrders.getString("customerusername").equals(this.username)) {
 				    myWaitingOrder = orderLines;
 				    myOrderID = orderID;
+				    myWaitingOrderNote = rsOrders.getString("note");
 				}
 				
 			} while (rsOrders.next());
@@ -420,6 +435,7 @@ public class InfoHandler {
                 return;
             } else if (!rs.next()) {
                 myOrderID = -1;
+                myWaitingOrderNote = "";
             }
             
         } catch (SQLException e) {

@@ -53,7 +53,7 @@ public class LoginWindow extends JFrame {
 	 * @param myDatabase_
 	 * @param buildingName
 	 */
-	public LoginWindow(SQLDatabase myDatabase_, String buildingName) {
+	public LoginWindow(SQLDatabase myDatabase_) {
 	    myDatabase = myDatabase_;
 	    
 	    // Initializes the frame
