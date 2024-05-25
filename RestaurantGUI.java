@@ -61,7 +61,7 @@ public class RestaurantGUI extends JFrame {
     private JScrollPane scrollPaneMenu;
     private JList<String> menuList;
     private JLabel lblCustomerTotal;
-    private JLabel lblOrderID;
+    private JLabel lblPendingOrderID;
     private JLabel lblNote;
     private JTextArea txtNote;
     private JLabel lblItem1;
@@ -81,6 +81,11 @@ public class RestaurantGUI extends JFrame {
     private JLabel lblCustomerName;
     private JButton btnSubmitOrder;
     private JButton buttonAddItem;
+    private JScrollPane scrollPaneNote;
+    
+    private JLabel[] itemLabels;
+    private JButton[] itemClearButtons;
+    private JLabel lblOrderInProgress;
 
 	/**
 	 * Creates the RestaurantGUI
@@ -124,91 +129,136 @@ public class RestaurantGUI extends JFrame {
    		createOrderP.setLayout(null);
    		
    		scrollPaneMenu = new JScrollPane();
-        scrollPaneMenu.setBounds(400, 30, 120, 130);
+        scrollPaneMenu.setBounds(381, 30, 139, 130);
         createOrderP.add(scrollPaneMenu);
         
         lblMenuList = new JLabel("Menu");
-        lblMenuList.setBounds(444, 15, 81, 14);
+        lblMenuList.setBounds(439, 11, 81, 14);
         createOrderP.add(lblMenuList);
         
         lblCustomerName = new JLabel("Name:");
-        lblCustomerName.setBounds(381, 203, 89, 14);
+        lblCustomerName.setBounds(381, 203, 139, 14);
         createOrderP.add(lblCustomerName);
         
         lblCustomerTotal = new JLabel("Total:");
-        lblCustomerTotal.setBounds(381, 253, 89, 14);
+        lblCustomerTotal.setBounds(381, 253, 139, 14);
         createOrderP.add(lblCustomerTotal);
         
-        lblOrderID = new JLabel("Order ID:");
-        lblOrderID.setBounds(381, 228, 89, 14);
-        createOrderP.add(lblOrderID);
+        lblPendingOrderID = new JLabel("Pending Order ID:");
+        lblPendingOrderID.setBounds(381, 228, 139, 14);
+        createOrderP.add(lblPendingOrderID);
         
         lblNote = new JLabel("Note:");
         lblNote.setBounds(31, 222, 69, 14);
         createOrderP.add(lblNote);
         
         btnSubmitOrder = new JButton("Submit Order");
+        btnSubmitOrder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (txtNote.getText().length() >= 255) {
+                    JOptionPane.showMessageDialog(null, "user note must be less than 255 characters", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                int orderID = infoHandler.addUserCurrentOrder(txtNote.getText());
+                
+                txtNote.setText("");
+                lblPendingOrderID.setText("Pending Order ID: " + orderID);
+                lblCustomerTotal.setText("$0.00");
+                lblPageNumber.setText("1/1");
+                
+                lblOrderInProgress.setVisible(true);
+                btnSubmitOrder.setVisible(false);
+                
+                OrderLine[] orderLines = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
+                drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, 1, ORDERLINES_PER_PAGE));
+            }
+        });
         btnSubmitOrder.setBounds(403, 278, 122, 58);
         createOrderP.add(btnSubmitOrder);
         
-        txtNote = new JTextArea();
-        txtNote.setBounds(31, 247, 220, 101);
-        createOrderP.add(txtNote);
-        
-        lblItem1 = new JLabel("item:");
+        lblItem1 = new JLabel("");
         lblItem1.setBounds(55, 34, 109, 14);
         lblItem1.setVisible(false);
         createOrderP.add(lblItem1);
         
-        lblItem2 = new JLabel("item:");
+        lblItem2 = new JLabel("");
         lblItem2.setBounds(55, 59, 109, 14);
         lblItem2.setVisible(false);
         createOrderP.add(lblItem2);
         
-        lblItem3 = new JLabel("item:");
+        lblItem3 = new JLabel("");
         lblItem3.setBounds(55, 84, 109, 14);
         lblItem3.setVisible(false);
         createOrderP.add(lblItem3);
         
-        lblItem4 = new JLabel("item:");
+        lblItem4 = new JLabel("");
         lblItem4.setBounds(55, 108, 109, 14);
         lblItem4.setVisible(false);
         createOrderP.add(lblItem4);
         
-        lblItem5 = new JLabel("item:");
+        lblItem5 = new JLabel("");
         lblItem5.setBounds(55, 133, 109, 14);
         lblItem5.setVisible(false);
         createOrderP.add(lblItem5);
         
         btnClearItem1 = new JButton("X");
+        btnClearItem1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePageOrderLine(0);
+            }
+        });
         btnClearItem1.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem1.setBounds(10, 32, 39, 18);
         btnClearItem1.setVisible(false);
         createOrderP.add(btnClearItem1);
         
         btnClearItem2 = new JButton("X");
+        btnClearItem2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePageOrderLine(1);
+            }
+        });
         btnClearItem2.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem2.setBounds(10, 57, 39, 18);
         btnClearItem2.setVisible(false);
         createOrderP.add(btnClearItem2);
         
         btnClearItem3 = new JButton("X");
+        btnClearItem3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePageOrderLine(2);
+            }
+        });
         btnClearItem3.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem3.setBounds(10, 82, 39, 18);
         btnClearItem3.setVisible(false);
         createOrderP.add(btnClearItem3);
         
         btnClearItem4 = new JButton("X");
+        btnClearItem4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePageOrderLine(3);
+            }
+        });
         btnClearItem4.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem4.setBounds(10, 106, 39, 18);
         btnClearItem4.setVisible(false);
         createOrderP.add(btnClearItem4);
         
         btnClearItem5 = new JButton("X");
+        btnClearItem5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deletePageOrderLine(4);
+            }
+        });
         btnClearItem5.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem5.setBounds(10, 131, 39, 18);
         btnClearItem5.setVisible(false);
         createOrderP.add(btnClearItem5);
+        
+        itemLabels = new JLabel[] {lblItem1, lblItem2, lblItem3, lblItem4, lblItem5};
+        itemClearButtons = new JButton[] {btnClearItem1, btnClearItem2, btnClearItem3, btnClearItem4, btnClearItem5};
         
         btnPageBack = new JButton("<");
         btnPageBack.addActionListener(new ActionListener() {
@@ -311,11 +361,11 @@ public class RestaurantGUI extends JFrame {
                 OrderLine[] orderLines = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
                 drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentOrderLinePage, ORDERLINES_PER_PAGE));
                 
-                int howManyPages = (currentOrderLines.size() / ORDERLINES_PER_PAGE);
+                int totalPages = (currentOrderLines.size() / ORDERLINES_PER_PAGE);
                 if (currentOrderLines.size() % ORDERLINES_PER_PAGE != 0 || currentOrderLines.size() == 0) {
-                    howManyPages += 1;
+                    totalPages += 1;
                 }
-                lblPageNumber.setText(currentPageString + "/" + howManyPages);
+                lblPageNumber.setText(currentPageString + "/" + totalPages);
                 
                 String totalString = lblCustomerTotal.getText();
                 double total = Double.valueOf(totalString.substring(totalString.indexOf('$') + 1));
@@ -323,8 +373,20 @@ public class RestaurantGUI extends JFrame {
                 lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
             }
         });
-        buttonAddItem.setBounds(421, 169, 83, 23);
+        buttonAddItem.setBounds(413, 169, 83, 23);
         createOrderP.add(buttonAddItem);
+        
+        scrollPaneNote = new JScrollPane();
+        scrollPaneNote.setBounds(27, 240, 220, 100);
+        createOrderP.add(scrollPaneNote);
+        
+        txtNote = new JTextArea();
+        scrollPaneNote.setViewportView(txtNote);
+        txtNote.setLineWrap(true);
+        
+        lblOrderInProgress = new JLabel("Order In Progress");
+        lblOrderInProgress.setBounds(425, 300, 109, 14);
+        createOrderP.add(lblOrderInProgress);
    		
    		// Sets the menu bar created by the build
    		setJMenuBar(menu);
@@ -397,9 +459,6 @@ public class RestaurantGUI extends JFrame {
 	
 	
 	public void drawOrderLinePage(OrderLine[] orderLinePage) {
-	    JLabel[] itemLabels = {lblItem1, lblItem2, lblItem3, lblItem4, lblItem5};
-	    JButton[] itemClearButtons = {btnClearItem1, btnClearItem2, btnClearItem3, btnClearItem4, btnClearItem5};
-	    
 	    for (int i = 0; i < itemLabels.length; i++) {
 	        itemLabels[i].setVisible(false);
 	        itemClearButtons[i].setVisible(false);
@@ -415,6 +474,44 @@ public class RestaurantGUI extends JFrame {
 	        itemLabels[i].setText(orderLinePage[i].getProductName() + " x" + orderLinePage[i].getQuantity());
 	        itemLabels[i].setVisible(true);
 	    }
+	}
+	
+	
+	public void deletePageOrderLine(int idx) {
+	    String pageNumberTxt = lblPageNumber.getText();
+        int slashIndex = pageNumberTxt.indexOf('/');
+        String currentPageString = pageNumberTxt.substring(0, slashIndex);
+        
+        int currentPage = Integer.valueOf(currentPageString);
+        
+        String itemLabelText = itemLabels[idx].getText();
+        int xIndex = itemLabelText.lastIndexOf('x');
+        String itemToRemove = itemLabelText.substring(0, xIndex - 1);
+        int quantity = Integer.valueOf(itemLabelText.substring(xIndex + 1));
+        
+        ArrayList<OrderLine> currentOrderLines = infoHandler.getMyCurrentOrder();
+        
+        for (int i = 0; i < currentOrderLines.size(); i++) {
+            if (currentOrderLines.get(i).getProductName().equals(itemToRemove)) {
+                currentOrderLines.remove(i);
+                break;
+            }
+        }
+        
+        int totalPages = (currentOrderLines.size() / ORDERLINES_PER_PAGE);
+        if (currentOrderLines.size() % ORDERLINES_PER_PAGE != 0 || currentOrderLines.size() == 0) {
+            totalPages += 1;
+        }
+        if (currentPage > totalPages) {
+            currentPage -= 1;
+        }
+        lblPageNumber.setText(currentPage + "/" + totalPages);
+        drawOrderLinePage(infoHandler.getOrderLinePage(currentOrderLines.toArray(OrderLine[]::new), currentPage, ORDERLINES_PER_PAGE));
+        
+        String totalString = lblCustomerTotal.getText();
+        double total = Double.valueOf(totalString.substring(totalString.indexOf('$') + 1));
+        total -= infoHandler.getProductValue(itemToRemove) * quantity;
+        lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
 	}
 	
 
@@ -495,14 +592,18 @@ public class RestaurantGUI extends JFrame {
 	void createOrderAction() {
 	    pagetype = ORDERLINES_PAGE_TYPE;
 	    
+	    // resets the menu button text
+	    resetMenuButtonText();
         // Removes any panels currently in view
         removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
         getContentPane().add(createOrderP);
         // Validates and repaints the changes
         
+        infoHandler.refreshOrderStatus();
+        
         lblCustomerName.setText("Name: " + infoHandler.username);
-        lblOrderID.setText("Order ID: " + (infoHandler.getUserOrderID() != -1 ? infoHandler.getUserOrderID() : "null"));
+        lblPendingOrderID.setText("Order ID: " + (infoHandler.getUserOrderID() != -1 ? infoHandler.getUserOrderID() : "null"));
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", infoHandler.getMyTotalCharge()));
         
         ArrayList<String> itemStrings = new ArrayList<String>();
@@ -532,6 +633,16 @@ public class RestaurantGUI extends JFrame {
         }
         lblPageNumber.setText("1/" + howManyPages);
         
+        if (infoHandler.getUserOrderID() == -1) {
+            lblOrderInProgress.setVisible(false);
+            btnSubmitOrder.setVisible(true);
+        } else {
+            lblOrderInProgress.setVisible(true);
+            btnSubmitOrder.setVisible(false);
+        }
+        
+        createOrderB.setText("refresh");
+        
         validate();
         repaint();
         
@@ -547,16 +658,16 @@ public class RestaurantGUI extends JFrame {
         
         // Removes any panels currently in view
         removeAllPanels();
-        manageUsersP.setLayout(new BoxLayout(manageUsersP,BoxLayout.Y_AXIS));
+        manageUsersP.setLayout(new BoxLayout(manageUsersP, BoxLayout.Y_AXIS));
         manageUsersP.setBackground(new Color(255, 255, 224));
         
         JPanel headerPanel = new JPanel();
         //headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setLayout(new GridLayout(1,3,10,10));
+        headerPanel.setLayout(new GridLayout(1, 3, 10, 10));
         headerPanel.setBackground(new Color(255, 255, 224));
         
         JLabel usernameHeader = new JLabel("Username");
-        usernameHeader.setFont(new Font("Arial", Font.BOLD,12));
+        usernameHeader.setFont(new Font("Arial", Font.BOLD, 12));
      
         headerPanel.add(usernameHeader);
         JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
@@ -606,6 +717,9 @@ public class RestaurantGUI extends JFrame {
     }
     
     
+    /**
+     * Removes all panels from the content pane
+     */
     void removeAllPanelsFromContentPane() {
         getContentPane().remove(viewOrderP);
         getContentPane().remove(createOrderP);
@@ -627,6 +741,7 @@ public class RestaurantGUI extends JFrame {
         masterP.remove(manageUsersP);
 	}
 	
+	
 	/**
 	 * Removes all buttons from the program
 	 */
@@ -636,4 +751,16 @@ public class RestaurantGUI extends JFrame {
         menu.remove(orderListB);
         menu.remove(manageB);
 	}
+	
+	
+	/**
+	 * resets the menu button text
+	 */
+	void resetMenuButtonText() {
+	    viewOrderB.setText("View Order");
+	    createOrderB.setText("Create Order");
+	    orderListB.setText("Order List");
+	    manageB.setText("Manage");
+	}
+	
 }

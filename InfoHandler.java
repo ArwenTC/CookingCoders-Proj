@@ -40,10 +40,12 @@ public class InfoHandler {
     private String streetAddr2;
     
     // this user's order info
+    private ArrayList<OrderLine> myWaitingOrder = new ArrayList<OrderLine>();
     private ArrayList<OrderLine> myCurrentOrder = new ArrayList<OrderLine>();
     
-    // this user's order ID
-    private int userOrderID = -1;
+    // this user's current order ID
+    // -1 means no order currently in progress
+    private int myOrderID = -1;
     
     
     public InfoHandler(
@@ -113,7 +115,7 @@ public class InfoHandler {
     
     
     public int getUserOrderID() {
-        return userOrderID;
+        return myOrderID;
     }
     
     
@@ -199,7 +201,7 @@ public class InfoHandler {
     }
     
     
-    public int addUserOrder(ArrayList<OrderLine> orderLines, String note) {
+    public int addUserCurrentOrder(String note) {
         try {
             
             String sqlString = "INSERT INTO `order` (BuildingName, CustomerUsername, Completed, OrderDate, Note) VALUES (?, ?, ?, ?, ?);";
@@ -216,15 +218,16 @@ public class InfoHandler {
             // getting the orderID auto incremented primary key
             ResultSet aiKeyResultSet = pst.getGeneratedKeys();
             aiKeyResultSet.next();
-            userOrderID = aiKeyResultSet.getInt(1);
             
-            for (int i = 0; i < orderLines.size(); i++) {
+            myOrderID = aiKeyResultSet.getInt(1);
+            
+            for (int i = 0; i < myCurrentOrder.size(); i++) {
                 sqlString = "INSERT INTO orderline (orderID, OrderLineNumber, ProductName, Quantity) VALUES (?, ?, ?, ?);";
                 pst = myDatabase.getCon().prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
                 
-                OrderLine orderLine = orderLines.get(i);
+                OrderLine orderLine = myCurrentOrder.get(i);
                 
-                pst.setInt(1, userOrderID);
+                pst.setInt(1, myOrderID);
                 pst.setInt(2, i + 1);
                 pst.setString(3, orderLine.getProductName());
                 pst.setInt(4, orderLine.getQuantity());
@@ -233,18 +236,16 @@ public class InfoHandler {
                 
             }
             
+            myWaitingOrder = new ArrayList<OrderLine>(myCurrentOrder);
+            myCurrentOrder.clear();
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't insert order: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
             
             return -1;
         }
         
-        return userOrderID;
-    }
-    
-    
-    public void addOrderLine(OrderLine newOrderLine) {
-        
+        return myOrderID;
     }
     
     
@@ -339,7 +340,7 @@ public class InfoHandler {
 			
 			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE", "orderID");
 			
-			if (rsOrders == null || !rsOrders.next()) { // don't clear the map unless the ResultSet works
+			if (rsOrders == null || !rsOrders.next()) { // don't clear the ArrayList unless the ResultSet works
 				return;
 			}
 			
@@ -367,7 +368,8 @@ public class InfoHandler {
 				refreshedOrdersInProgress.add(orderLines);
 				
 				if (rsOrders.getString("customerusername").equals(this.username)) {
-				    myCurrentOrder = orderLines;
+				    myWaitingOrder = orderLines;
+				    myOrderID = orderID;
 				}
 				
 			} while (rsOrders.next());
@@ -389,7 +391,7 @@ public class InfoHandler {
     		
     		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'", "username");
 			
-			if (rs == null || !rs.next()) { // don't clear the map unless the ResultSet works
+			if (rs == null || !rs.next()) { // don't clear the ArrayList unless the ResultSet works
 				return;
 			}
 			
@@ -406,6 +408,23 @@ public class InfoHandler {
     	} catch (SQLException e) {
     		JOptionPane.showMessageDialog(null, "Couldn't refresh users map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
     	}
+    }
+    
+    
+    public void refreshOrderStatus() {
+        try {
+            
+            ResultSet rs = myDatabase.getDatabaseInfo("order", "customerusername = '" + username + "' AND completed = FALSE", null);
+            
+            if (rs == null) {
+                return;
+            } else if (!rs.next()) {
+                myOrderID = -1;
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Couldn't refresh order status: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     

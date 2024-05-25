@@ -91,7 +91,7 @@ CREATE TABLE `order` (
   KEY `CustomerUsername` (`CustomerUsername`),
   CONSTRAINT `order_fk_building` FOREIGN KEY (`BuildingName`) REFERENCES `building` (`BuildingName`),
   CONSTRAINT `order_ibfk_1` FOREIGN KEY (`CustomerUsername`) REFERENCES `user` (`Username`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (4,'testraunt','testuser',1,'2024-05-21','TEST NOTE TEXT'),(5,'testraunt','testuser',1,'2024-05-21','TEST NOTE TEXT');
+INSERT INTO `order` VALUES (5,'testraunt','testuser',0,'2024-05-21','TEST NOTE TEXT'),(7,'testraunt','wtf',1,'2024-05-24','light mayo');
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -160,7 +160,7 @@ CREATE TABLE `orderline` (
 
 LOCK TABLES `orderline` WRITE;
 /*!40000 ALTER TABLE `orderline` DISABLE KEYS */;
-INSERT INTO `orderline` VALUES (4,1,'burger',2),(4,2,'fries',1),(5,1,'burger',2),(5,2,'fries',1);
+INSERT INTO `orderline` VALUES (5,1,'burger',2),(5,2,'fries',1),(7,1,'burger',2),(7,2,'coffee',1),(7,3,'fries',1);
 /*!40000 ALTER TABLE `orderline` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -214,7 +214,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES ('burger',2.34),('fries',1.23);
+INSERT INTO `product` VALUES ('burger',2.34),('coffee',1.00),('doughnut',1.50),('fries',1.23),('onion rings',1.50),('pizza',3.45),('soda',2.00),('taco',3.00);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -272,7 +272,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('idk','123','customer','testraunt'),('idk2','123','customer','testraunt'),('testuser','123','customer','testraunt'),('wtf','123','customer','testraunt');
+INSERT INTO `user` VALUES ('idk','123','admin','testraunt'),('idk2','123','customer','testraunt'),('testuser','123','customer','testraunt'),('wtf','123','customer','testraunt');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -315,4 +315,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-22 22:01:06
+-- Dump completed on 2024-05-25  0:07:37
