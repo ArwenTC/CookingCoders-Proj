@@ -247,16 +247,15 @@ public class RestaurantGUI extends JFrame {
 	    removeAllPanels();
 	    JButton removeUser = new JButton("Remove User");
 	    manageUsersP.setLayout(new BoxLayout(manageUsersP,BoxLayout.Y_AXIS));
-	    manageUsersP.setBackground(new Color(255, 255, 224));
+	    manageUsersP.setBackground(new Color(38,102,55));
 	    
 	    JPanel headerPanel = new JPanel();
 	    //headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 	    headerPanel.setLayout(new GridLayout(1,3,10,10));
-	    headerPanel.setBackground(new Color(255, 255, 224));
+	    headerPanel.setBackground(new Color(38,102,55));
 	    
 	    JLabel usernameHeader = new JLabel("Username");
 	    usernameHeader.setFont(new Font("Arial", Font.BOLD,12));
-	 
 	    headerPanel.add(usernameHeader);
 	    JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
 	    manageUsersP.add(sep1);
@@ -266,7 +265,6 @@ public class RestaurantGUI extends JFrame {
 	    
 	    JLabel userTypeHeader = new JLabel("Usertype");
 	    userTypeHeader.setFont(new Font("Arial", Font.BOLD,12));
-	    
 	    headerPanel.add(userTypeHeader);
 	    manageUsersP.add(headerPanel);
 	    
@@ -277,18 +275,34 @@ public class RestaurantGUI extends JFrame {
 	    for(User user : userList) {
 	    	JPanel  userPanel = new JPanel();
 	    	userPanel.setLayout(new GridLayout(1,2,10,10));
-	    	userPanel.setBackground(new Color(144, 238, 144));
 	    	JLabel UsernameLabel = new JLabel(user.getUsername());
 	    	userPanel.add(UsernameLabel);
 	    	
 	    	JLabel UsertypeLabel = new JLabel( user.getUserType());
 	    	userPanel.add(UsertypeLabel);
-	        String[] userTypeOptions = {"Customer", "Employee"};
+	        String[] userTypeOptions = {"customer", "employee"};
 	        JComboBox<String> userTypeComboBox = new JComboBox<>(userTypeOptions);
 	        userTypeComboBox.setSelectedItem(user.getUserType()); // Set selected item based on user's current type
 	        userPanel.add(userTypeComboBox);
+	        
+	        userTypeComboBox.addActionListener(new ActionListener() {
 
-	          userPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String role = (String) userTypeComboBox.getSelectedItem();
+					user.setUserType(role);
+					
+					myDatabase.updateUsertype(user.getUsername(), role);
+					if("customer".equals(role)) {
+						setCustomerView();
+					}else if("employee".equals(role)) {
+						setEmployeeView();
+					}
+				}
+	        	
+	        });
+
+	          userPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 	          manageUsersP.add(userPanel);
 
 	          JSeparator now = new JSeparator(SwingConstants.HORIZONTAL);
