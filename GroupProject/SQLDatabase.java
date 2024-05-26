@@ -1,4 +1,5 @@
 
+
 package GroupProject;
 
 import java.sql.*;
@@ -340,21 +341,33 @@ public class SQLDatabase {
 	}
 
 	public List<User> getAllUser() {
-        List <User> userList = new ArrayList<>();
-        String query = "SELECT Username, Usertype FROM USER";
-        try(PreparedStatement pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery()) {
-            while(rs.next()) {
-                String Username = rs.getString("Username");
-                String Usertype = rs.getString("Usertype");
-                userList.add(new User(Username,Usertype));
+		List <User> userList = new ArrayList<>();
+		String query = "SELECT Username, Password, Usertype FROM USER";
+		try(PreparedStatement pst = con.prepareStatement(query);
+			ResultSet rs = pst.executeQuery()) {
+			while(rs.next()) {
+				String Username = rs.getString("Username");
+			
+				String Usertype = rs.getString("Usertype");
+				userList.add(new User(Username, Usertype));
+				
+			}
+		}catch(SQLException e) {
+			System.out.println("Error retrieving users: " + e.getMessage());
+		}
+		return userList;
+	}
 
-            }
-        }catch(SQLException e) {
-            System.out.println("Error retrieving users: " + e.getMessage());
-        }
-        return userList;
-    }
+	public void updateUsertype(String username, String usertype) {
+		String query = "UPDATE USER SET Usertype = ? WHERE Username = ? ";
+		try(PreparedStatement pst = con.prepareStatement(query)) {
+			pst.setString(1, usertype );
+			pst.setString(2, username);
+			pst.executeUpdate();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 
