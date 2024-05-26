@@ -39,7 +39,7 @@ public class OrderListPanel extends RPanel {
 			int index = 0;
 			// Iterates through the result set and adds items to the order panel
 			while (orders.next()) {
-				orderPanels.add(new OPanel(new Order(orders.getInt(1), database_)));
+				//orderPanels.add(new OPanel(new Order(orders.getInt(1), database_)));
 				orderScroll.add(orderPanels.get(index));
 				// Ups the index
 				index++;

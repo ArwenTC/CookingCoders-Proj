@@ -26,11 +26,10 @@ public class InfoHandler {
     private TreeMap<String, Double> products = new TreeMap<String, Double>();
     
     // order information
-    private OrderLine[][] ordersInProgress;
+    private Order[] ordersInProgress = new Order[] {};
     
     // user information
-    private User[] users;
-    
+    private User[] users = new User[] {};
     
     // this building values
     private String buildingName;
@@ -44,7 +43,7 @@ public class InfoHandler {
     private ArrayList<OrderLine> myCurrentOrder = new ArrayList<OrderLine>();
     private String myWaitingOrderNote = "";
     
-    // this user's current order ID
+    // this user's waiting order ID
     // -1 means no order currently in progress
     private int myOrderID = -1;
     
@@ -96,8 +95,8 @@ public class InfoHandler {
     }
     
     
-    public OrderLine[][] getOrderPage(int pageNumber, int itemsPerPage) {
-        OrderLine[][] page = new OrderLine[itemsPerPage][];
+    public Order[] getOrderPage(int pageNumber, int itemsPerPage) {
+        Order[] page = new Order[itemsPerPage];
         makePage(ordersInProgress, pageNumber, itemsPerPage, page);
         return page;
     }
@@ -117,6 +116,11 @@ public class InfoHandler {
     
     public ArrayList<OrderLine> getMyWaitingOrder() {
         return myWaitingOrder;
+    }
+    
+    
+    public Order[] getOrdersInProgress() {
+        return ordersInProgress;
     }
     
     
@@ -310,7 +314,7 @@ public class InfoHandler {
     }
     
     
-    public void markOrderAsCompleted(int orderID) {
+    public void markOrderCompleted(int orderID) {
         try {
             
             String sqlString = "UPDATE `order` SET Completed = TRUE WHERE OrderID = " + orderID + ";";
@@ -350,17 +354,20 @@ public class InfoHandler {
     public void refreshOrdersInProgress() {
     	try {
 			
-			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE", "orderID");
+			ResultSet rsOrders = myDatabase.getDatabaseInfo("order", "buildingname = '" + buildingName + "' AND completed = FALSE", "customerusername");
 			
-			if (rsOrders == null || !rsOrders.next()) { // don't clear the ArrayList unless the ResultSet works
+			if (rsOrders == null || !rsOrders.next()) {
+			    ordersInProgress = new Order[] {};
 				return;
 			}
 			
-			ArrayList<ArrayList<OrderLine>> refreshedOrdersInProgress = new ArrayList<ArrayList<OrderLine>>();
+			ArrayList<Order> refreshedOrdersInProgress = new ArrayList<Order>();
 			
 			do {
 				
 				int orderID = rsOrders.getInt("orderID");
+				String customerUsername = rsOrders.getString("customerusername");
+				String note = rsOrders.getString("note");
 				
 				ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
 				
@@ -377,21 +384,17 @@ public class InfoHandler {
 					orderLines.add(new OrderLine(productName, quantity));
 				}
 				
-				refreshedOrdersInProgress.add(orderLines);
+				refreshedOrdersInProgress.add(new Order(orderID, orderLines, customerUsername, note));
 				
-				if (rsOrders.getString("customerusername").equals(this.username)) {
+				if (customerUsername.equals(this.username)) {
 				    myWaitingOrder = orderLines;
 				    myOrderID = orderID;
-				    myWaitingOrderNote = rsOrders.getString("note");
+				    myWaitingOrderNote = note;
 				}
 				
 			} while (rsOrders.next());
 			
-			ordersInProgress = new OrderLine[refreshedOrdersInProgress.size()][];
-			
-			for (int i = 0; i < refreshedOrdersInProgress.size(); i++) {
-			    ordersInProgress[i] = refreshedOrdersInProgress.get(i).toArray(OrderLine[]::new);
-			}
+			ordersInProgress = refreshedOrdersInProgress.toArray(Order[]::new);
 			
     	} catch (SQLException e) {
     		JOptionPane.showMessageDialog(null, "Couldn't refresh orders map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
@@ -404,7 +407,8 @@ public class InfoHandler {
     		
     		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'", "username");
 			
-			if (rs == null || !rs.next()) { // don't clear the ArrayList unless the ResultSet works
+			if (rs == null || !rs.next()) {
+			    users = new User[] {};
 				return;
 			}
 			

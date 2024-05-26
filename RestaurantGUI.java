@@ -92,10 +92,35 @@ public class RestaurantGUI extends JFrame {
     private JButton btnSubmitOrder;
     private JButton buttonAddItem;
     private JScrollPane scrollPaneNote;
+    private JLabel lblOrderInProgress;
+    private JLabel lblWaitingOrders;
+    private JButton btnViewOrder1;
+    private JButton btnViewOrder2;
+    private JButton btnViewOrder3;
+    private JButton btnViewOrder4;
+    private JButton btnViewOrder5;
+    private JButton btnMarkCompleted1;
+    private JButton btnMarkCompleted2;
+    private JButton btnMarkCompleted3;
+    private JButton btnMarkCompleted4;
+    private JButton btnMarkCompleted5;
+    private JLabel lblName1;
+    private JLabel lblName2;
+    private JLabel lblName3;
+    private JLabel lblName4;
+    private JLabel lblName5;
+    private JLabel lblOrder1;
+    private JLabel lblOrder2;
+    private JLabel lblOrder3;
+    private JLabel lblOrder4;
+    private JLabel lblOrder5;
     
     private JLabel[] itemLabels;
     private JButton[] itemClearButtons;
-    private JLabel lblOrderInProgress;
+    private JButton[] viewOrderButtons;
+    private JButton[] markCompletedButtons;
+    private JLabel[] orderLabels;
+    private JLabel[] nameLabels;
 
 	/**
 	 * Creates the RestaurantGUI
@@ -136,10 +161,80 @@ public class RestaurantGUI extends JFrame {
    		// Adds the master panel
    		getContentPane().add(masterP);
    		
-   		createOrderP.setLayout(null);
-   		viewOrderP.setLayout(null);
+   	    // Sets the menu bar created by the build
+        setJMenuBar(menu);
+        
+        // Size and display the window.
+        setSize(SIZE_X, SIZE_Y);
+
+		//Sets the program view based on the login window input
+   		programView = loginWindow.getProgramView();
    		
-   		scrollPaneMenu = new JScrollPane();
+		switch (programView) { 
+			case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
+			case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
+			case MANAGER_VIEW_TYPE:  setManagerView();  break;
+		}
+		
+		setVisible(true);
+	}
+	
+	/**
+	 * Builds the JFrame an sets values
+	 */
+	public void build() {
+		
+		// Creates Panels
+		masterP = new RPanel();
+		viewOrderP = new RPanel();
+		createOrderP = new RPanel();
+		employeeViewOrderP = new RPanel();
+		orderListP = new RPanel();
+		manageUsersP = new RPanel();
+		settingsP = new RPanel();
+		
+		// Menu bar that allows user to swap between each view
+		menu = new JMenuBar();
+		menu.setLayout(new GridLayout(1, 0, 3, 0));
+		menu.setBackground(new Color(38, 102, 55));
+		menu.setBorderPainted(false);
+		// Menu bar buttons
+		viewOrderB = new RMenuItem("View Order");
+		createOrderB = new RMenuItem("Create Order");
+		orderListB = new RMenuItem("Order List");
+		manageB = new RMenuItem("Manage");
+		manageB.add(new PopupMenu("message"));
+		
+		// Adds mouse listeners
+		viewOrderB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                viewOrderAction();
+            }
+        });
+		createOrderB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                createOrderAction();
+            }
+        });
+		orderListB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                orderListAction();
+            }
+        });
+		manageB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                manageAction();
+            }
+        });
+		
+		createOrderP.setLayout(null);
+        viewOrderP.setLayout(null);
+        
+        scrollPaneMenu = new JScrollPane();
         scrollPaneMenu.setBounds(381, 30, 139, 130);
         createOrderP.add(scrollPaneMenu);
         
@@ -275,90 +370,6 @@ public class RestaurantGUI extends JFrame {
         itemLabels = new JLabel[] {lblItem1, lblItem2, lblItem3, lblItem4, lblItem5};
         itemClearButtons = new JButton[] {btnClearItem1, btnClearItem2, btnClearItem3, btnClearItem4, btnClearItem5};
         
-        btnPageBack = new JButton("<");
-        btnPageBack.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String pageNumberTxt = lblPageNumber.getText();
-                int slashIndex = pageNumberTxt.indexOf('/');
-                String currentPageString = pageNumberTxt.substring(0, slashIndex);
-                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
-                
-                int currentPage = Integer.valueOf(currentPageString);
-                int totalPages = Integer.valueOf(totalPagesString);
-                
-                if (currentPage == 1) {
-                    return;
-                }
-                
-                currentPage -= 1;
-                
-                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-                    ArrayList<OrderLine> myOrder;
-                    
-                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                        myOrder = infoHandler.getMyCurrentOrder();
-                    } else {
-                        myOrder = infoHandler.getMyWaitingOrder();
-                    }
-                    
-                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
-                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
-                } else if (pagetype == ORDERS_PAGE_TYPE) {
-                    // placeholder
-                } else if (pagetype == USERS_PAGE_TYPE) {
-                    // placeholder
-                }
-                
-                lblPageNumber.setText(currentPage + "/" + totalPages);
-            }
-        });
-        btnPageBack.setBounds(10, 176, 47, 23);
-        createOrderP.add(btnPageBack);
-        
-        lblPageNumber = new JLabel("1/1");
-        lblPageNumber.setBounds(67, 180, 47, 14);
-        createOrderP.add(lblPageNumber);
-        
-        btnPageForward = new JButton(">");
-        btnPageForward.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String pageNumberTxt = lblPageNumber.getText();
-                int slashIndex = pageNumberTxt.indexOf('/');
-                String currentPageString = pageNumberTxt.substring(0, slashIndex);
-                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
-                
-                int currentPage = Integer.valueOf(currentPageString);
-                int totalPages = Integer.valueOf(totalPagesString);
-                
-                if (currentPage == totalPages) {
-                    return;
-                }
-                
-                currentPage += 1;
-                
-                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-                    ArrayList<OrderLine> myOrder;
-                    
-                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                        myOrder = infoHandler.getMyCurrentOrder();
-                    } else {
-                        myOrder = infoHandler.getMyWaitingOrder();
-                    }
-                    
-                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
-                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
-                } else if (pagetype == ORDERS_PAGE_TYPE) {
-                    // placeholder
-                } else if (pagetype == USERS_PAGE_TYPE) {
-                    // placeholder
-                }
-                
-                lblPageNumber.setText(currentPage + "/" + totalPages);
-            }
-        });
-        btnPageForward.setBounds(96, 176, 47, 23);
-        createOrderP.add(btnPageForward);
-        
         buttonAddItem = new JButton("Add");
         buttonAddItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -418,76 +429,230 @@ public class RestaurantGUI extends JFrame {
         lblOrderInProgress = new JLabel("Order In Progress");
         lblOrderInProgress.setBounds(405, 300, 135, 14);
         createOrderP.add(lblOrderInProgress);
-   		
-   		// Sets the menu bar created by the build
-   		setJMenuBar(menu);
-   		
-   		// Size and display the window.
-   		setSize(SIZE_X, SIZE_Y);
-   		setVisible(true);
-
-		//Sets the program view based on the login window input
-   		programView = loginWindow.getProgramView();
-   		
-		switch (programView) { 
-			case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
-			case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
-			case MANAGER_VIEW_TYPE:  setManagerView();  break;
-		}
-	}
-	
-	/**
-	 * Builds the JFrame an sets values
-	 */
-	public void build() {
+        
 		
-		// Creates Panels
-		masterP = new RPanel();
-		viewOrderP = new RPanel();
-		createOrderP = new RPanel();
-		employeeViewOrderP = new RPanel();
-		orderListP = new OrderListPanel(this.myDatabase);
-		manageUsersP = new RPanel();
-		settingsP = new RPanel();
-		
-		// Menu bar that allows user to swap between each view
-		menu = new JMenuBar();
-		menu.setLayout(new GridLayout(1, 0, 3, 0));
-		menu.setBackground(new Color(38, 102, 55));
-		menu.setBorderPainted(false);
-		// Menu bar buttons
-		viewOrderB = new RMenuItem("View Order");
-		createOrderB = new RMenuItem("Create Order");
-		orderListB = new RMenuItem("Order List");
-		manageB = new RMenuItem("Manage");
-		manageB.add(new PopupMenu("message"));
-		
-		// Adds mouse listeners
-		viewOrderB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                viewOrderAction();
+		btnPageBack = new JButton("<");
+        btnPageBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String pageNumberTxt = lblPageNumber.getText();
+                int slashIndex = pageNumberTxt.indexOf('/');
+                String currentPageString = pageNumberTxt.substring(0, slashIndex);
+                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
+                
+                int currentPage = Integer.valueOf(currentPageString);
+                int totalPages = Integer.valueOf(totalPagesString);
+                
+                if (currentPage == 1) {
+                    return;
+                }
+                
+                currentPage -= 1;
+                
+                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+                    ArrayList<OrderLine> myOrder;
+                    
+                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
+                        myOrder = infoHandler.getMyCurrentOrder();
+                    } else {
+                        myOrder = infoHandler.getMyWaitingOrder();
+                    }
+                    
+                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
+                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
+                } else if (pagetype == ORDERS_PAGE_TYPE) {
+                    // placeholder
+                } else if (pagetype == USERS_PAGE_TYPE) {
+                    // placeholder
+                }
+                
+                lblPageNumber.setText(currentPage + "/" + totalPages);
             }
         });
-		createOrderB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                createOrderAction();
+        btnPageBack.setBounds(223, 280, 47, 23);
+        
+        btnPageForward = new JButton(">");
+        btnPageForward.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String pageNumberTxt = lblPageNumber.getText();
+                int slashIndex = pageNumberTxt.indexOf('/');
+                String currentPageString = pageNumberTxt.substring(0, slashIndex);
+                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
+                
+                int currentPage = Integer.valueOf(currentPageString);
+                int totalPages = Integer.valueOf(totalPagesString);
+                
+                if (currentPage == totalPages) {
+                    return;
+                }
+                
+                currentPage += 1;
+                
+                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+                    ArrayList<OrderLine> myOrder;
+                    
+                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
+                        myOrder = infoHandler.getMyCurrentOrder();
+                    } else {
+                        myOrder = infoHandler.getMyWaitingOrder();
+                    }
+                    
+                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
+                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
+                } else if (pagetype == ORDERS_PAGE_TYPE) {
+                    drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
+                } else if (pagetype == USERS_PAGE_TYPE) {
+                    // placeholder
+                }
+                
+                lblPageNumber.setText(currentPage + "/" + totalPages);
             }
         });
-		orderListB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                orderListAction();
-            }
-        });
-		manageB.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent m) {
-                manageAction();
-            }
-        });
+        btnPageForward.setBounds(309, 280, 47, 23);
+        
+        lblPageNumber = new JLabel("1/1");
+        lblPageNumber.setBounds(266, 284, 47, 14);
+        lblPageNumber.setHorizontalAlignment(SwingConstants.CENTER);
 		
+        orderListP.setLayout(null);
+        lblWaitingOrders = new JLabel("Waiting Orders");
+        lblWaitingOrders.setBounds(256, 20, 100, 14);
+        orderListP.add(lblWaitingOrders);
+        
+        lblOrder1 = new JLabel("Order: ");
+        lblOrder1.setBounds(307, 40, 100, 14);
+        orderListP.add(lblOrder1);
+        
+        lblOrder2 = new JLabel("Order: ");
+        lblOrder2.setBounds(307, 90, 100, 14);
+        orderListP.add(lblOrder2);
+        
+        lblOrder3 = new JLabel("Order: ");
+        lblOrder3.setBounds(307, 140, 100, 14);
+        orderListP.add(lblOrder3);
+        
+        lblOrder4 = new JLabel("Order: ");
+        lblOrder4.setBounds(307, 190, 100, 14);
+        orderListP.add(lblOrder4);
+        
+        lblOrder5 = new JLabel("Order: ");
+        lblOrder5.setBounds(307, 240, 170, 14);
+        orderListP.add(lblOrder5);
+        
+        btnViewOrder1 = new JButton("View Order");
+        btnViewOrder1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewOrder(0);
+            }
+        });
+        btnViewOrder1.setBounds(197, 46, 100, 23);
+        orderListP.add(btnViewOrder1);
+        
+        btnViewOrder2 = new JButton("View Order");
+        btnViewOrder2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewOrder(1);
+            }
+        });
+        btnViewOrder2.setBounds(197, 96, 100, 23);
+        orderListP.add(btnViewOrder2);
+        
+        btnViewOrder3 = new JButton("View Order");
+        btnViewOrder3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewOrder(2);
+            }
+        });
+        btnViewOrder3.setBounds(197, 146, 100, 23);
+        orderListP.add(btnViewOrder3);
+        
+        btnViewOrder4 = new JButton("View Order");
+        btnViewOrder4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewOrder(3);
+            }
+        });
+        btnViewOrder4.setBounds(197, 196, 100, 23);
+        orderListP.add(btnViewOrder4);
+        
+        btnViewOrder5 = new JButton("View Order");
+        btnViewOrder5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                viewOrder(4);
+            }
+        });
+        btnViewOrder5.setBounds(197, 246, 100, 23);
+        orderListP.add(btnViewOrder5);
+        
+        btnMarkCompleted1 = new JButton("Set Completed");
+        btnMarkCompleted1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markOrderCompleted(0);
+            }
+        });
+        btnMarkCompleted1.setBounds(67, 46, 120, 23);
+        orderListP.add(btnMarkCompleted1);
+        
+        btnMarkCompleted2 = new JButton("Set Completed");
+        btnMarkCompleted2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markOrderCompleted(1);
+            }
+        });
+        btnMarkCompleted2.setBounds(67, 96, 120, 23);
+        orderListP.add(btnMarkCompleted2);
+        
+        btnMarkCompleted3 = new JButton("Set Completed");
+        btnMarkCompleted3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markOrderCompleted(2);
+            }
+        });
+        btnMarkCompleted3.setBounds(67, 146, 120, 23);
+        orderListP.add(btnMarkCompleted3);
+        
+        btnMarkCompleted4 = new JButton("Set Completed");
+        btnMarkCompleted4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markOrderCompleted(3);
+            }
+        });
+        btnMarkCompleted4.setBounds(67, 196, 120, 23);
+        orderListP.add(btnMarkCompleted4);
+        
+        btnMarkCompleted5 = new JButton("Set Completed");
+        btnMarkCompleted5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                markOrderCompleted(4);
+            }
+        });
+        btnMarkCompleted5.setBounds(67, 246, 120, 23);
+        orderListP.add(btnMarkCompleted5);
+        
+        lblName1 = new JLabel("Name: ");
+        lblName1.setBounds(307, 60, 170, 14);
+        orderListP.add(lblName1);
+        
+        lblName2 = new JLabel("Name: ");
+        lblName2.setBounds(307, 110, 170, 14);
+        orderListP.add(lblName2);
+        
+        lblName3 = new JLabel("Name: ");
+        lblName3.setBounds(307, 160, 170, 14);
+        orderListP.add(lblName3);
+        
+        lblName4 = new JLabel("Name: ");
+        lblName4.setBounds(307, 210, 170, 14);
+        orderListP.add(lblName4);
+        
+        lblName5 = new JLabel("Name: ");
+        lblName5.setBounds(307, 260, 170, 14);
+        orderListP.add(lblName5);
+        
+        viewOrderButtons = new JButton[] {btnViewOrder1, btnViewOrder2, btnViewOrder3, btnViewOrder4, btnViewOrder5};
+        markCompletedButtons = new JButton[] {btnMarkCompleted1, btnMarkCompleted2, btnMarkCompleted3, btnMarkCompleted4, btnMarkCompleted5};
+        orderLabels = new JLabel[] {lblOrder1, lblOrder2, lblOrder3, lblOrder4, lblOrder5};
+        nameLabels = new JLabel[] {lblName1, lblName2, lblName3, lblName4, lblName5};
+        
 	}
 	
 	
@@ -497,16 +662,77 @@ public class RestaurantGUI extends JFrame {
 	        itemClearButtons[i].setVisible(false);
 	    }
 	    
-	    for (int i = 0; i < orderLinePage.length; i++) {
-	        if (orderLinePage[i] == null) {
-	            break;
-	        }
-	        
+	    for (int i = 0; i < orderLinePage.length && orderLinePage[i] != null; i++) {
 	        itemClearButtons[i].setVisible(true);
 	        
 	        itemLabels[i].setText(orderLinePage[i].getProductName() + " x" + orderLinePage[i].getQuantity());
 	        itemLabels[i].setVisible(true);
 	    }
+	}
+	
+	
+	public void drawOrderPage(Order[] orderPage) {
+	    for (int i = 0; i < orderLabels.length; i++) {
+	        viewOrderButtons[i].setVisible(false);
+            markCompletedButtons[i].setVisible(false);
+	        
+	        orderLabels[i].setVisible(false);
+            nameLabels[i].setVisible(false);
+        }
+	    
+	    for (int i = 0; i < orderPage.length && orderPage[i] != null; i++) {
+	        viewOrderButtons[i].setVisible(true);
+            markCompletedButtons[i].setVisible(true);
+            
+            orderLabels[i].setText("Order: " + orderPage[i].getOrderID());
+            nameLabels[i].setText("name: " + orderPage[i].getCustomerUsername());
+            orderLabels[i].setVisible(true);
+            nameLabels[i].setVisible(true);
+        }
+	}
+	
+	
+	public void viewOrder(int idx) {
+	    String pageNumberTxt = lblPageNumber.getText();
+        int slashIndex = pageNumberTxt.indexOf('/');
+        String currentPageString = pageNumberTxt.substring(0, slashIndex);
+        
+        int currentPage = Integer.valueOf(currentPageString);
+        
+        Order orderToView = infoHandler.getOrdersInProgress()[((currentPage - 1) * ORDERS_PER_PAGE) + idx];
+        
+        setupOrderViewPage(
+            orderToView.getItems(),
+            orderToView.getOrderID(),
+            orderToView.getCustomerUsername(),
+            orderToView.getNote()
+        );
+	}
+	
+	
+	public void markOrderCompleted(int idx) {
+	    String pageNumberTxt = lblPageNumber.getText();
+        int slashIndex = pageNumberTxt.indexOf('/');
+        String currentPageString = pageNumberTxt.substring(0, slashIndex);
+        
+        int currentPage = Integer.valueOf(currentPageString);
+	    
+	    int orderID = infoHandler.getOrdersInProgress()[((currentPage - 1) * ORDERS_PER_PAGE) + idx].getOrderID();
+	    
+	    infoHandler.markOrderCompleted(orderID);
+	    
+	    infoHandler.refreshOrdersInProgress();
+	    
+	    int howManyWaitingOrders = infoHandler.getOrdersInProgress().length;
+	    int totalPages = (howManyWaitingOrders / ORDERS_PER_PAGE);
+        if (howManyWaitingOrders % ORDERS_PER_PAGE != 0 || howManyWaitingOrders == 0) {
+            totalPages += 1;
+        }
+        if (currentPage > totalPages) {
+            currentPage -= 1;
+        }
+        lblPageNumber.setText(currentPage + "/" + totalPages);
+        drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
 	}
 	
 	
@@ -587,24 +813,9 @@ public class RestaurantGUI extends JFrame {
 		menu.add(manageB);
 	}
 	
-
-	/**
-	 * Method that runs when the user presses "Order List"
-	 */
-	void orderListAction() {
-		// Removes any panels currently in view
-	    removeAllPanels();
-		// Adds the panel selected by the user
-		masterP.add(orderListP);
-		// Validates and repaints the changes
-		validate();
-		repaint();
-		
-	}
 	
-	
-	void setupOrderViewPage(ArrayList<OrderLine> orderToView, int orderID, String username, String orderNote) {
-	    pagetype = VIEW_ORDER_PAGE_TYPE;
+    void setupOrderViewPage(ArrayList<OrderLine> orderToView, int orderID, String username, String orderNote) {
+        pagetype = VIEW_ORDER_PAGE_TYPE;
         
         addOrderLinePageSharedGraphics(viewOrderP);
         createOrderP.add(txtWaitingOrderNote);
@@ -616,7 +827,13 @@ public class RestaurantGUI extends JFrame {
         removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
         getContentPane().add(viewOrderP);
-        // Validates and repaints the changes
+        
+        lblPageNumber.setLocation(53, 180);
+        btnPageBack.setLocation(10, 176);
+        btnPageForward.setLocation(96, 176);
+        viewOrderP.add(lblPageNumber);
+        viewOrderP.add(btnPageBack);
+        viewOrderP.add(btnPageForward);
         
         lblCustomerName.setText("Name: " + username);
         lblPendingOrderID.setText("Pending Order ID: " + (orderID != -1 ? orderID : "null"));
@@ -638,9 +855,51 @@ public class RestaurantGUI extends JFrame {
         
         txtWaitingOrderNote.setText(orderNote);
         
+        // Validates and repaints the changes
         validate();
         repaint();
         
+    }
+	
+
+	/**
+	 * Method that runs when the user presses "Order List"
+	 */
+	void orderListAction() {
+	    pagetype = ORDERS_PAGE_TYPE;
+	    
+	    // resets the menu button text
+        resetMenuButtonText();
+        // Removes any panels currently in view
+        removeAllPanelsFromContentPane();
+        // Adds the panel selected by the user
+        getContentPane().add(orderListP);
+        
+        infoHandler.refreshOrdersInProgress();
+        
+        orderListB.setText("refresh");
+        
+        lblPageNumber.setLocation(266, 284);
+        btnPageBack.setLocation(223, 280);
+        btnPageForward.setLocation(309, 280);
+        orderListP.add(lblPageNumber);
+        orderListP.add(btnPageBack);
+        orderListP.add(btnPageForward);
+        
+        Order[] orderPage = infoHandler.getOrderPage(1, ORDERS_PER_PAGE);
+        drawOrderPage(orderPage);
+        
+        int howManyWaitingOrders = infoHandler.getOrdersInProgress().length;
+        int howManyPages = (howManyWaitingOrders / ORDERLINES_PER_PAGE);
+        if (howManyWaitingOrders % ORDERLINES_PER_PAGE != 0 || howManyWaitingOrders == 0) {
+            howManyPages += 1;
+        }
+        lblPageNumber.setText("1/" + howManyPages);
+	    
+		// Validates and repaints the changes
+		validate();
+		repaint();
+		
 	}
 	
 	
@@ -677,11 +936,17 @@ public class RestaurantGUI extends JFrame {
         removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
         getContentPane().add(createOrderP);
-        // Validates and repaints the changes
         
         infoHandler.refreshOrderStatus();
         
         createOrderB.setText("refresh");
+        
+        lblPageNumber.setLocation(53, 180);
+        btnPageBack.setLocation(10, 176);
+        btnPageForward.setLocation(96, 176);
+        createOrderP.add(lblPageNumber);
+        createOrderP.add(btnPageBack);
+        createOrderP.add(btnPageForward);
         
         lblCustomerName.setText("Name: " + infoHandler.username);
         lblPendingOrderID.setText("Pending Order ID: " + (infoHandler.getMyOrderID() != -1 ? infoHandler.getMyOrderID() : "null"));
@@ -694,14 +959,14 @@ public class RestaurantGUI extends JFrame {
             itemStrings.add(costString + ": " + productView.getKey());
         }
         
+        menuList = new JList<String>(itemStrings.toArray(String[]::new));
+        menuList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        scrollPaneMenu.setViewportView(menuList);
+        
         OrderLine[] currentOrder = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
         OrderLine[] orderLinePage = infoHandler.getOrderLinePage(currentOrder, 1, ORDERLINES_PER_PAGE);
         
         drawOrderLinePage(orderLinePage);
-        
-        menuList = new JList<String>(itemStrings.toArray(String[]::new));
-        menuList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        scrollPaneMenu.setViewportView(menuList);
         
         int howManyPages = (currentOrder.length / ORDERLINES_PER_PAGE);
         if (currentOrder.length % ORDERLINES_PER_PAGE != 0 || currentOrder.length == 0) {
@@ -718,6 +983,7 @@ public class RestaurantGUI extends JFrame {
             btnSubmitOrder.setVisible(false);
         }
         
+        // Validates and repaints the changes
         validate();
         repaint();
         
@@ -857,5 +1123,4 @@ public class RestaurantGUI extends JFrame {
 	    orderListB.setText("Order List");
 	    manageB.setText("Manage");
 	}
-	
 }

@@ -137,8 +137,8 @@ public class LoginWindow extends JFrame {
 		getContentPane().setLayout(null);
 		
 		// Sets the login label
-		JLabel lbLogin = new JLabel("Login Systems");
-		lbLogin.setBounds(238, 30, 98, 14);
+		JLabel lbLogin = new JLabel("Login Page");
+		lbLogin.setBounds(260, 30, 98, 14);
 		getContentPane().add(lbLogin);
 		
 		JLabel lblUsername = new JLabel("Username");
