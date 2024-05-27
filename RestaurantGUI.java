@@ -13,51 +13,51 @@ import java.util.Set;
 
 public class RestaurantGUI extends JFrame {
 
-	// Window Size
-	final int SIZE_X = 600, SIZE_Y = 450;
-	
-	// items per pages
-	public final int ORDERLINES_PER_PAGE = 5;
-	public final int ORDERS_PER_PAGE = 5;
-	public final int USERS_PER_PAGE = 5;
-	public final int CREATE_ORDER_PAGE_TYPE = 0;
-	public final int VIEW_ORDER_PAGE_TYPE = 1;
-	public final int ORDERS_PAGE_TYPE = 2;
-	public final int USERS_PAGE_TYPE = 3;
-	
-	// current page type
-	private int pagetype;
-	
-	// program view
-	private int programView;
-	
-	// program view types
-	private final int CUSTOMER_VIEW_TYPE = 0;
-	private final int EMPLOYEE_VIEW_TYPE = 1;
-	private final int ADMIN_VIEW_TYPE = 2;
-	
-	// Panels that will be swapped depending what the user selects
-	JPanel masterP;
-	JPanel viewOrderP;
-	JPanel createOrderP;
-	JPanel employeeViewOrderP;
-	JPanel orderListP;
-	JPanel manageUsersP;
-	JPanel buildingP;
-	JPanel settingsP;
-	
-	// Menu bar that allows user to swap between each view
-	JMenuBar menu;
-	// Menu bar buttons
-	JMenuItem viewOrderB;
-	JMenuItem createOrderB;
-	JMenuItem orderListB;
-	JMenuItem manageUsersB;
-	JMenuItem buildingB;
-	
-	SQLDatabase myDatabase;
-	
-	InfoHandler infoHandler;
+    // Window Size
+    final int SIZE_X = 600, SIZE_Y = 450;
+    
+    // items per pages
+    public final int ORDERLINES_PER_PAGE = 5;
+    public final int ORDERS_PER_PAGE = 5;
+    public final int USERS_PER_PAGE = 5;
+    public final int CREATE_ORDER_PAGE_TYPE = 0;
+    public final int VIEW_ORDER_PAGE_TYPE = 1;
+    public final int ORDERS_PAGE_TYPE = 2;
+    public final int USERS_PAGE_TYPE = 3;
+    
+    // program view types
+    private final int CUSTOMER_VIEW_TYPE = 0;
+    private final int EMPLOYEE_VIEW_TYPE = 1;
+    private final int ADMIN_VIEW_TYPE = 2;
+    
+    // current page type
+    private int pagetype;
+    
+    // program view
+    private int programView;
+    
+    // Panels that will be swapped depending what the user selects
+    JPanel masterP;
+    JPanel viewOrderP;
+    JPanel createOrderP;
+    JPanel employeeViewOrderP;
+    JPanel orderListP;
+    JPanel manageUsersP;
+    JPanel buildingP;
+    JPanel settingsP;
+    
+    // Menu bar that allows user to swap between each view
+    JMenuBar menu;
+    // Menu bar buttons
+    JMenuItem viewOrderB;
+    JMenuItem createOrderB;
+    JMenuItem orderListB;
+    JMenuItem manageUsersB;
+    JMenuItem buildingB;
+    
+    SQLDatabase myDatabase;
+    
+    InfoHandler infoHandler;
     
     User loggedInUser;
 
@@ -128,7 +128,6 @@ public class RestaurantGUI extends JFrame {
     private JButton btnDeleteUser3;
     private JButton btnDeleteUser4;
     private JButton btnDeleteUser5;
-    
     private JLabel lblusername1;
     private JTextField txtUsername1;
     private JLabel lblPassword1;
@@ -149,6 +148,14 @@ public class RestaurantGUI extends JFrame {
     private JTextField txtUsername5;
     private JLabel lblPassword5;
     private JTextField txtPassword5;
+    private JLabel lblBuilding;
+    private JLabel lblBuildingPhone;
+    private JLabel lblState;
+    private JLabel lblCity;
+    private JLabel lblStreetAddr1;
+    private JLabel lblStreetAddr2;
+    private JComboBox<String> comboBoxState;
+    private JButton btnBuilding;
     
     private JLabel[] itemLabels;
     private JButton[] itemClearButtons;
@@ -163,26 +170,30 @@ public class RestaurantGUI extends JFrame {
     private JTextField[] usernameTxtFields;
     private JTextField[] passwordTxtFields;
     private ArrayList<JComboBox<String>> usertypeComboBoxes;
+    private JTextField txtBuildingPhone;
+    private JTextField txtCity;
+    private JTextField txtAddrLine1;
+    private JTextField txtAddrLine2;
 
-	/**
-	 * Creates the RestaurantGUI
-	 */
-	public RestaurantGUI(SQLDatabase myDatabase_) {
-	    
-	    myDatabase = myDatabase_;
-		
-   		// Set the title.
-   		setTitle("Order Manager");
-   		
-   		// Specify what happens when the close button is clicked.
-   		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-   		
-   		// Build and add the panel that contains the other components.
-   		build();
-   		
-   		LoginWindow loginWindow = new LoginWindow(myDatabase);
+    /**
+     * Creates the RestaurantGUI
+     */
+    public RestaurantGUI(SQLDatabase myDatabase_) {
+        
+        myDatabase = myDatabase_;
+        
+        // Set the title.
+        setTitle("Order Manager");
+        
+        // Specify what happens when the close button is clicked.
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        // Build and add the panel that contains the other components.
+        build();
+        
+        LoginWindow loginWindow = new LoginWindow(myDatabase);
 
-   		// Toggles the visibility of the login window
+        // Toggles the visibility of the login window
         loginWindow.toggleVisibility();
 
         // wait for user login
@@ -199,89 +210,89 @@ public class RestaurantGUI extends JFrame {
         
         // Makes the login window invisible
         loginWindow.toggleVisibility();
-   		
-   		// Adds the master panel
-   		getContentPane().add(masterP);
-   		
-   	    // Sets the menu bar created by the build
+        
+        // Adds the master panel
+        getContentPane().add(masterP);
+        
+        // Sets the menu bar created by the build
         setJMenuBar(menu);
         
         // Size and display the window.
         setSize(SIZE_X, SIZE_Y);
 
-		//Sets the program view based on the login window input
-   		programView = loginWindow.getProgramView();
-   		
-		switch (programView) { 
-			case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
-			case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
-			case ADMIN_VIEW_TYPE:    setAdminView();    break;
-		}
-		
-		setVisible(true);
-	}
-	
-	/**
-	 * Builds the JFrame an sets values
-	 */
-	public void build() {
-		
-		// Creates Panels
-		masterP = new RPanel();
-		viewOrderP = new RPanel();
-		createOrderP = new RPanel();
-		employeeViewOrderP = new RPanel();
-		orderListP = new RPanel();
-		manageUsersP = new RPanel();
-		buildingP = new RPanel();
-		settingsP = new RPanel();
-		
-		// Menu bar that allows user to swap between each view
-		menu = new JMenuBar();
-		menu.setLayout(new GridLayout(1, 0, 3, 0));
-		menu.setBackground(new Color(38, 102, 55));
-		menu.setBorderPainted(false);
-		// Menu bar buttons
-		viewOrderB = new RMenuItem("View Order");
-		createOrderB = new RMenuItem("Create Order");
-		orderListB = new RMenuItem("Order List");
-		manageUsersB = new RMenuItem("Manage Users");
-		buildingB = new RMenuItem("Building");
-		manageUsersB.add(new PopupMenu("message"));
-		
-		// Adds mouse listeners
-		viewOrderB.addMouseListener(new MouseAdapter() {
+        //Sets the program view based on the login window input
+        programView = loginWindow.getProgramView();
+        
+        switch (programView) { 
+            case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
+            case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
+            case ADMIN_VIEW_TYPE:    setAdminView();    break;
+        }
+        
+        setVisible(true);
+    }
+    
+    /**
+     * Builds the JFrame an sets values
+     */
+    public void build() {
+        
+        // Creates Panels
+        masterP = new RPanel();
+        viewOrderP = new RPanel();
+        createOrderP = new RPanel();
+        employeeViewOrderP = new RPanel();
+        orderListP = new RPanel();
+        manageUsersP = new RPanel();
+        buildingP = new RPanel();
+        settingsP = new RPanel();
+        
+        // Menu bar that allows user to swap between each view
+        menu = new JMenuBar();
+        menu.setLayout(new GridLayout(1, 0, 3, 0));
+        menu.setBackground(new Color(38, 102, 55));
+        menu.setBorderPainted(false);
+        // Menu bar buttons
+        viewOrderB = new RMenuItem("View Order");
+        createOrderB = new RMenuItem("Create Order");
+        orderListB = new RMenuItem("Order List");
+        manageUsersB = new RMenuItem("Manage Users");
+        buildingB = new RMenuItem("Building");
+        manageUsersB.add(new PopupMenu("message"));
+        
+        // Adds mouse listeners
+        viewOrderB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
                 viewOrderAction();
             }
         });
-		createOrderB.addMouseListener(new MouseAdapter() {
+        createOrderB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
                 createOrderAction();
             }
         });
-		orderListB.addMouseListener(new MouseAdapter() {
+        orderListB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
                 orderListAction();
             }
         });
-		manageUsersB.addMouseListener(new MouseAdapter() {
+        manageUsersB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
                 manageUsersAction();
             }
         });
-		buildingB.addMouseListener(new MouseAdapter() {
+        buildingB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
                 buildingAction();
             }
         });
-		
-		btnPageBack = new JButton("<");
+        
+        btnPageBack = new JButton("<");
         btnPageBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String pageNumberTxt = lblPageNumber.getText();
@@ -363,7 +374,7 @@ public class RestaurantGUI extends JFrame {
         lblPageNumber.setBounds(266, 284, 47, 14);
         lblPageNumber.setHorizontalAlignment(SwingConstants.CENTER);
         
-		createOrderP.setLayout(null);
+        createOrderP.setLayout(null);
         viewOrderP.setLayout(null);
         
         scrollPaneMenu = new JScrollPane();
@@ -567,7 +578,7 @@ public class RestaurantGUI extends JFrame {
         lblOrderInProgress = new JLabel("Order In Progress");
         lblOrderInProgress.setBounds(405, 300, 135, 14);
         createOrderP.add(lblOrderInProgress);
-		
+        
         orderListP.setLayout(null);
         lblWaitingOrders = new JLabel("Waiting Orders");
         lblWaitingOrders.setBounds(256, 20, 100, 14);
@@ -708,7 +719,7 @@ public class RestaurantGUI extends JFrame {
         orderLabels = new JLabel[] {lblOrder1, lblOrder2, lblOrder3, lblOrder4, lblOrder5};
         nameLabels = new JLabel[] {lblName1, lblName2, lblName3, lblName4, lblName5};
         
-manageUsersP.setLayout(null);
+        manageUsersP.setLayout(null);
         
         JLabel lblUsers = new JLabel("Users");
         lblUsers.setBounds(270, 15, 46, 14);
@@ -934,34 +945,119 @@ manageUsersP.setLayout(null);
         usertypeComboBoxes.add(comboBoxUsertype4);
         usertypeComboBoxes.add(comboBoxUsertype5);
         
-	}
-	
-	
-	public void drawOrderLinePage(OrderLine[] orderLinePage) {
-	    for (int i = 0; i < ORDERLINES_PER_PAGE; i++) {
-	        itemLabels[i].setVisible(false);
-	        itemClearButtons[i].setVisible(false);
-	    }
-	    
-	    for (int i = 0; i < orderLinePage.length && orderLinePage[i] != null; i++) {
-	        itemClearButtons[i].setVisible(true);
-	        
-	        itemLabels[i].setText(orderLinePage[i].getProductName() + " x" + orderLinePage[i].getQuantity());
-	        itemLabels[i].setVisible(true);
-	    }
-	}
-	
-	
-	public void drawOrderPage(Order[] orderPage) {
-	    for (int i = 0; i < ORDERS_PER_PAGE; i++) {
-	        viewOrderButtons[i].setVisible(false);
+buildingP.setLayout(null);
+        
+        lblBuilding = new JLabel("Building");
+        lblBuilding.setBounds(270, 20, 46, 14);
+        buildingP.add(lblBuilding);
+        
+        lblBuildingPhone = new JLabel("Building Phone:");
+        lblBuildingPhone.setBounds(130, 50, 100, 14);
+        buildingP.add(lblBuildingPhone);
+        
+        lblState = new JLabel("State:");
+        lblState.setBounds(130, 100, 100, 14);
+        buildingP.add(lblState);
+        
+        lblCity = new JLabel("City:");
+        lblCity.setBounds(130, 150, 100, 14);
+        buildingP.add(lblCity);
+        
+        lblStreetAddr1 = new JLabel("Address Line 1:");
+        lblStreetAddr1.setBounds(130, 200, 100, 14);
+        buildingP.add(lblStreetAddr1);
+        
+        lblStreetAddr2 = new JLabel("Address Line 2:");
+        lblStreetAddr2.setBounds(130, 250, 100, 14);
+        buildingP.add(lblStreetAddr2);
+        
+        txtBuildingPhone = new JTextField();
+        txtBuildingPhone.setBounds(240, 47, 150, 20);
+        buildingP.add(txtBuildingPhone);
+        txtBuildingPhone.setColumns(10);
+        
+        txtCity = new JTextField();
+        txtCity.setBounds(240, 147, 150, 20);
+        buildingP.add(txtCity);
+        txtCity.setColumns(10);
+        
+        txtAddrLine1 = new JTextField();
+        txtAddrLine1.setBounds(240, 197, 150, 20);
+        buildingP.add(txtAddrLine1);
+        txtAddrLine1.setColumns(10);
+        
+        txtAddrLine2 = new JTextField();
+        txtAddrLine2.setBounds(240, 247, 150, 20);
+        buildingP.add(txtAddrLine2);
+        txtAddrLine2.setColumns(10);
+        
+        String[] states = {
+            "ak", "al", "ar", "az", "ca", "co", "ct", "de", "fl", "ga",
+            "hi", "ia", "id", "il", "in", "ks", "ky", "la", "ma", "md",
+            "me", "mi", "mn", "mo", "ms", "mt", "nc", "nd", "ne", "nh",
+            "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc",
+            "sd", "tn", "tx", "ut", "va", "vt", "wa", "wi", "wv", "wy"
+        };
+        comboBoxState = new JComboBox<String>(states);
+        comboBoxState.setBounds(240, 96, 50, 22);
+        buildingP.add(comboBoxState);
+        
+        btnBuilding = new JButton("Save Changes");
+        btnBuilding.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFrame confirmSubmit = new JFrame();
+                if (JOptionPane.showConfirmDialog(confirmSubmit, "Confirm Change To Building", "Confirm Building Edit", JOptionPane.YES_NO_OPTION) 
+                        != JOptionPane.YES_OPTION) {
+                    return;
+                }
+                
+                String newPhone = txtBuildingPhone.getText();
+                String state = (String)comboBoxState.getSelectedItem();
+                String city = txtCity.getText();
+                String addr1 = txtAddrLine1.getText();
+                String addr2 = txtAddrLine2.getText();
+                if (addr2.isEmpty()) {
+                    addr2 = null;
+                }
+                
+                if (newPhone.length() != 10) {
+                    JOptionPane.showMessageDialog(null, "enter ten phone characters", "Building Edit Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                infoHandler.setBuildingInfo(newPhone, state, city, addr1, addr2);
+            }
+        });
+        btnBuilding.setBounds(239, 300, 120, 23);
+        buildingP.add(btnBuilding);
+    }
+    
+    
+    public void drawOrderLinePage(OrderLine[] orderLinePage) {
+        for (int i = 0; i < ORDERLINES_PER_PAGE; i++) {
+            itemLabels[i].setVisible(false);
+            itemClearButtons[i].setVisible(false);
+        }
+        
+        for (int i = 0; i < orderLinePage.length && orderLinePage[i] != null; i++) {
+            itemClearButtons[i].setVisible(true);
+            
+            itemLabels[i].setText(orderLinePage[i].getProductName() + " x" + orderLinePage[i].getQuantity());
+            itemLabels[i].setVisible(true);
+        }
+    }
+    
+    
+    public void drawOrderPage(Order[] orderPage) {
+        for (int i = 0; i < ORDERS_PER_PAGE; i++) {
+            viewOrderButtons[i].setVisible(false);
             markCompletedButtons[i].setVisible(false);
-	        orderLabels[i].setVisible(false);
+            orderLabels[i].setVisible(false);
             nameLabels[i].setVisible(false);
         }
-	    
-	    for (int i = 0; i < orderPage.length && orderPage[i] != null; i++) {
-	        viewOrderButtons[i].setVisible(true);
+        
+        for (int i = 0; i < orderPage.length && orderPage[i] != null; i++) {
+            viewOrderButtons[i].setVisible(true);
             markCompletedButtons[i].setVisible(true);
             
             orderLabels[i].setText("Order: " + orderPage[i].getOrderID());
@@ -969,38 +1065,38 @@ manageUsersP.setLayout(null);
             orderLabels[i].setVisible(true);
             nameLabels[i].setVisible(true);
         }
-	}
-	
-	
-	public void drawUserPage(User[] userPage) {
-	    for (int i = 0; i < USERS_PER_PAGE; i++) {
-	        usernameLabels[i].setVisible(false);
-	        passwordLabels[i].setVisible(false);
-	        usertypeComboBoxes.get(i).setVisible(false);
-	        usernameTxtFields[i].setVisible(false);
-	        passwordTxtFields[i].setVisible(false);
-	        editUserButtons[i].setVisible(false);
-	        deleteUserButtons[i].setVisible(false);
+    }
+    
+    
+    public void drawUserPage(User[] userPage) {
+        for (int i = 0; i < USERS_PER_PAGE; i++) {
+            usernameLabels[i].setVisible(false);
+            passwordLabels[i].setVisible(false);
+            usertypeComboBoxes.get(i).setVisible(false);
+            usernameTxtFields[i].setVisible(false);
+            passwordTxtFields[i].setVisible(false);
+            editUserButtons[i].setVisible(false);
+            deleteUserButtons[i].setVisible(false);
         }
-	    
-	    for (int i = 0; i < userPage.length && userPage[i] != null; i++) {
-	        usernameLabels[i].setVisible(true);
-	        passwordLabels[i].setVisible(true);
-	        editUserButtons[i].setVisible(true);
+        
+        for (int i = 0; i < userPage.length && userPage[i] != null; i++) {
+            usernameLabels[i].setVisible(true);
+            passwordLabels[i].setVisible(true);
+            editUserButtons[i].setVisible(true);
             deleteUserButtons[i].setVisible(true);
-	        
-	        usertypeComboBoxes.get(i).setSelectedItem(userPage[i].getUsertype());
-	        usernameTxtFields[i].setText(userPage[i].getUsername());
-	        passwordTxtFields[i].setText(userPage[i].getPassword());
-	        usertypeComboBoxes.get(i).setVisible(true);
+            
+            usertypeComboBoxes.get(i).setSelectedItem(userPage[i].getUsertype());
+            usernameTxtFields[i].setText(userPage[i].getUsername());
+            passwordTxtFields[i].setText(userPage[i].getPassword());
+            usertypeComboBoxes.get(i).setVisible(true);
             usernameTxtFields[i].setVisible(true);
             passwordTxtFields[i].setVisible(true);
         }
-	}
-	
-	
-	public void viewOrder(int idx) {
-	    String pageNumberTxt = lblPageNumber.getText();
+    }
+    
+    
+    public void viewOrder(int idx) {
+        String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
         
@@ -1014,30 +1110,30 @@ manageUsersP.setLayout(null);
             orderToView.getCustomerUsername(),
             orderToView.getNote()
         );
-	}
-	
-	
-	public void markOrderCompleted(int idx) {
-	    JFrame confirmCompleted = new JFrame();
+    }
+    
+    
+    public void markOrderCompleted(int idx) {
+        JFrame confirmCompleted = new JFrame();
         if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm Order Completion", "Confirm Completion", JOptionPane.YES_NO_OPTION) 
                 != JOptionPane.YES_OPTION) {
             return;
         }
-	    
-	    String pageNumberTxt = lblPageNumber.getText();
+        
+        String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
         
         int currentPage = Integer.valueOf(currentPageString);
-	    
-	    int orderID = infoHandler.getOrdersInProgress()[((currentPage - 1) * ORDERS_PER_PAGE) + idx].getOrderID();
-	    
-	    infoHandler.markOrderCompleted(orderID);
-	    
-	    infoHandler.refreshOrdersInProgress();
-	    
-	    int howManyWaitingOrders = infoHandler.getOrdersInProgress().length;
-	    int totalPages = (howManyWaitingOrders / ORDERS_PER_PAGE);
+        
+        int orderID = infoHandler.getOrdersInProgress()[((currentPage - 1) * ORDERS_PER_PAGE) + idx].getOrderID();
+        
+        infoHandler.markOrderCompleted(orderID);
+        
+        infoHandler.refreshOrdersInProgress();
+        
+        int howManyWaitingOrders = infoHandler.getOrdersInProgress().length;
+        int totalPages = (howManyWaitingOrders / ORDERS_PER_PAGE);
         if (howManyWaitingOrders % ORDERS_PER_PAGE != 0 || howManyWaitingOrders == 0) {
             totalPages += 1;
         }
@@ -1046,11 +1142,11 @@ manageUsersP.setLayout(null);
         }
         lblPageNumber.setText(currentPage + "/" + totalPages);
         drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
-	}
-	
-	
-	public void deletePageOrderLine(int idx) {
-	    String pageNumberTxt = lblPageNumber.getText();
+    }
+    
+    
+    public void deletePageOrderLine(int idx) {
+        String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
         
@@ -1081,10 +1177,10 @@ manageUsersP.setLayout(null);
         
         double total = infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder());
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
-	}
-	
-	
-	public void editUser(int idx) {
+    }
+    
+    
+    public void editUser(int idx) {
         String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
@@ -1117,10 +1213,10 @@ manageUsersP.setLayout(null);
         lblPageNumber.setText(currentPage + "/" + totalPages);
         drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
     }
-	
-	
-	public void deleteUser(int idx) {
-	    JFrame confirmCompleted = new JFrame();
+    
+    
+    public void deleteUser(int idx) {
+        JFrame confirmCompleted = new JFrame();
         if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm User Deletion", "Confirm Delete User", JOptionPane.YES_NO_OPTION) 
                 != JOptionPane.YES_OPTION) {
             return;
@@ -1150,53 +1246,53 @@ manageUsersP.setLayout(null);
         }
         lblPageNumber.setText(currentPage + "/" + totalPages);
         drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
-	}
-	
-	
-	/**
-	 * Sets the viewable buttons by the user as a customer
-	 */
-	public void setCustomerView() {
-		// Removes all items from the menu
-	    removeAllButtons();
-		
-		// Adds necessary items to the menu
-		menu.add(viewOrderB);
-		menu.add(createOrderB);
-		//menu.add(orderListB);
-		//menu.add(manageB);
-	}
+    }
+    
+    
+    /**
+     * Sets the viewable buttons by the user as a customer
+     */
+    public void setCustomerView() {
+        // Removes all items from the menu
+        removeAllButtons();
+        
+        // Adds necessary items to the menu
+        menu.add(viewOrderB);
+        menu.add(createOrderB);
+        //menu.add(orderListB);
+        //menu.add(manageB);
+    }
 
-	/**
-	 * Sets the viewable buttons by the user as an employee
-	 */
-	public void setEmployeeView() {
-		// Removes all items from the menu
-	    removeAllButtons();
-		
-		// Adds necessary items to the menu
-		//menu.add(viewOrderB);
-		menu.add(orderListB);
-		menu.add(createOrderB);
-		//menu.add(manageB);
-	}
+    /**
+     * Sets the viewable buttons by the user as an employee
+     */
+    public void setEmployeeView() {
+        // Removes all items from the menu
+        removeAllButtons();
+        
+        // Adds necessary items to the menu
+        //menu.add(viewOrderB);
+        menu.add(orderListB);
+        menu.add(createOrderB);
+        //menu.add(manageB);
+    }
 
-	/**
-	 * Sets the viewable buttons by the user as an admin
-	 */
-	public void setAdminView() {
-		// Removes all items from the menu
-	    removeAllButtons();
-		
-		// Adds necessary items to the menu
-		//menu.add(viewOrderB);
-		menu.add(orderListB);
-		menu.add(createOrderB);
-		menu.add(manageUsersB);
-		menu.add(buildingB);
-	}
-	
-	
+    /**
+     * Sets the viewable buttons by the user as an admin
+     */
+    public void setAdminView() {
+        // Removes all items from the menu
+        removeAllButtons();
+        
+        // Adds necessary items to the menu
+        //menu.add(viewOrderB);
+        menu.add(orderListB);
+        menu.add(createOrderB);
+        menu.add(manageUsersB);
+        menu.add(buildingB);
+    }
+    
+    
     void setupOrderViewPage(ArrayList<OrderLine> orderToView, int orderID, String username, String orderNote) {
         pagetype = VIEW_ORDER_PAGE_TYPE;
         
@@ -1243,15 +1339,15 @@ manageUsersP.setLayout(null);
         repaint();
         
     }
-	
+    
 
-	/**
-	 * Method that runs when the user presses "Order List"
-	 */
-	void orderListAction() {
-	    pagetype = ORDERS_PAGE_TYPE;
-	    
-	    // resets the menu button text
+    /**
+     * Method that runs when the user presses "Order List"
+     */
+    void orderListAction() {
+        pagetype = ORDERS_PAGE_TYPE;
+        
+        // resets the menu button text
         resetMenuButtonText();
         // Removes any panels currently in view
         removeAllPanelsFromContentPane();
@@ -1278,15 +1374,15 @@ manageUsersP.setLayout(null);
             howManyPages += 1;
         }
         lblPageNumber.setText("1/" + howManyPages);
-	    
-		// Validates and repaints the changes
-		validate();
-		repaint();
-		
-	}
-	
-	
-	/**
+        
+        // Validates and repaints the changes
+        validate();
+        repaint();
+        
+    }
+    
+    
+    /**
      * Method that runs when the user presses "View Order"
      */
     void viewOrderAction() {
@@ -1301,20 +1397,20 @@ manageUsersP.setLayout(null);
         
         viewOrderB.setText("refresh");
     }
-	
-	
-	/**
-	 * Method that runs when the user presses "Create Order"
-	 */
-	void createOrderAction() {
-	    pagetype = CREATE_ORDER_PAGE_TYPE;
-	    
-	    addOrderLinePageSharedGraphics(createOrderP);
-	    createOrderP.add(txtCurrentOrderNote);
-	    scrollPaneNote.setViewportView(txtCurrentOrderNote);
-	    
-	    // resets the menu button text
-	    resetMenuButtonText();
+    
+    
+    /**
+     * Method that runs when the user presses "Create Order"
+     */
+    void createOrderAction() {
+        pagetype = CREATE_ORDER_PAGE_TYPE;
+        
+        addOrderLinePageSharedGraphics(createOrderP);
+        createOrderP.add(txtCurrentOrderNote);
+        scrollPaneNote.setViewportView(txtCurrentOrderNote);
+        
+        // resets the menu button text
+        resetMenuButtonText();
         // Removes any panels currently in view
         removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
@@ -1371,11 +1467,11 @@ manageUsersP.setLayout(null);
         repaint();
         
     }
-	
-	
-	/**
-	 * Method that runs when the user presses "Manage"
-	 */
+    
+    
+    /**
+     * Method that runs when the user presses "Manage"
+     */
     void manageUsersAction() {
         pagetype = USERS_PAGE_TYPE;
         
@@ -1416,6 +1512,26 @@ manageUsersP.setLayout(null);
     
     void buildingAction() {
         
+        // resets the menu button text
+        resetMenuButtonText();
+        // Removes any panels currently in view
+        removeAllPanelsFromContentPane();
+        // Adds the panel selected by the user
+        getContentPane().add(buildingP);
+        
+        infoHandler.refreshUserInfo();
+        
+        String[] buildingInfo = infoHandler.getBuildingInfo();
+        
+        txtBuildingPhone.setText(buildingInfo[0]);
+        comboBoxState.setSelectedItem(buildingInfo[1]);
+        txtCity.setText(buildingInfo[2]);
+        txtAddrLine1.setText(buildingInfo[3]);
+        txtAddrLine2.setText(buildingInfo[4]);
+        
+        // Validates and repaints the changes
+        validate();
+        repaint();
     }
     
     
@@ -1446,42 +1562,44 @@ manageUsersP.setLayout(null);
         getContentPane().remove(employeeViewOrderP);
         getContentPane().remove(orderListP);
         getContentPane().remove(manageUsersP);
+        getContentPane().remove(buildingP);
         getContentPane().remove(masterP);
     }
-	
-	
-	/**
-	 * Removes all panels from the program
-	 */
-	void removeAllPanels() {
-	    masterP.remove(viewOrderP);
+    
+    
+    /**
+     * Removes all panels from the program
+     */
+    void removeAllPanels() {
+        masterP.remove(viewOrderP);
         masterP.remove(createOrderP);
         masterP.remove(employeeViewOrderP);
         masterP.remove(orderListP);
         masterP.remove(manageUsersP);
-	}
-	
-	
-	/**
-	 * Removes all buttons from the program
-	 */
-	void removeAllButtons() {
-	    menu.remove(viewOrderB);
+        masterP.remove(buildingP);
+    }
+    
+    
+    /**
+     * Removes all buttons from the program
+     */
+    void removeAllButtons() {
+        menu.remove(viewOrderB);
         menu.remove(createOrderB);
         menu.remove(orderListB);
         menu.remove(manageUsersB);
         menu.remove(buildingB);
-	}
-	
-	
-	/**
-	 * resets the menu button text
-	 */
-	void resetMenuButtonText() {
-	    viewOrderB.setText("View Order");
-	    createOrderB.setText("Create Order");
-	    orderListB.setText("Order List");
-	    manageUsersB.setText("Manage Users");
-	    buildingB.setText("Building");
-	}
+    }
+    
+    
+    /**
+     * resets the menu button text
+     */
+    void resetMenuButtonText() {
+        viewOrderB.setText("View Order");
+        createOrderB.setText("Create Order");
+        orderListB.setText("Order List");
+        manageUsersB.setText("Manage Users");
+        buildingB.setText("Building");
+    }
 }

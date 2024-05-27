@@ -217,7 +217,7 @@ public class LoginWindow extends JFrame {
                     
                     // Collects user input from the text fields
                     String username = txtUsername.getText();
-                    String buildingName = txtBuilding.getText();
+                    String buildingPhone = txtBuilding.getText();
                     password = txtPassword.getPassword();
                     confirmedPassword = txtConfirm.getPassword();
                     
@@ -239,8 +239,12 @@ public class LoginWindow extends JFrame {
                         JOptionPane.showMessageDialog(null, "password too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if (myDatabase.valueExists("building", "buildingname", "'" + buildingName + "'") != 1) {
-                        JOptionPane.showMessageDialog(null, "building \"" + buildingName + "\" not found", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                    if (buildingPhone.length() != 10) {
+                        JOptionPane.showMessageDialog(null, "enter ten phone characters", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (myDatabase.valueExists("building", "buildingname", "'" + buildingPhone + "'") != 1) {
+                        JOptionPane.showMessageDialog(null, "building \"" + buildingPhone + "\" not found", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     
@@ -259,27 +263,6 @@ public class LoginWindow extends JFrame {
                     }
                     
                     
-                    // Creates a DropDown option that prompts the user with their user type
-                    String[] userTypes = {"customer", "employee", "admin"};
-                    String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "User Type", JOptionPane.QUESTION_MESSAGE, null, userTypes, userTypes[0]) ;
-                    
-                    
-                    // Sets customer view based on the selection by the user
-                    if (selectedUserType.equals("customer")) {
-                        programView = 0;
-                    } else if (selectedUserType.equals("employee")) { 
-                        programView = 1;
-                    } else if (selectedUserType.equals("admin")) {
-                        programView = 2;
-                    } else {
-                        // Returns the function in case the user exits the prompt
-                        return;
-                    }
-
-                    // 
-                    System.out.println(selectedUserType + ": " + programView);
-                    
-                    
                     
                     // Display a dialog to prompt the user to select a user type
                     switch (myDatabase.addItem(
@@ -287,10 +270,10 @@ public class LoginWindow extends JFrame {
                         "USER",
                         // Columns
                         new ArrayList<String>(
-                            Arrays.asList( "Username", "Password", "Usertype", "BuildingName" )),
+                            Arrays.asList( "Username", "Password", "Usertype", "BuildingName")),
                         // Values
                         new ArrayList<Object>(
-                            Arrays.asList(username, password, selectedUserType.toLowerCase(), buildingName))
+                            Arrays.asList(username, password, "customer", buildingPhone))
                     )) {
                         // Gives an error depending on the result
                         case 0:
@@ -308,7 +291,7 @@ public class LoginWindow extends JFrame {
                     JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
                     
                     // Creates a new user using the selected fields
-                    loggedInUser = new User(username, new String(password), selectedUserType.toLowerCase());
+                    loggedInUser = new User(username, new String(password), "customer");
                 
                 } finally {
                     // do this so the password doesn't stay in memory
@@ -369,7 +352,7 @@ public class LoginWindow extends JFrame {
 		getContentPane().add(lblConfirm);
 		getContentPane().add(txtConfirm);
 		
-		JLabel lblBuilding = new JLabel("Choose Building");
+		JLabel lblBuilding = new JLabel("Building Phone");
 		lblBuilding.setBounds(96, 200, 110, 14);
 		getContentPane().add(lblBuilding);
 		

@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `building`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `building` (
-  `BuildingName` varchar(63) NOT NULL,
+  `BuildingName` char(10) NOT NULL,
   `State` char(2) NOT NULL,
   `City` varchar(40) NOT NULL,
   `StreetAddr1` varchar(60) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `building` (
 
 LOCK TABLES `building` WRITE;
 /*!40000 ALTER TABLE `building` DISABLE KEYS */;
-INSERT INTO `building` VALUES ('lowercase name','wa','seattle','54321 test street',NULL),('test name','wa','seattle','12345 67th street',NULL),('testraunt','wa','ellensburg','1400 coconut ln.','unit 2');
+INSERT INTO `building` VALUES ('0987654321','wa','seattle','12345 67th street',NULL),('1234554321','wa','seattle','54321 test street',NULL),('1234567890','wa','ellensburg','1400 coconut ln.','unit 2');
 /*!40000 ALTER TABLE `building` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -81,15 +81,15 @@ DROP TABLE IF EXISTS `order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order` (
   `OrderId` int NOT NULL AUTO_INCREMENT,
-  `buildingname` varchar(63) DEFAULT NULL,
+  `BuildingName` char(10) DEFAULT NULL,
   `customerusername` varchar(31) DEFAULT NULL,
   `Completed` tinyint NOT NULL,
   `OrderDate` date NOT NULL,
   `Note` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`OrderId`),
-  KEY `fk_ORDER_BUILDING1_idx` (`buildingname`),
+  KEY `fk_ORDER_BUILDING1_idx` (`BuildingName`),
   KEY `order_fk_user` (`customerusername`),
-  CONSTRAINT `order_fk_building` FOREIGN KEY (`buildingname`) REFERENCES `building` (`BuildingName`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `order_fk_building` FOREIGN KEY (`BuildingName`) REFERENCES `building` (`BuildingName`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `order_fk_user` FOREIGN KEY (`customerusername`) REFERENCES `user` (`Username`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -100,7 +100,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (5,'testraunt','testuser',0,'2024-05-21',''),(7,'testraunt','wtf',1,'2024-05-24','light mayo'),(15,'testraunt','wtf',0,'2024-05-25','no sugar in the coffee'),(16,'testraunt','idk',0,'2024-05-26','some text');
+INSERT INTO `order` VALUES (5,'1234567890','testuser',0,'2024-05-21',''),(7,'1234567890','wtf',1,'2024-05-24','light mayo'),(15,'1234567890','wtf',0,'2024-05-25','no sugar in the coffee'),(16,'1234567890','idk',0,'2024-05-26','some text');
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -259,7 +259,7 @@ CREATE TABLE `user` (
   `Username` varchar(31) NOT NULL,
   `Password` varchar(31) NOT NULL,
   `Usertype` enum('customer','employee','admin') NOT NULL,
-  `BuildingName` varchar(63) NOT NULL,
+  `BuildingName` char(10) DEFAULT NULL,
   PRIMARY KEY (`Username`),
   KEY `fk_EMPLOYEE_BUILDING_idx` (`BuildingName`),
   CONSTRAINT `user_fk_building` FOREIGN KEY (`BuildingName`) REFERENCES `building` (`BuildingName`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -272,7 +272,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('idk','123','admin','testraunt'),('lol','123','customer','testraunt'),('testuser','123','customer','testraunt'),('wtf','123','employee','testraunt');
+INSERT INTO `user` VALUES ('aaaaa','123','customer','1234567890'),('idk','123','admin','1234567890'),('lol','123','customer','1234567890'),('testuser','123','customer','1234567890'),('wtf','123','employee','1234567890');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -315,4 +315,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-26 18:46:33
+-- Dump completed on 2024-05-27  0:55:18
