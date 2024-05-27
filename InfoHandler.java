@@ -618,7 +618,6 @@ public class InfoHandler {
             pst.setString(2, newPassword);
             pst.setString(3, newUsername);
             pst.setString(4, username);
-            pst.setString(5, this.buildingPhone);
             
             pst.executeUpdate();
             
@@ -626,7 +625,6 @@ public class InfoHandler {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
     /**
      * Updates the information of a building in the database.
      *
