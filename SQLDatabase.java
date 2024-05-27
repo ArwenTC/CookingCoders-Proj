@@ -36,7 +36,6 @@ public class SQLDatabase {
 		try {
 			// Attempts to connect to the database
 			this.con = DriverManager.getConnection(this.databaseURL, this.username, this.password);
-			JOptionPane.showMessageDialog(null, "Successfully connected to the database.", "Connection Success", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
 			// Prints out if the database could not connect
 			JOptionPane.showMessageDialog(null, "Error connecting to database: " + e, "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -354,11 +353,11 @@ public class SQLDatabase {
      * @param Password The password of the user.
      * @return true if the login is successful, false otherwise.
      */
-	public boolean verifyLogin(String Username, char[] Password) {
+	public boolean verifyLogin(String Username, String Password) {
         String query = "SELECT password FROM USER WHERE Username = ? AND Password = ?";
         try (PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(1, Username);
-            pst.setString(2, new String(Password));
+            pst.setString(2, Password);
             try (ResultSet rs = pst.executeQuery()) {
                 return rs.next();
             }
