@@ -1,6 +1,5 @@
 package GroupProject;
 
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeMap;
 import java.awt.event.ActionEvent;
 
 
@@ -124,7 +122,158 @@ public class LoginWindow extends JFrame {
 	public boolean userIsLoggedIn() {
 	    return loggedInUser != null;
 	}
+	
+	
+	/**
+     * Getter for program view
+     * @return
+     */
+    public int getProgramView() {
+        return programView;
+    }
+    
+    
+    public void loginAction() {
 
+        String username = txtUsername.getText();
+        char[] password = txtPassword.getPassword();
+        
+        if (myDatabase.verifyLogin(username, password)) {
+            
+            JOptionPane.showMessageDialog(null, "Login successful!");
+            
+            String usertype = myDatabase.getUserType(username);
+            
+            loggedInUser = new User(username, new String(password), usertype);
+            
+            if ("customer".equals(loggedInUser.getUsertype())) {
+                programView = 0;
+            } else if ("employee".equals(loggedInUser.getUsertype())) {
+                programView = 1;
+            } else {
+                programView = 2;
+            }
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Invalid Username or password");
+        }
+        
+    }
+    
+    
+    public void resetAction() {
+        txtUsername.setText(null);
+        txtPassword.setText(null);
+        txtBuilding.setText(null);
+        txtConfirm.setText(null);
+    }
+    
+    
+    public void signUpAction() {
+
+        // Creates password and confirmed password strings
+        char[] password = {};
+        char[] confirmedPassword = {};
+        
+        try {
+            
+            // Collects user input from the text fields
+            String username = txtUsername.getText();
+            String buildingPhone = txtBuilding.getText();
+            password = txtPassword.getPassword();
+            confirmedPassword = txtConfirm.getPassword();
+            
+            
+            // Cases in which userName or passwords are invalid entries
+            if (username.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "no username entered", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (username.length() > 31) {
+                JOptionPane.showMessageDialog(null, "username too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!Arrays.equals(password, confirmedPassword)) {
+                JOptionPane.showMessageDialog(null, "passwords didn't match", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (password.length > 31) {
+                JOptionPane.showMessageDialog(null, "password too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (buildingPhone.length() != 10) {
+                JOptionPane.showMessageDialog(null, "enter ten phone characters", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (myDatabase.valueExists("building", "buildingname", "'" + buildingPhone + "'") != 1) {
+                JOptionPane.showMessageDialog(null, "building \"" + buildingPhone + "\" not found", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            
+            // Checks if the userName is available in the database
+            // Switches based on the error value
+            switch(myDatabase.valueExists("USER", "Username", "'" + username + "'")) {
+                case 0:
+                    break;
+                case 1:
+                    JOptionPane.showMessageDialog(null, "username not available", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                case 2:
+                    JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+            }
+            
+            
+            
+            // Display a dialog to prompt the user to select a user type
+            switch (myDatabase.addItem(
+                // Table Name
+                "USER",
+                // Columns
+                new ArrayList<String>(
+                    Arrays.asList( "Username", "Password", "Usertype", "BuildingName")),
+                // Values
+                new ArrayList<Object>(
+                    Arrays.asList(username, password, "customer", buildingPhone))
+            )) {
+                // Gives an error depending on the result
+                case 0:
+                    break;
+                case 1:
+                    JOptionPane.showMessageDialog(null, "Java error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                case 2:
+                    JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+            }
+            
+            
+            // Gives a message 
+            JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Creates a new user using the selected fields
+            loggedInUser = new User(username, new String(password), "customer");
+        
+        } finally {
+            // do this so the password doesn't stay in memory
+            Arrays.fill(password, '\0');
+            Arrays.fill(confirmedPassword, '\0');
+        }
+    }
+    
+    
+    public void exitAction() {
+        // Creates new frame for exit
+        frmLoginSystem = new JFrame();
+        // Confirms if user want to exit and exits if so
+        if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm exit", "Login System", JOptionPane.YES_NO_OPTION) 
+            == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
+
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -163,30 +312,7 @@ public class LoginWindow extends JFrame {
 		btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			    
-				String username = txtUsername.getText();
-				char[] password = txtPassword.getPassword();
-				
-				if (myDatabase.verifyLogin(username, password)) {
-				    
-					JOptionPane.showMessageDialog(null, "Login successful!");
-					
-					String usertype = myDatabase.getUserType(username);
-					
-					loggedInUser = new User(username, new String(password), usertype);
-					
-					if ("customer".equals(loggedInUser.getUsertype())) {
-						programView = 0;
-					} else if ("employee".equals(loggedInUser.getUsertype())) {
-						programView = 1;
-					} else {
-					    programView = 2;
-					}
-					
-				} else {
-					JOptionPane.showMessageDialog(null, "Invalid Username or password");
-				}
-				
+			    loginAction();
 			}
 		});
 		btnLogin.setBounds(31, 297, 89, 23);
@@ -196,10 +322,7 @@ public class LoginWindow extends JFrame {
 		btnReset = new JButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				txtUsername.setText(null);
-				txtPassword.setText(null);
-				txtBuilding.setText(null);
-				txtConfirm.setText(null);
+				resetAction();
 			}
 		});
 		btnReset.setBounds(177, 297, 89, 23);
@@ -208,96 +331,7 @@ public class LoginWindow extends JFrame {
 		btnSignUp = new JButton("Sign Up");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
-                // Creates password and confirmed password strings
-                char[] password = {};
-                char[] confirmedPassword = {};
-                
-                try {
-                    
-                    // Collects user input from the text fields
-                    String username = txtUsername.getText();
-                    String buildingPhone = txtBuilding.getText();
-                    password = txtPassword.getPassword();
-                    confirmedPassword = txtConfirm.getPassword();
-                    
-                    
-                    // Cases in which userName or passwords are invalid entries
-                    if (username.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "no username entered", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (username.length() > 31) {
-                        JOptionPane.showMessageDialog(null, "username too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (!Arrays.equals(password, confirmedPassword)) {
-                        JOptionPane.showMessageDialog(null, "passwords didn't match", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (password.length > 31) {
-                        JOptionPane.showMessageDialog(null, "password too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (buildingPhone.length() != 10) {
-                        JOptionPane.showMessageDialog(null, "enter ten phone characters", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (myDatabase.valueExists("building", "buildingname", "'" + buildingPhone + "'") != 1) {
-                        JOptionPane.showMessageDialog(null, "building \"" + buildingPhone + "\" not found", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    
-                    
-                    // Checks if the userName is available in the database
-                    // Switches based on the error value
-                    switch(myDatabase.valueExists("USER", "Username", "'" + username + "'")) {
-                        case 0:
-                            break;
-                        case 1:
-                            JOptionPane.showMessageDialog(null, "username not available", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        case 2:
-                            JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                    }
-                    
-                    
-                    
-                    // Display a dialog to prompt the user to select a user type
-                    switch (myDatabase.addItem(
-                        // Table Name
-                        "USER",
-                        // Columns
-                        new ArrayList<String>(
-                            Arrays.asList( "Username", "Password", "Usertype", "BuildingName")),
-                        // Values
-                        new ArrayList<Object>(
-                            Arrays.asList(username, password, "customer", buildingPhone))
-                    )) {
-                        // Gives an error depending on the result
-                        case 0:
-                            break;
-                        case 1:
-                            JOptionPane.showMessageDialog(null, "Java error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        case 2:
-                            JOptionPane.showMessageDialog(null, "SQL error", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                    }
-                    
-                    
-                    // Gives a message 
-                    JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    // Creates a new user using the selected fields
-                    loggedInUser = new User(username, new String(password), "customer");
-                
-                } finally {
-                    // do this so the password doesn't stay in memory
-                    Arrays.fill(password, '\0');
-                    Arrays.fill(confirmedPassword, '\0');
-                }
+                signUpAction();
             }
         });
         
@@ -308,14 +342,7 @@ public class LoginWindow extends JFrame {
         btnExit = new JButton("Exit");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Creates new frame for exit
-				frmLoginSystem = new JFrame();
-				// Confirms if user want to exit and exits if so
-				if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm exit", "Login System", JOptionPane.YES_NO_OPTION) 
-				    == JOptionPane.YES_OPTION) {
-					System.exit(0);
-				}
-				
+				exitAction();
 			}
 		});
 		btnExit.setBounds(467, 297, 89, 23);
@@ -364,11 +391,4 @@ public class LoginWindow extends JFrame {
 		
 	}
 	
-	/**
-	 * Getter for program view
-	 * @return
-	 */
-	public int getProgramView() {
-		return programView;
-	}
 }

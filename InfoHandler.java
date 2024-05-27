@@ -491,7 +491,6 @@ public class InfoHandler {
             pst.setString(2, newPassword);
             pst.setString(3, newUsername);
             pst.setString(4, username);
-            pst.setString(5, this.buildingPhone);
             
             pst.executeUpdate();
             
