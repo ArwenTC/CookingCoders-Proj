@@ -19,12 +19,10 @@ public class OrderListPanel extends RPanel {
 	JScrollPane orderScroll;
 	
 	SQLDatabase database_;
-	/**
-     * Constructs an OrderListPanel with the specified SQL database connection.
-     *
-     * @param database_ The SQLDatabase object representing the database connection.
-     */
 	
+	/**
+	 * Constructor
+	 */
 	public OrderListPanel(SQLDatabase database_) {
 		// Calls super constructor
 		super();
@@ -67,9 +65,8 @@ public class OrderListPanel extends RPanel {
 		private JButton remove;
 		
 		/**
-		 * Constructs an OPanel for displaying the specified order.
-         *
-         * @param order The Order object to display.
+		 * Constructor
+		 * @param order
 		 */
 		public OPanel(Order order) {
 			super();

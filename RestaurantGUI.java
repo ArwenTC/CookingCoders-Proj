@@ -33,9 +33,6 @@ public class RestaurantGUI extends JFrame {
     // current page type
     private int pagetype;
     
-    // program view
-    private int programView;
-    
     // Panels that will be swapped depending what the user selects
     JPanel masterP;
     JPanel viewOrderP;
@@ -58,8 +55,6 @@ public class RestaurantGUI extends JFrame {
     SQLDatabase myDatabase;
     
     InfoHandler infoHandler;
-    
-    User loggedInUser;
 
     String chosenBuildingName;
 
@@ -219,11 +214,8 @@ public class RestaurantGUI extends JFrame {
         
         // Size and display the window.
         setSize(SIZE_X, SIZE_Y);
-
-        //Sets the program view based on the login window input
-        programView = loginWindow.getProgramView();
         
-        switch (programView) { 
+        switch (loginWindow.getProgramView()) { 
             case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
             case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
             case ADMIN_VIEW_TYPE:    setAdminView();    break;
@@ -1144,19 +1136,7 @@ public class RestaurantGUI extends JFrame {
         drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, 1, ORDERLINES_PER_PAGE));
     }
     
-    /**
-     * Action performed when adding an item to the current order.
-     * This method retrieves the selected item from the menu list,
-     * checks if an item is selected and not empty,
-     * extracts the product name from the selected value,
-     * retrieves the current order lines from the infoHandler,
-     * checks if the quantity of the selected product is already incremented,
-     * increments the quantity if the product is already in the order lines,
-     * otherwise, adds a new order line with quantity 1 for the selected product,
-     * updates the order line page with the modified order lines,
-     * calculates the total number of pages and updates the page number label accordingly,
-     * recalculates the total charge of the current order and updates the total charge label.
-     */
+    
     public void addItemAction() {
         String selectedValue = menuList.getSelectedValue();
         
@@ -1198,16 +1178,7 @@ public class RestaurantGUI extends JFrame {
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
     }
     
-    /**
-     * Action performed when saving changes made to building information.
-     * This method prompts the user to confirm the changes through a dialog window.
-     * If the user confirms the changes, the method retrieves the updated building information,
-     * including phone number, state, city, and address lines,
-     * validates the phone number to ensure it has exactly ten characters,
-     * displays an error message if the phone number is invalid,
-     * otherwise, updates the building information using the infoHandler,
-     * which updates the building information in the database.
-     */
+    
     public void saveBuildingChangesAction() {
         JFrame confirmSubmit = new JFrame();
         if (JOptionPane.showConfirmDialog(confirmSubmit, "Confirm Change To Building", "Confirm Building Edit", JOptionPane.YES_NO_OPTION) 
@@ -1232,17 +1203,7 @@ public class RestaurantGUI extends JFrame {
         infoHandler.setBuildingInfo(newPhone, state, city, addr1, addr2);
     }
     
-    /**
-     * Action performed when marking an order as completed.
-     * This method prompts the user to confirm order completion through a dialog window.
-     * If the user confirms completion, the method retrieves the current page number,
-     * calculates the index of the order to mark as completed based on the page number and index passed as parameters,
-     * retrieves the order ID of the order to mark as completed, marks the order as completed in the database,
-     * refreshes orders in progress, recalculates the total number of pages, adjusts the current page if necessary,
-     * updates the page number label, and redraws the order page.
-     *
-     * @param idx The index of the order to mark as completed within the current page.
-     */
+    
     public void viewOrderAction(int idx) {
         String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
@@ -1292,17 +1253,7 @@ public class RestaurantGUI extends JFrame {
         drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
     }
     
-    /**
-     * Action performed when deleting an order line from the current page.
-     * This method retrieves the current page number, calculates the index of the order line to delete based on the index passed as a parameter,
-     * retrieves the name of the item to remove from the order line, retrieves the current order lines,
-     * removes the order line corresponding to the item to remove from the current order lines,
-     * recalculates the total number of pages and adjusts the current page if necessary,
-     * updates the page number label, redraws the order line page with the updated order lines,
-     * calculates the total charge of the current order, and updates the total charge label.
-     *
-     * @param idx The index of the order line to delete within the current page.
-     */
+    
     public void deletePageOrderLineAction(int idx) {
         String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
@@ -1336,16 +1287,7 @@ public class RestaurantGUI extends JFrame {
         double total = infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder());
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
     }
-    /**
-     * Action performed when editing a user's information.
-     * This method retrieves the current page number, calculates the index of the user to edit based on the page number and index passed as parameters,
-     * retrieves the user to edit, extracts the old username of the user, retrieves the new username, password, and user type entered by the user,
-     * updates the user information with the new values, refreshes user information, displays a confirmation message,
-     * recalculates the total number of pages and adjusts the current page if necessary,
-     * updates the page number label, and redraws the user page.
-     *
-     * @param idx The index of the user to edit within the current page.
-     */
+    
     
     public void editUserAction(int idx) {
         String pageNumberTxt = lblPageNumber.getText();
@@ -1381,17 +1323,7 @@ public class RestaurantGUI extends JFrame {
         drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
     }
     
-    /**
-     * Action performed when deleting a user.
-     * This method prompts the user to confirm user deletion through a dialog window.
-     * If the user confirms deletion, the method retrieves the current page number,
-     * calculates the index of the user to delete based on the page number and index passed as parameters,
-     * deletes the user from the database, refreshes user information,
-     * recalculates the total number of pages, adjusts the current page if necessary,
-     * updates the page number label, and redraws the user page.
-     *
-     * @param idx The index of the user to delete within the current page.
-     */
+    
     public void deleteUserAction(int idx) {
         JFrame confirmCompleted = new JFrame();
         if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm User Deletion", "Confirm Delete User", JOptionPane.YES_NO_OPTION) 
@@ -1427,13 +1359,7 @@ public class RestaurantGUI extends JFrame {
     
 
     /**
-     * Action performed when the "Order List" menu button is clicked.
-     * This method sets up the interface to display a list of orders in progress.
-     * It sets the page type to orders, resets the menu button text,
-     * removes any panels currently in view, adds the order list panel to the content pane,
-     * refreshes orders in progress, sets up pagination controls, retrieves and displays the first page of orders,
-     * calculates the total number of pages, updates the page number label,
-     * and validates and repaints the changes made.
+     * Method that runs when the user presses "Order List"
      */
     void orderListAction() {
         pagetype = ORDERS_PAGE_TYPE;
@@ -1474,37 +1400,24 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Action performed when the "View Order" menu button is clicked.
-     * This method refreshes the order status, sets up the interface for viewing the user's waiting order,
-     * including displaying order details such as order ID, customer name, and order note,
-     * resets the "View Order" menu button text to "refresh",
-     * and validates the changes made.
+     * Method that runs when the user presses "View Order"
      */
     void viewOrderAction() {
-    	// Refresh order status to ensure the latest data is retrieved
         infoHandler.refreshOrderStatus();
-     // Set up the order view page with information about the user's waiting order
+        
         setupOrderViewPage(
             infoHandler.getMyWaitingOrder(),
             infoHandler.getMyOrderID(),
             infoHandler.getUsername(),
             infoHandler.getMyWaitingOrderNote()
         );
-        // Update the text of the "View Order" menu button to "refresh"
+        
         viewOrderB.setText("refresh");
     }
     
     
     /**
-     * Action performed when the "Create Order" menu button is clicked.
-     * This method sets up the interface for creating a new order.
-     * It sets the page type to create order, adds shared graphics components for order line pages to the create order panel,
-     * sets up scroll panes for order notes and menu items, resets the menu button text, removes any panels currently in view,
-     * adds the create order panel to the content pane, refreshes order status, sets up pagination controls,
-     * retrieves and displays the first page of order lines, populates customer information and pending order ID,
-     * populates the menu list with available items, and updates the page number label.
-     * Additionally, it hides or displays the "Order In Progress" label and "Submit Order" button based on the existence of a pending order,
-     * and validates and repaints the changes.
+     * Method that runs when the user presses "Create Order"
      */
     void createOrderAction() {
         pagetype = CREATE_ORDER_PAGE_TYPE;
@@ -1574,12 +1487,7 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Action performed when the "Manage Users" menu button is clicked.
-     * This method sets up the interface to manage user information.
-     * It sets the page type to users, resets the menu button text, removes any panels currently in view,
-     * adds the manage users panel to the content pane, refreshes user information, sets up pagination controls,
-     * retrieves and displays the first page of users, calculates the total number of pages,
-     * updates the page number label, and validates and repaints the changes.
+     * Method that runs when the user presses "Manage"
      */
     void manageUsersAction() {
         pagetype = USERS_PAGE_TYPE;
@@ -1618,13 +1526,7 @@ public class RestaurantGUI extends JFrame {
         
     }
     
-    /**
-     * Action performed when the "Building" menu button is clicked.
-     * This method sets up the interface to display building information.
-     * It resets the menu button text, removes any panels currently in view,
-     * adds the building panel to the content pane, refreshes user information,
-     * populates the building information fields, and validates and repaints the changes.
-     */
+    
     void buildingAction() {
         
         // resets the menu button text
@@ -1649,15 +1551,7 @@ public class RestaurantGUI extends JFrame {
         repaint();
     }
     
-    /**
-     * Adds shared graphics components for order line pages to a panel.
-     * This method adds common graphical components used in order line pages
-     * to the specified panel, such as labels, scroll panes, and buttons.
-     * It is useful for maintaining consistency in the appearance and functionality
-     * of order line pages across the application.
-     *
-     * @param panel The panel to which the shared graphics components will be added.
-     */
+    
     void addOrderLinePageSharedGraphics(JPanel panel) {
         panel.add(lblCustomerName);
         panel.add(lblPendingOrderID);
@@ -1677,10 +1571,7 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Removes all panels from the content pane of the JFrame.
-     * This method removes all panels from the content pane of the JFrame,
-     * including the main master panel and all its child panels.
-     * It is useful for clearing the content pane before adding new panels or refreshing the interface.
+     * Removes all panels from the content pane
      */
     void removeAllPanelsFromContentPane() {
         getContentPane().remove(viewOrderP);
@@ -1694,10 +1585,7 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Removes all panels from the master panel.
-     * This method removes all panels from the master panel,
-     * which is the main panel containing all other panels.
-     * It is useful for clearing the master panel before adding new panels or refreshing the interface.
+     * Removes all panels from the program
      */
     void removeAllPanels() {
         masterP.remove(viewOrderP);
@@ -1710,9 +1598,7 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Removes all buttons from the menu bar.
-     * This method removes all menu items (buttons) from the menu bar.
-     * It is useful for clearing the menu bar before adding new buttons or refreshing the menu.
+     * Removes all buttons from the program
      */
     void removeAllButtons() {
         menu.remove(viewOrderB);
@@ -1724,9 +1610,7 @@ public class RestaurantGUI extends JFrame {
     
     
     /**
-     * Resets the text of menu buttons to their default values.
-     * This method sets the text of each menu button to its default value.
-     * It is useful for resetting the text of menu buttons after modifications.
+     * resets the menu button text
      */
     void resetMenuButtonText() {
         viewOrderB.setText("View Order");

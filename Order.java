@@ -6,11 +6,7 @@ import java.util.Random;
 
 
 import java.sql.*;
-/**
- * 
- * This class has an order containing multiple order lines, associated with a customer
- *
- */
+
 public class Order{
 
 	private int orderID;
@@ -18,14 +14,7 @@ public class Order{
 	private String customerUsername;
 	private String note;
 	
-	/**
-		Constructs an Order with the specified details.
-     *
-     * @param orderID The ID of the order.
-     * @param items A list of order lines associated with the order.
-     * @param customerUsername The username of the customer placing the order.
-     * @param note Additional notes for the order.
-	 */
+	
 	public Order(int orderID, ArrayList<OrderLine> items, String customerUsername, String note) {
 	    this.orderID = orderID;
 	    this.items = items;
@@ -36,7 +25,7 @@ public class Order{
 	
 	/**
 	 * Adds an item to the order
-	 * @param productName the name of the product to be added
+	 * @param product
 	 */
 	public void addItem(String productName) {
 		// Adds a new item to the order line
@@ -45,7 +34,7 @@ public class Order{
 	
 	/**
 	 * Removes an item from the order
-	 * @param item the order line item to be removed
+	 * @param item
 	 */
 	public void removeItem(OrderLine item) {
 		items.remove(item);
@@ -56,19 +45,17 @@ public class Order{
 	//
 	
 	/**
-	 * 
-	 * Returns the list of order line items in the order
-	 * 
-	 * @return A list of order line items 
+	 * Getter method for items
+	 * @return
 	 */
 	public ArrayList<OrderLine> getItems() {
 		return items;
 	}
-	   /**
-     * Sets the list of order line items in the order.
-     *
-     * @param items A list of order line items to be set.
-     */
+	
+	/**
+	 * Setter method for items
+	 * @param items
+	 */
 	public void setItems(ArrayList<OrderLine> items) {
 		this.items = items;
 	}
@@ -87,11 +74,7 @@ public class Order{
 		return orderID;
 	}
 	
-	/**
-     * Returns any additional notes associated with the order.
-     *
-     * @return The order note.
-     */
+	
 	public String getNote() {
 	    return note;
 	}

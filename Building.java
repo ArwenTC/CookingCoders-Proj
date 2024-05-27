@@ -2,12 +2,11 @@ package GroupProject;
 import java.sql.*;
 public class Building {
 	
-	// the variable for the building ID
+	// Create
 	public int buildingID;
 	
 	/**
 	 * Constructor for building
-	 * @param buildingID the ID for the building
 	 */
 	public Building(int buildingID) {
 		this.buildingID = buildingID;
@@ -22,7 +21,7 @@ public class Building {
 	}
 	/**
 	 * Setter for building ID
-	 * @param buildingID the ID to set
+	 * @param buildingID
 	 */
 	public void setBuildingID(int buildingID) {
 		 this.buildingID= buildingID;

@@ -6,9 +6,9 @@ public class Item {
 	private double price;
 	
 	/**
-	 * Constructor that initializes an item with a name and a price
-	 * @param name 			The name of the item
-	 * @param price			The price of the item
+	 * Constructor
+	 * @param name
+	 * @param price
 	 */
 	public Item(String name, double price) {
 		this.name = name;
@@ -18,12 +18,7 @@ public class Item {
 		// Adds item to the database
 		
 	}
-	/**
-	 * Constructor that initializes an item with a name 
-	 * The price is retrieved from the database based on the item name.
-	 * 
-	 * @param name			The name of the item
-	 */
+	
 	public Item(String name) {
 		this.name = name;
 
@@ -38,7 +33,7 @@ public class Item {
 	
 	/**
 	 * Returns the item name
-	 * @return the name of the item
+	 * @return name
 	 */
 	public String getName() {
 		return this.name;
@@ -46,7 +41,7 @@ public class Item {
 	
 	/**
 	 * Returns the item price
-	 * @return the price of the item
+	 * @return
 	 */
 	public double getPrice() {
 		return this.price;
