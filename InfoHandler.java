@@ -13,7 +13,10 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-
+/**
+ * 
+ * THis one will help to handle the various operations related to the user information, orders and building details
+ */
 public class InfoHandler {
     
     public final SQLDatabase myDatabase;
@@ -47,7 +50,17 @@ public class InfoHandler {
     // -1 means no order currently in progress
     private int myOrderID = -1;
     
-    
+    /**
+     * Constructor for InfoHandler
+     * @param myDatabase    the SQLDatabase instance
+     * @param username      the username of the user
+     * @param usertype      the type of the user (customer/employee)
+     * @param buildingPhone the phone number of the building
+     * @param state         the state where the building is located
+     * @param city          the city where the building is located
+     * @param streetAddr1   the first line of the street address
+     * @param streetAddr2   the second line of the street address (if any)
+     */
     public InfoHandler(
         SQLDatabase myDatabase,
         String username,
@@ -66,7 +79,14 @@ public class InfoHandler {
         this.streetAddr1 = streetAddr1;
         this.streetAddr2 = streetAddr2;
     }
-    
+    /**
+     *Paginates an array of objects.
+     * 
+     * @param pageSource 	 the source array to paginate
+     * @param pageNumber  	the page number to retrieve (1-based)
+     * @param itemsPerPage 	the number of items per page
+     * @param page       	 the output array to hold the paginated items
+     */
     
     private void makePage(Object[] pageSource, int pageNumber, int itemsPerPage, Object[] page) {
         if (pageSource == null || pageSource.length == 0) {
@@ -82,25 +102,47 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Gets the product to the entry set
+     * @return a set of products entries
+     */
     public Set<Map.Entry<String, Double>> getProductEntrySet() {
         return products.entrySet();
     }
-    
+    /**
+     * Gets a paginated list of order lines.
+     * 
+     * @param orderLines   the array of order lines to paginate
+     * @param pageNumber   the page number to retrieve (1-based)
+     * @param itemsPerPage the number of items per page
+     * @return an array of order lines for the specified page
+     */
     
     public OrderLine[] getOrderLinePage(OrderLine[] orderLines, int pageNumber, int itemsPerPage) {
         OrderLine[] page = new OrderLine[itemsPerPage];
         makePage(orderLines, pageNumber, itemsPerPage, page);
         return page;
     }
-    
+    /**
+     * Gets a paginated list of orders.
+     * 
+     * @param pageNumber   the page number to retrieve (1-based)
+     * @param itemsPerPage the number of items per page
+     * @return an array of orders for the specified page
+     */
     
     public Order[] getOrderPage(int pageNumber, int itemsPerPage) {
         Order[] page = new Order[itemsPerPage];
         makePage(ordersInProgress, pageNumber, itemsPerPage, page);
         return page;
     }
-    
+    /**
+     * Gets a paginated list of users.
+     * 
+     * @param pageNumber   the page number to retrieve (1-based)
+     * @param itemsPerPage the number of items per page
+     * @return an array of users for the specified page
+     */
     
     public User[] getUserPage(int pageNumber, int itemsPerPage) {
         User[] page = new User[itemsPerPage];
@@ -108,41 +150,75 @@ public class InfoHandler {
         return page;
     }
     
-    
+    /**
+     * Gets the current user's order.
+     * 
+     * @return an ArrayList of current order lines
+     */
     public ArrayList<OrderLine> getMyCurrentOrder() {
         return myCurrentOrder;
     }
     
-    
+    /**
+     * Gets the current user's waiting order.
+     * 
+     * @return an ArrayList of waiting order lines
+     */
     public ArrayList<OrderLine> getMyWaitingOrder() {
         return myWaitingOrder;
     }
     
-    
+    /**
+     * Gets the orders in progress.
+     * 
+     * @return an array of orders in progress
+     */
     public Order[] getOrdersInProgress() {
         return ordersInProgress;
     }
     
-    
+    /**
+     * Gets the list of users.
+     * 
+     * @return an array of users
+     */
     public User[] getUsers() {
         return users;
     }
     
-    
+    /**
+     * Gets the current user's order ID.
+     * 
+     * @return the current order ID
+     */
     public int getMyOrderID() {
         return myOrderID;
     }
-    
+    /**
+     * Gets the current user's waiting order note.
+     * 
+     * @return the waiting order note
+     */
     
     public String getMyWaitingOrderNote() {
         return myWaitingOrderNote;
     }
     
-    
+    /**
+     * Gets the price of a product.
+     * 
+     * @param productName the name of the product
+     * @return the price of the product
+     */
     public double getProductValue(String productName) {
         return products.get(productName);
     }
-    
+    /**
+     * Calculates the total charge of an order.
+     * 
+     * @param chargeSource the source of the order lines to calculate the total charge from
+     * @return the total charge
+     */
     
     public double getTotalCharge(ArrayList<OrderLine> chargeSource) {
         if (myCurrentOrder == null) {
@@ -158,11 +234,21 @@ public class InfoHandler {
         return totalCharge;
     }
     
-    
+    /**
+     * Gets the building information.
+     * 
+     * @return an array of strings containing the building information
+     */
     public String[] getBuildingInfo() {
         return new String[] {buildingPhone, state, city, streetAddr1, streetAddr2};
     }
     
+    /**
+     * Retrieves all building information from the database.
+     * 
+     * @param myDatabase the SQLDatabase instance
+     * @return a TreeMap of building names to their information arrays
+     */
     
     public static TreeMap<String, String[]> getAllBuildingInfo(SQLDatabase myDatabase) {
         try {
@@ -193,12 +279,20 @@ public class InfoHandler {
         return null;
     }
     
-    
+    /**
+     * Gets the username.
+     * 
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
     
-    
+    /**
+     * Sets this building's information based on the new building name.
+     * 
+     * @param newBuildingName the new building name
+     */
     public void setThisBuildingInfo(String newBuildingName) {
         try {
             
@@ -224,7 +318,12 @@ public class InfoHandler {
             JOptionPane.showMessageDialog(null, "Couldn't refresh buildings map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+    /**
+     * Adds the current order for the user to the database.
+     *
+     * @param note The note to add to the order.
+     * @return The order ID if successful, -1 if there is an error.
+     */
     
     public int addUserCurrentOrder(String note) {
         try {
@@ -274,7 +373,11 @@ public class InfoHandler {
         return myOrderID;
     }
     
-    
+    /**
+     * Removes an order from the database.
+     *
+     * @param orderID The ID of the order to be removed.
+     */
     public void removeOrder(int orderID) {
         try {
             
@@ -323,7 +426,11 @@ public class InfoHandler {
         return result;
     }
     
-    
+    /**
+     * Marks an order as completed in the database.
+     *
+     * @param orderID The ID of the order to be marked as completed.
+     */
     public void markOrderCompleted(int orderID) {
         try {
             
@@ -337,7 +444,9 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Refreshes the product map with the latest product information from the database.
+     */
     public void refreshProductMap() {
         try {
             
@@ -360,7 +469,9 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Refreshes the list of orders in progress for the current building from the database.
+     */
     public void refreshOrdersInProgress() {
         try {
             
@@ -411,7 +522,9 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Refreshes the user information for the current building from the database.
+     */
     public void refreshUserInfo() {
         try {
             
@@ -437,7 +550,9 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Refreshes the status of the current user's order from the database.
+     */
     public void refreshOrderStatus() {
         try {
             
@@ -455,7 +570,12 @@ public class InfoHandler {
         }
     }
     
-    
+    /**
+     * Retrieves the user type of a specific user.
+     *
+     * @param username The username of the user whose type is being retrieved.
+     * @return The user type of the specified user, or null if there is an error.
+     */
     public String getUsertype(String username) {
         try {
             
@@ -474,7 +594,14 @@ public class InfoHandler {
         return null;
     }
     
-    
+    /**
+     * Updates the information of a specific user in the database.
+     *
+     * @param username The current username of the user.
+     * @param newUsername The new username of the user.
+     * @param newPassword The new password of the user.
+     * @param newUsertype The new user type of the user (must be either 'customer' or 'employee').
+     */
     public void setUserInfo(String username, String newUsername, String newPassword, String newUsertype) {
         if (!newUsertype.equals("customer") && !newUsertype.equals("employee")) {
             System.out.println(newUsertype + ": " + newUsertype.length());
@@ -498,8 +625,15 @@ public class InfoHandler {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
+    /**
+     * Updates the information of a building in the database.
+     *
+     * @param buildingPhone The new building phone number.
+     * @param state The new state of the building.
+     * @param city The new city of the building.
+     * @param addr1 The new first line of the building's address.
+     * @param addr2 The new second line of the building's address.
+     */
     public void setBuildingInfo(String buildingPhone, String state, String city, String addr1, String addr2) {
         try {
             

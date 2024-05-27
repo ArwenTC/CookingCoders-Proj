@@ -11,8 +11,8 @@ public class ViewOrderPanel extends RPanel {
 	RButton tempButton;
 	
 	/**
-	 * Constructor
-	 */
+     * Constructs a ViewOrderPanel object.
+     */
 	public ViewOrderPanel() {
 		super(new Color(0, 0, 0));
 		

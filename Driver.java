@@ -1,5 +1,8 @@
 
+
 package GroupProject;
+
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -22,8 +25,8 @@ public class Driver {
 	    
 	    RestaurantGUI rgui = null;
 		
-		// Runs the GUI
-	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "placeholder");
+		// Runs the gui
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "password");
 	    
 	    
 	    if (myDatabase.getCon() != null) {
