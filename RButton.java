@@ -7,15 +7,24 @@ import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.GridLayout;
-
+/**
+ * Custom JButton with customizable appearance.
+ */
 public class RButton extends JButton {
 	
 	// Creates button color
 	Color buttonColor = new Color(50, 168, 82);
 	Color outlineColor = new Color(38, 102, 55);
 	Color textColor = new Color(255, 255, 255);
+	/**
+     * Constructs an RButton with the specified text and colors.
+     *
+     * @param text         The text to display on the button.
+     * @param buttonColor  The background color of the button.
+     * @param outlineColor The color of the button outline.
+     * @param textColor    The color of the text on the button.
+     */
 	
-	// Constructor that sets all colors
 	public RButton(String text, Color buttonColor, Color outlineColor, Color textColor) {
 		// Super constructor
 		super(text);
@@ -31,7 +40,13 @@ public class RButton extends JButton {
 		setForeground(textColor);
 	}
 	
-	// Constructor that sets just button color and outline
+	  /**
+     * Constructs an RButton with the specified text, button color, and outline color.
+     *
+     * @param text         The text to display on the button.
+     * @param buttonColor  The background color of the button.
+     * @param outlineColor The color of the button outline.
+     */
 	public RButton(String text, Color buttonColor, Color outlineColor) {
 		// Super constructor
 		super(text);
@@ -46,7 +61,11 @@ public class RButton extends JButton {
 		setForeground(textColor);
 	}
 
-	// Constructor that uses the default colors
+	/**
+     * Constructs an RButton with the specified text using default colors.
+     *
+     * @param name The text to display on the button.
+     */
 	public RButton(String name) {
 		// Super constructor
 		super(name);
