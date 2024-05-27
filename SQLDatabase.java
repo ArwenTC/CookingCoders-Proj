@@ -36,10 +36,11 @@ public class SQLDatabase {
 		try {
 			// Attempts to connect to the database
 			this.con = DriverManager.getConnection(this.databaseURL, this.username, this.password);
-			System.out.println("Successfully connected database.");
+			JOptionPane.showMessageDialog(null, "Successfully connected to the database.", "Connection Success", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
 			// Prints out if the database could not connect
-			System.out.println("Error connecting to database: " + e);
+			JOptionPane.showMessageDialog(null, "Error connecting to database: " + e, "Connection Error", JOptionPane.ERROR_MESSAGE);
+
 		}
 	}
 	
@@ -150,7 +151,7 @@ public class SQLDatabase {
 			}
 			
 		} catch (Exception e) {
-		    System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(null, "Error processing elements: " + e.getMessage(), "Processing Error", JOptionPane.ERROR_MESSAGE);
 			// Array accessing errors
 			return 1;
 		}
@@ -162,11 +163,12 @@ public class SQLDatabase {
 			Statement statement = con.createStatement();
 			
 			// Executes the deletion
-			System.out.println(sqlCommand);
+			
 			statement.execute(sqlCommand);
 			
 		} catch (SQLException e) {
-		    System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(null, "Error adding item to database: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+			
 			// Error upon failure
 			return 2;
 		}
@@ -249,6 +251,7 @@ public class SQLDatabase {
 				}
 			}
 		} catch (Exception e) {
+			 JOptionPane.showMessageDialog(null, "Error processing update elements: " + e.getMessage(), "Processing Error", JOptionPane.ERROR_MESSAGE);
 			// Array accessing errors
 			return 1;
 		}
@@ -268,6 +271,7 @@ public class SQLDatabase {
 			statement.execute(sqlCommand);
 			
 		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error updating item in database: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
 			// Error upon failure
 			return 2;
 		}
@@ -298,6 +302,7 @@ public class SQLDatabase {
             
             exists = rs.next() ? 1 : 0;
         } catch (SQLException e) {
+        	JOptionPane.showMessageDialog(null, "Error checking value existence: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
             return 2;
         }
         
@@ -316,6 +321,7 @@ public class SQLDatabase {
 			Statement statement = con.createStatement();
 			statement.execute(command);
 		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Error executing command: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
 			// SQL Error
 			return 1;
 		}
@@ -337,7 +343,7 @@ public class SQLDatabase {
 			return statement.executeQuery(command);
 		}
 		catch (SQLException e) {
-			System.out.println("Error accessing database: " + e);
+			JOptionPane.showMessageDialog(null, "Error accessing database: " + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 	}
