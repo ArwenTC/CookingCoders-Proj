@@ -1,16 +1,21 @@
 package GroupProject;
-
+/**
+ * this class represents a single line item in an order, consisting of a product and its quantity.
+ * 
+ *
+ */
 public class OrderLine {
 	
 	private String productName;
 	private int quantity;
 	
 	/**
-	 * Constructor
-	 * @param orderID The order's ID, or null if no order ID has been assigned yet
-	 * @param product
-	 * @param quantity
-	 */
+	  * Constructs an OrderLine with the specified product name and quantity.
+     *
+     * @param productName The name of the product.
+     * @param quantity The quantity of the product in the order line.
+     */
+	 
 	public OrderLine(String productName, int quantity) { 
 		this.productName = productName;
 		this.quantity = quantity;
@@ -30,27 +35,30 @@ public class OrderLine {
 	}
 	
 	
-	/**
-	 * Getter for product
-	 * @return product
-	 */
+	 /**
+     * Returns the name of the product in this order line.
+     *
+     * @return The product name.
+     */
 	public String getProductName() {
 		return this.productName;
 	}
 	
-	/**
-	 * Getter for quantity
-	 * @return quantity
-	 */
+	 /**
+     * Returns the quantity of the product in this order line.
+     *
+     * @return The quantity.
+     */
 	public int getQuantity() {
 		return this.quantity;
 	}
 	
 	
-	/**
-	 * Setter for quantity
-	 * @param newQuantity
-	 */
+	 /**
+     * Sets the quantity of the product in this order line.
+     *
+     * @param newQuantity The new quantity to set.
+     */
 	public void setQuantity(int newQuantity) {
 	    this.quantity = newQuantity;
 	}
