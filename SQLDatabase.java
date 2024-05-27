@@ -4,6 +4,8 @@ package GroupProject;
 import java.sql.*;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 // TODO: use char arrays instead of strings so the SQL queries can be overwritten.
 // The above TODO probably isn't necessary since this isn't a security class.
 
@@ -11,12 +13,11 @@ public class SQLDatabase {
 	
 	// Database info to be used when connecting / getting data
 	private String databaseURL;
-	private String tableName;
 	private String username;
 	private String password;
 	
 	// SQL Connection
-	public Connection con;
+	private Connection con;
 	
 	/**
 	 * Constructor method
@@ -39,27 +40,42 @@ public class SQLDatabase {
 			// Prints out if the database could not connect
 			System.out.println("Error connecting to database: " + e);
 		}
-		
 	}
+	
+	
+	public Connection getCon() {
+	    return con;
+	}
+	
 	
 	/**
 	 * Returns the data set inside a given table.
 	 * @param table
+	 * @param condition
 	 * @return Result set containing info
 	 * @return null upon error
 	 */
-	public ResultSet getDatabaseInfo(String table) {
+	public ResultSet getDatabaseInfo(String table, String condition, String orderBy) {
+	    if (condition == null || condition.isEmpty()) {
+	        condition = "TRUE";
+	    }
+	    
+	    if (orderBy == null || orderBy.isEmpty()) {
+	        orderBy = "";
+	    } else {
+	        orderBy = " ORDER BY " + orderBy;
+	    }
 		
 		try {
 			// Creates selection statement
-			String sqlCommand = "SELECT * FROM `" + table + "`";
+			String sqlCommand = "SELECT * FROM `" + table + "`" + " WHERE " + condition + orderBy + ";";
 			Statement statement = con.createStatement();
 			
 			// Returns the set of results
 			return statement.executeQuery(sqlCommand);
 		}
 		catch (SQLException e) {
-			System.out.println("Error accessing database: " + e);
+		    JOptionPane.showMessageDialog(null, "Error accessing database: " + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
@@ -312,15 +328,19 @@ public class SQLDatabase {
 		}
 	}
 	
-	public boolean verifyLogin(String Username, char[] Password) throws SQLException {
+	public boolean verifyLogin(String Username, String Password) {
         String query = "SELECT password FROM USER WHERE Username = ? AND Password = ?";
         try (PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(1, Username);
-            pst.setString(2, new String(Password));
+            pst.setString(2, Password);
             try (ResultSet rs = pst.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "error verifying user password: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        return false;
     }
 	
 	public String getUserType(String Username) {
@@ -332,16 +352,10 @@ public class SQLDatabase {
 					return rs.getString("Usertype");
 				}
 			}
-		}catch (SQLException e) {
-			System.out.println("Error retrieving user type: "  + e.getMessage());
+		} catch (SQLException e) {
+		    JOptionPane.showMessageDialog(null, "Error retrieving user type: "  + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 	}
-	
-	
-
-	
-
-	
 	
 }

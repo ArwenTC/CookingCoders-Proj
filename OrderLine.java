@@ -2,20 +2,17 @@ package GroupProject;
 
 public class OrderLine {
 	
-	// Order item values
-	private int orderID;
-	private Item product;
+	private String productName;
 	private int quantity;
 	
 	/**
 	 * Constructor
-	 * @param orderID
+	 * @param orderID The order's ID, or null if no order ID has been assigned yet
 	 * @param product
 	 * @param quantity
 	 */
-	public OrderLine(int orderID, Item product, int quantity) { 
-		this.orderID = orderID;
-		this.product = product;
+	public OrderLine(String productName, int quantity) { 
+		this.productName = productName;
 		this.quantity = quantity;
 
 		// PSEUDO - FROM SQL DATABASE
@@ -33,32 +30,29 @@ public class OrderLine {
 	}
 	
 	
-	//
-	// GETTER METHODS
-	//
-	/**
-	 * Getter for order id
-	 * @return orderID
-	 */
-	public int getOrderID() {
-		return this.orderID;
-	}
-	
 	/**
 	 * Getter for product
 	 * @return product
 	 */
-	public Item product() {
-		return this.product;
+	public String getProductName() {
+		return this.productName;
 	}
 	
 	/**
 	 * Getter for quantity
 	 * @return quantity
 	 */
-	public int quantity() {
+	public int getQuantity() {
 		return this.quantity;
 	}
 	
+	
+	/**
+	 * Setter for quantity
+	 * @param newQuantity
+	 */
+	public void setQuantity(int newQuantity) {
+	    this.quantity = newQuantity;
+	}
 	
 }

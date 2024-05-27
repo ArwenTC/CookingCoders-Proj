@@ -1,6 +1,8 @@
 
 package GroupProject;
 
+import javax.swing.JOptionPane;
+
 public class Driver {
 	
 	/**
@@ -17,11 +19,19 @@ public class Driver {
 	 * @return pass/fail 0 = pass, >0 = error code
 	 */
 	public int Run() {
+	    
+	    RestaurantGUI rgui = null;
 		
-		// Runs the gui
+		// Runs the GUI
 	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "placeholder");
 	    
-		RestaurantGUI rgui = new RestaurantGUI(myDatabase);
+	    
+	    if (myDatabase.getCon() != null) {
+	        rgui = new RestaurantGUI(myDatabase);
+	    } else {
+	        JOptionPane.showMessageDialog(null, "Couldn't connect to database", "Database Connection Error", JOptionPane.ERROR_MESSAGE);
+	        return 1;
+	    }
 		
 		// Pass error code
 		return 0;
