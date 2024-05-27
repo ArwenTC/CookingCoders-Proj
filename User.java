@@ -7,6 +7,7 @@ public class User {
 
 	// User fields
 	private String username;
+	private String password;
 	private String usertype;
 	
 	/**
@@ -14,8 +15,9 @@ public class User {
 	 * @param username
 	 * @param usertype
 	 */
-	public User(String userName, String usertype) {
+	public User(String userName, String password, String usertype) {
 		this.username = userName;
+		this.password = password;
 		this.usertype = usertype;
 	}
 	
@@ -32,6 +34,14 @@ public class User {
 	 */
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public String getPassword() {
+	    return password;
+	}
+	
+	public void setPassword(String password) {
+	    this.password = password;
 	}
 	
 	/**

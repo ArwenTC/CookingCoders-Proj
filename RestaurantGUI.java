@@ -34,7 +34,7 @@ public class RestaurantGUI extends JFrame {
 	// program view types
 	private final int CUSTOMER_VIEW_TYPE = 0;
 	private final int EMPLOYEE_VIEW_TYPE = 1;
-	private final int MANAGER_VIEW_TYPE = 2;
+	private final int ADMIN_VIEW_TYPE = 2;
 	
 	// Panels that will be swapped depending what the user selects
 	JPanel masterP;
@@ -43,6 +43,7 @@ public class RestaurantGUI extends JFrame {
 	JPanel employeeViewOrderP;
 	JPanel orderListP;
 	JPanel manageUsersP;
+	JPanel buildingP;
 	JPanel settingsP;
 	
 	// Menu bar that allows user to swap between each view
@@ -51,7 +52,8 @@ public class RestaurantGUI extends JFrame {
 	JMenuItem viewOrderB;
 	JMenuItem createOrderB;
 	JMenuItem orderListB;
-	JMenuItem manageB;
+	JMenuItem manageUsersB;
+	JMenuItem buildingB;
 	
 	SQLDatabase myDatabase;
 	
@@ -64,9 +66,6 @@ public class RestaurantGUI extends JFrame {
     JLabel lblBuildingName;
     JTextField buildingNameField;
     
-    private JTextField usernameField;
-    private JTextField passwordField;
-    private JTextField textField;
     private JScrollPane scrollPaneMenu;
     private JList<String> menuList;
     private JLabel lblCustomerTotal;
@@ -114,6 +113,42 @@ public class RestaurantGUI extends JFrame {
     private JLabel lblOrder3;
     private JLabel lblOrder4;
     private JLabel lblOrder5;
+    private JComboBox<String> comboBoxUsertype1;
+    private JComboBox<String> comboBoxUsertype2;
+    private JComboBox<String> comboBoxUsertype3;
+    private JComboBox<String> comboBoxUsertype4;
+    private JComboBox<String> comboBoxUsertype5;
+    private JButton btnEditUser1;
+    private JButton btnEditUser2;
+    private JButton btnEditUser3;
+    private JButton btnEditUser4;
+    private JButton btnEditUser5;
+    private JButton btnDeleteUser1;
+    private JButton btnDeleteUser2;
+    private JButton btnDeleteUser3;
+    private JButton btnDeleteUser4;
+    private JButton btnDeleteUser5;
+    
+    private JLabel lblusername1;
+    private JTextField txtUsername1;
+    private JLabel lblPassword1;
+    private JTextField txtPassword1;
+    private JLabel lblusername2;
+    private JTextField txtUsername2;
+    private JLabel lblPassword2;
+    private JTextField txtPassword2;
+    private JLabel lblusername3;
+    private JTextField txtUsername3;
+    private JLabel lblPassword3;
+    private JTextField txtPassword3;
+    private JLabel lblusername4;
+    private JTextField txtUsername4;
+    private JLabel lblPassword4;
+    private JTextField txtPassword4;
+    private JLabel lblusername5;
+    private JTextField txtUsername5;
+    private JLabel lblPassword5;
+    private JTextField txtPassword5;
     
     private JLabel[] itemLabels;
     private JButton[] itemClearButtons;
@@ -121,6 +156,13 @@ public class RestaurantGUI extends JFrame {
     private JButton[] markCompletedButtons;
     private JLabel[] orderLabels;
     private JLabel[] nameLabels;
+    private JButton[] editUserButtons;
+    private JButton[] deleteUserButtons;
+    private JLabel[] usernameLabels;
+    private JLabel[] passwordLabels;
+    private JTextField[] usernameTxtFields;
+    private JTextField[] passwordTxtFields;
+    private ArrayList<JComboBox<String>> usertypeComboBoxes;
 
 	/**
 	 * Creates the RestaurantGUI
@@ -173,7 +215,7 @@ public class RestaurantGUI extends JFrame {
 		switch (programView) { 
 			case CUSTOMER_VIEW_TYPE: setCustomerView(); break;
 			case EMPLOYEE_VIEW_TYPE: setEmployeeView(); break;
-			case MANAGER_VIEW_TYPE:  setManagerView();  break;
+			case ADMIN_VIEW_TYPE:    setAdminView();    break;
 		}
 		
 		setVisible(true);
@@ -191,6 +233,7 @@ public class RestaurantGUI extends JFrame {
 		employeeViewOrderP = new RPanel();
 		orderListP = new RPanel();
 		manageUsersP = new RPanel();
+		buildingP = new RPanel();
 		settingsP = new RPanel();
 		
 		// Menu bar that allows user to swap between each view
@@ -202,8 +245,9 @@ public class RestaurantGUI extends JFrame {
 		viewOrderB = new RMenuItem("View Order");
 		createOrderB = new RMenuItem("Create Order");
 		orderListB = new RMenuItem("Order List");
-		manageB = new RMenuItem("Manage");
-		manageB.add(new PopupMenu("message"));
+		manageUsersB = new RMenuItem("Manage Users");
+		buildingB = new RMenuItem("Building");
+		manageUsersB.add(new PopupMenu("message"));
 		
 		// Adds mouse listeners
 		viewOrderB.addMouseListener(new MouseAdapter() {
@@ -224,13 +268,101 @@ public class RestaurantGUI extends JFrame {
                 orderListAction();
             }
         });
-		manageB.addMouseListener(new MouseAdapter() {
+		manageUsersB.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent m) {
-                manageAction();
+                manageUsersAction();
+            }
+        });
+		buildingB.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent m) {
+                buildingAction();
             }
         });
 		
+		btnPageBack = new JButton("<");
+        btnPageBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String pageNumberTxt = lblPageNumber.getText();
+                int slashIndex = pageNumberTxt.indexOf('/');
+                String currentPageString = pageNumberTxt.substring(0, slashIndex);
+                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
+                
+                int currentPage = Integer.valueOf(currentPageString);
+                int totalPages = Integer.valueOf(totalPagesString);
+                
+                if (currentPage == 1) {
+                    return;
+                }
+                
+                currentPage -= 1;
+                
+                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+                    ArrayList<OrderLine> myOrder;
+                    
+                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
+                        myOrder = infoHandler.getMyCurrentOrder();
+                    } else {
+                        myOrder = infoHandler.getMyWaitingOrder();
+                    }
+                    
+                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
+                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
+                } else if (pagetype == ORDERS_PAGE_TYPE) {
+                    drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
+                } else if (pagetype == USERS_PAGE_TYPE) {
+                    drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
+                }
+                
+                lblPageNumber.setText(currentPage + "/" + totalPages);
+            }
+        });
+        btnPageBack.setBounds(223, 280, 47, 23);
+        
+        btnPageForward = new JButton(">");
+        btnPageForward.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String pageNumberTxt = lblPageNumber.getText();
+                int slashIndex = pageNumberTxt.indexOf('/');
+                String currentPageString = pageNumberTxt.substring(0, slashIndex);
+                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
+                
+                int currentPage = Integer.valueOf(currentPageString);
+                int totalPages = Integer.valueOf(totalPagesString);
+                
+                if (currentPage == totalPages) {
+                    return;
+                }
+                
+                currentPage += 1;
+                
+                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+                    ArrayList<OrderLine> myOrder;
+                    
+                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
+                        myOrder = infoHandler.getMyCurrentOrder();
+                    } else {
+                        myOrder = infoHandler.getMyWaitingOrder();
+                    }
+                    
+                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
+                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
+                } else if (pagetype == ORDERS_PAGE_TYPE) {
+                    drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
+                } else if (pagetype == USERS_PAGE_TYPE) {
+                    drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
+                }
+                
+                lblPageNumber.setText(currentPage + "/" + totalPages);
+            }
+        });
+        btnPageForward.setBounds(309, 280, 47, 23);
+        
+        lblPageNumber = new JLabel("1/1");
+        lblPageNumber.setBounds(266, 284, 47, 14);
+        lblPageNumber.setHorizontalAlignment(SwingConstants.CENTER);
+        
 		createOrderP.setLayout(null);
         viewOrderP.setLayout(null);
         
@@ -267,6 +399,12 @@ public class RestaurantGUI extends JFrame {
                 
                 if (txtCurrentOrderNote.getText().length() >= 255) {
                     JOptionPane.showMessageDialog(null, "user note must be less than 255 characters", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                JFrame confirmSubmit = new JFrame();
+                if (JOptionPane.showConfirmDialog(confirmSubmit, "Confirm Order Submission", "Confirm Order", JOptionPane.YES_NO_OPTION) 
+                        != JOptionPane.YES_OPTION) {
                     return;
                 }
                 
@@ -429,89 +567,6 @@ public class RestaurantGUI extends JFrame {
         lblOrderInProgress = new JLabel("Order In Progress");
         lblOrderInProgress.setBounds(405, 300, 135, 14);
         createOrderP.add(lblOrderInProgress);
-        
-		
-		btnPageBack = new JButton("<");
-        btnPageBack.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String pageNumberTxt = lblPageNumber.getText();
-                int slashIndex = pageNumberTxt.indexOf('/');
-                String currentPageString = pageNumberTxt.substring(0, slashIndex);
-                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
-                
-                int currentPage = Integer.valueOf(currentPageString);
-                int totalPages = Integer.valueOf(totalPagesString);
-                
-                if (currentPage == 1) {
-                    return;
-                }
-                
-                currentPage -= 1;
-                
-                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-                    ArrayList<OrderLine> myOrder;
-                    
-                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                        myOrder = infoHandler.getMyCurrentOrder();
-                    } else {
-                        myOrder = infoHandler.getMyWaitingOrder();
-                    }
-                    
-                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
-                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
-                } else if (pagetype == ORDERS_PAGE_TYPE) {
-                    // placeholder
-                } else if (pagetype == USERS_PAGE_TYPE) {
-                    // placeholder
-                }
-                
-                lblPageNumber.setText(currentPage + "/" + totalPages);
-            }
-        });
-        btnPageBack.setBounds(223, 280, 47, 23);
-        
-        btnPageForward = new JButton(">");
-        btnPageForward.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String pageNumberTxt = lblPageNumber.getText();
-                int slashIndex = pageNumberTxt.indexOf('/');
-                String currentPageString = pageNumberTxt.substring(0, slashIndex);
-                String totalPagesString = pageNumberTxt.substring(slashIndex + 1);
-                
-                int currentPage = Integer.valueOf(currentPageString);
-                int totalPages = Integer.valueOf(totalPagesString);
-                
-                if (currentPage == totalPages) {
-                    return;
-                }
-                
-                currentPage += 1;
-                
-                if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-                    ArrayList<OrderLine> myOrder;
-                    
-                    if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                        myOrder = infoHandler.getMyCurrentOrder();
-                    } else {
-                        myOrder = infoHandler.getMyWaitingOrder();
-                    }
-                    
-                    OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
-                    drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
-                } else if (pagetype == ORDERS_PAGE_TYPE) {
-                    drawOrderPage(infoHandler.getOrderPage(currentPage, ORDERS_PER_PAGE));
-                } else if (pagetype == USERS_PAGE_TYPE) {
-                    // placeholder
-                }
-                
-                lblPageNumber.setText(currentPage + "/" + totalPages);
-            }
-        });
-        btnPageForward.setBounds(309, 280, 47, 23);
-        
-        lblPageNumber = new JLabel("1/1");
-        lblPageNumber.setBounds(266, 284, 47, 14);
-        lblPageNumber.setHorizontalAlignment(SwingConstants.CENTER);
 		
         orderListP.setLayout(null);
         lblWaitingOrders = new JLabel("Waiting Orders");
@@ -653,11 +708,237 @@ public class RestaurantGUI extends JFrame {
         orderLabels = new JLabel[] {lblOrder1, lblOrder2, lblOrder3, lblOrder4, lblOrder5};
         nameLabels = new JLabel[] {lblName1, lblName2, lblName3, lblName4, lblName5};
         
+manageUsersP.setLayout(null);
+        
+        JLabel lblUsers = new JLabel("Users");
+        lblUsers.setBounds(270, 15, 46, 14);
+        manageUsersP.add(lblUsers);
+        
+        btnEditUser1 = new JButton("Save Edits");
+        btnEditUser1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editUser(0);
+            }
+        });
+        btnEditUser1.setBounds(124, 55, 97, 23);
+        manageUsersP.add(btnEditUser1);
+        
+        btnEditUser2 = new JButton("Save Edits");
+        btnEditUser2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editUser(1);
+            }
+        });
+        btnEditUser2.setBounds(124, 110, 97, 23);
+        manageUsersP.add(btnEditUser2);
+        
+        btnEditUser3 = new JButton("Save Edits");
+        btnEditUser3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editUser(2);
+            }
+        });
+        btnEditUser3.setBounds(124, 165, 97, 23);
+        manageUsersP.add(btnEditUser3);
+        
+        btnEditUser4 = new JButton("Save Edits");
+        btnEditUser4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editUser(3);
+            }
+        });
+        btnEditUser4.setBounds(124, 220, 97, 23);
+        manageUsersP.add(btnEditUser4);
+        
+        btnEditUser5 = new JButton("Save Edits");
+        btnEditUser5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editUser(4);
+            }
+        });
+        btnEditUser5.setBounds(124, 275, 97, 23);
+        manageUsersP.add(btnEditUser5);
+        
+        btnDeleteUser1 = new JButton("Delete User");
+        btnDeleteUser1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteUser(0);
+            }
+        });
+        btnDeleteUser1.setBounds(10, 55, 104, 23);
+        manageUsersP.add(btnDeleteUser1);
+        
+        btnDeleteUser2 = new JButton("Delete User");
+        btnDeleteUser2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteUser(1);
+            }
+        });
+        btnDeleteUser2.setBounds(10, 110, 104, 23);
+        manageUsersP.add(btnDeleteUser2);
+        
+        btnDeleteUser3 = new JButton("Delete User");
+        btnDeleteUser3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteUser(2);
+            }
+        });
+        btnDeleteUser3.setBounds(10, 165, 104, 23);
+        manageUsersP.add(btnDeleteUser3);
+        
+        btnDeleteUser4 = new JButton("Delete User");
+        btnDeleteUser4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteUser(3);
+            }
+        });
+        btnDeleteUser4.setBounds(10, 220, 104, 23);
+        manageUsersP.add(btnDeleteUser4);
+        
+        btnDeleteUser5 = new JButton("Delete User");
+        btnDeleteUser5.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteUser(4);
+            }
+        });
+        btnDeleteUser5.setBounds(10, 275, 104, 23);
+        manageUsersP.add(btnDeleteUser5);
+        
+        String[] comboBoxOptions = new String[] {"customer", "employee"};
+        
+        comboBoxUsertype1 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype1.setBounds(231, 55, 85, 22);
+        comboBoxUsertype1.setSelectedItem("customer");
+        manageUsersP.add(comboBoxUsertype1);
+        
+        comboBoxUsertype2 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype2.setBounds(231, 110, 85, 22);
+        comboBoxUsertype2.setSelectedItem("customer");
+        manageUsersP.add(comboBoxUsertype2);
+        
+        comboBoxUsertype3 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype3.setBounds(231, 165, 85, 22);
+        comboBoxUsertype3.setSelectedItem("customer");
+        manageUsersP.add(comboBoxUsertype3);
+        
+        comboBoxUsertype4 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype4.setBounds(231, 220, 85, 22);
+        comboBoxUsertype4.setSelectedItem("customer");
+        manageUsersP.add(comboBoxUsertype4);
+        
+        comboBoxUsertype5 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype5.setBounds(231, 275, 85, 22);
+        comboBoxUsertype5.setSelectedItem("customer");
+        manageUsersP.add(comboBoxUsertype5);
+        
+        lblusername1 = new JLabel("Username:");
+        lblusername1.setBounds(326, 49, 69, 14);
+        manageUsersP.add(lblusername1);
+        
+        lblPassword1 = new JLabel("Password:");
+        lblPassword1.setBounds(326, 71, 70, 14);
+        manageUsersP.add(lblPassword1);
+        
+        txtUsername1 = new JTextField();
+        txtUsername1.setBounds(390, 46, 184, 20);
+        manageUsersP.add(txtUsername1);
+        txtUsername1.setColumns(10);
+        
+        txtPassword1 = new JTextField();
+        txtPassword1.setBounds(390, 68, 184, 20);
+        manageUsersP.add(txtPassword1);
+        txtPassword1.setColumns(10);
+        
+        lblusername2 = new JLabel("Username:");
+        lblusername2.setBounds(326, 104, 69, 14);
+        manageUsersP.add(lblusername2);
+        
+        txtUsername2 = new JTextField();
+        txtUsername2.setColumns(10);
+        txtUsername2.setBounds(390, 101, 184, 20);
+        manageUsersP.add(txtUsername2);
+        
+        lblPassword2 = new JLabel("Password:");
+        lblPassword2.setBounds(326, 126, 70, 14);
+        manageUsersP.add(lblPassword2);
+        
+        txtPassword2 = new JTextField();
+        txtPassword2.setColumns(10);
+        txtPassword2.setBounds(390, 123, 184, 20);
+        manageUsersP.add(txtPassword2);
+        
+        lblusername3 = new JLabel("Username:");
+        lblusername3.setBounds(326, 159, 69, 14);
+        manageUsersP.add(lblusername3);
+        
+        txtUsername3 = new JTextField();
+        txtUsername3.setColumns(10);
+        txtUsername3.setBounds(390, 156, 184, 20);
+        manageUsersP.add(txtUsername3);
+        
+        lblPassword3 = new JLabel("Password:");
+        lblPassword3.setBounds(326, 181, 70, 14);
+        manageUsersP.add(lblPassword3);
+        
+        txtPassword3 = new JTextField();
+        txtPassword3.setColumns(10);
+        txtPassword3.setBounds(390, 178, 184, 20);
+        manageUsersP.add(txtPassword3);
+        
+        lblusername4 = new JLabel("Username:");
+        lblusername4.setBounds(326, 214, 69, 14);
+        manageUsersP.add(lblusername4);
+        
+        txtUsername4 = new JTextField();
+        txtUsername4.setColumns(10);
+        txtUsername4.setBounds(390, 211, 184, 20);
+        manageUsersP.add(txtUsername4);
+        
+        lblPassword4 = new JLabel("Password:");
+        lblPassword4.setBounds(326, 236, 70, 14);
+        manageUsersP.add(lblPassword4);
+        
+        txtPassword4 = new JTextField();
+        txtPassword4.setColumns(10);
+        txtPassword4.setBounds(390, 233, 184, 20);
+        manageUsersP.add(txtPassword4);
+        
+        lblusername5 = new JLabel("Username:");
+        lblusername5.setBounds(326, 269, 69, 14);
+        manageUsersP.add(lblusername5);
+        
+        txtUsername5 = new JTextField();
+        txtUsername5.setColumns(10);
+        txtUsername5.setBounds(390, 266, 184, 20);
+        manageUsersP.add(txtUsername5);
+        
+        lblPassword5 = new JLabel("Password:");
+        lblPassword5.setBounds(326, 291, 70, 14);
+        manageUsersP.add(lblPassword5);
+        
+        txtPassword5 = new JTextField();
+        txtPassword5.setColumns(10);
+        txtPassword5.setBounds(390, 288, 184, 20);
+        manageUsersP.add(txtPassword5);
+        
+        usernameLabels = new JLabel[] {lblusername1, lblusername2, lblusername3, lblusername4, lblusername5};
+        passwordLabels = new JLabel[] {lblPassword1, lblPassword2, lblPassword3, lblPassword4, lblPassword5};
+        usernameTxtFields = new JTextField[] {txtUsername1, txtUsername2, txtUsername3, txtUsername4, txtUsername5};
+        passwordTxtFields = new JTextField[] {txtPassword1, txtPassword2, txtPassword3, txtPassword4, txtPassword5};
+        editUserButtons = new JButton[] {btnEditUser1, btnEditUser2, btnEditUser3, btnEditUser4, btnEditUser5};
+        deleteUserButtons = new JButton[] {btnDeleteUser1, btnDeleteUser2, btnDeleteUser3, btnDeleteUser4, btnDeleteUser5};
+        usertypeComboBoxes = new ArrayList<JComboBox<String>>();
+        usertypeComboBoxes.add(comboBoxUsertype1);
+        usertypeComboBoxes.add(comboBoxUsertype2);
+        usertypeComboBoxes.add(comboBoxUsertype3);
+        usertypeComboBoxes.add(comboBoxUsertype4);
+        usertypeComboBoxes.add(comboBoxUsertype5);
+        
 	}
 	
 	
 	public void drawOrderLinePage(OrderLine[] orderLinePage) {
-	    for (int i = 0; i < itemLabels.length; i++) {
+	    for (int i = 0; i < ORDERLINES_PER_PAGE; i++) {
 	        itemLabels[i].setVisible(false);
 	        itemClearButtons[i].setVisible(false);
 	    }
@@ -672,10 +953,9 @@ public class RestaurantGUI extends JFrame {
 	
 	
 	public void drawOrderPage(Order[] orderPage) {
-	    for (int i = 0; i < orderLabels.length; i++) {
+	    for (int i = 0; i < ORDERS_PER_PAGE; i++) {
 	        viewOrderButtons[i].setVisible(false);
             markCompletedButtons[i].setVisible(false);
-	        
 	        orderLabels[i].setVisible(false);
             nameLabels[i].setVisible(false);
         }
@@ -688,6 +968,33 @@ public class RestaurantGUI extends JFrame {
             nameLabels[i].setText("name: " + orderPage[i].getCustomerUsername());
             orderLabels[i].setVisible(true);
             nameLabels[i].setVisible(true);
+        }
+	}
+	
+	
+	public void drawUserPage(User[] userPage) {
+	    for (int i = 0; i < USERS_PER_PAGE; i++) {
+	        usernameLabels[i].setVisible(false);
+	        passwordLabels[i].setVisible(false);
+	        usertypeComboBoxes.get(i).setVisible(false);
+	        usernameTxtFields[i].setVisible(false);
+	        passwordTxtFields[i].setVisible(false);
+	        editUserButtons[i].setVisible(false);
+	        deleteUserButtons[i].setVisible(false);
+        }
+	    
+	    for (int i = 0; i < userPage.length && userPage[i] != null; i++) {
+	        usernameLabels[i].setVisible(true);
+	        passwordLabels[i].setVisible(true);
+	        editUserButtons[i].setVisible(true);
+            deleteUserButtons[i].setVisible(true);
+	        
+	        usertypeComboBoxes.get(i).setSelectedItem(userPage[i].getUsertype());
+	        usernameTxtFields[i].setText(userPage[i].getUsername());
+	        passwordTxtFields[i].setText(userPage[i].getPassword());
+	        usertypeComboBoxes.get(i).setVisible(true);
+            usernameTxtFields[i].setVisible(true);
+            passwordTxtFields[i].setVisible(true);
         }
 	}
 	
@@ -711,6 +1018,12 @@ public class RestaurantGUI extends JFrame {
 	
 	
 	public void markOrderCompleted(int idx) {
+	    JFrame confirmCompleted = new JFrame();
+        if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm Order Completion", "Confirm Completion", JOptionPane.YES_NO_OPTION) 
+                != JOptionPane.YES_OPTION) {
+            return;
+        }
+	    
 	    String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
@@ -770,7 +1083,76 @@ public class RestaurantGUI extends JFrame {
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
 	}
 	
+	
+	public void editUser(int idx) {
+        String pageNumberTxt = lblPageNumber.getText();
+        int slashIndex = pageNumberTxt.indexOf('/');
+        String currentPageString = pageNumberTxt.substring(0, slashIndex);
+        
+        int currentPage = Integer.valueOf(currentPageString);
+        
+        User userToEdit = infoHandler.getUsers()[((currentPage - 1) * USERS_PER_PAGE) + idx];
+        
+        String oldUsername = userToEdit.getUsername();
 
+        String newUsername = usernameTxtFields[idx].getText();
+        String newPassword = passwordTxtFields[idx].getText();
+        String newUsertype = (String)usertypeComboBoxes.get(idx).getSelectedItem();
+        
+        infoHandler.setUserInfo(oldUsername, newUsername, newPassword, newUsertype);
+        
+        infoHandler.refreshUserInfo();
+        
+        JOptionPane.showMessageDialog(null, "User Information Edited", "User Edited", JOptionPane.INFORMATION_MESSAGE);
+        
+        // do this in case orders were deleted since last refresh
+        int howManyUsers = infoHandler.getUsers().length;
+        int totalPages = (howManyUsers / USERS_PER_PAGE);
+        if (howManyUsers % USERS_PER_PAGE != 0 || howManyUsers == 0) {
+            totalPages += 1;
+        }
+        if (currentPage > totalPages) {
+            currentPage -= 1;
+        }
+        lblPageNumber.setText(currentPage + "/" + totalPages);
+        drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
+    }
+	
+	
+	public void deleteUser(int idx) {
+	    JFrame confirmCompleted = new JFrame();
+        if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm User Deletion", "Confirm Delete User", JOptionPane.YES_NO_OPTION) 
+                != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        String pageNumberTxt = lblPageNumber.getText();
+        int slashIndex = pageNumberTxt.indexOf('/');
+        String currentPageString = pageNumberTxt.substring(0, slashIndex);
+        
+        int currentPage = Integer.valueOf(currentPageString);
+        
+        User userToDelete = infoHandler.getUsers()[((currentPage - 1) * USERS_PER_PAGE) + idx];
+        
+        String username = userToDelete.getUsername();
+        
+        myDatabase.removeItem("user", "username", username);
+        
+        infoHandler.refreshUserInfo();
+        
+        int howManyUsers = infoHandler.getUsers().length;
+        int totalPages = (howManyUsers / USERS_PER_PAGE);
+        if (howManyUsers % USERS_PER_PAGE != 0 || howManyUsers == 0) {
+            totalPages += 1;
+        }
+        if (currentPage > totalPages) {
+            currentPage -= 1;
+        }
+        lblPageNumber.setText(currentPage + "/" + totalPages);
+        drawUserPage(infoHandler.getUserPage(currentPage, USERS_PER_PAGE));
+	}
+	
+	
 	/**
 	 * Sets the viewable buttons by the user as a customer
 	 */
@@ -800,9 +1182,9 @@ public class RestaurantGUI extends JFrame {
 	}
 
 	/**
-	 * Sets the viewable buttons by the user as a manager
+	 * Sets the viewable buttons by the user as an admin
 	 */
-	public void setManagerView() {
+	public void setAdminView() {
 		// Removes all items from the menu
 	    removeAllButtons();
 		
@@ -810,7 +1192,8 @@ public class RestaurantGUI extends JFrame {
 		//menu.add(viewOrderB);
 		menu.add(orderListB);
 		menu.add(createOrderB);
-		menu.add(manageB);
+		menu.add(manageUsersB);
+		menu.add(buildingB);
 	}
 	
 	
@@ -912,7 +1295,7 @@ public class RestaurantGUI extends JFrame {
         setupOrderViewPage(
             infoHandler.getMyWaitingOrder(),
             infoHandler.getMyOrderID(),
-            infoHandler.username,
+            infoHandler.getUsername(),
             infoHandler.getMyWaitingOrderNote()
         );
         
@@ -948,7 +1331,7 @@ public class RestaurantGUI extends JFrame {
         createOrderP.add(btnPageBack);
         createOrderP.add(btnPageForward);
         
-        lblCustomerName.setText("Name: " + infoHandler.username);
+        lblCustomerName.setText("Name: " + infoHandler.getUsername());
         lblPendingOrderID.setText("Pending Order ID: " + (infoHandler.getMyOrderID() != -1 ? infoHandler.getMyOrderID() : "null"));
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder())));
         
@@ -993,69 +1376,45 @@ public class RestaurantGUI extends JFrame {
 	/**
 	 * Method that runs when the user presses "Manage"
 	 */
-    void manageAction() {
+    void manageUsersAction() {
+        pagetype = USERS_PAGE_TYPE;
         
-        pagetype = USERS_PER_PAGE;
-        
-        User[] users = infoHandler.getUserPage(0, 5);
-        
+        // resets the menu button text
+        resetMenuButtonText();
         // Removes any panels currently in view
-        removeAllPanels();
-        manageUsersP.setLayout(new BoxLayout(manageUsersP, BoxLayout.Y_AXIS));
-        manageUsersP.setBackground(new Color(255, 255, 224));
-        
-        JPanel headerPanel = new JPanel();
-        //headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        headerPanel.setLayout(new GridLayout(1, 3, 10, 10));
-        headerPanel.setBackground(new Color(255, 255, 224));
-        
-        JLabel usernameHeader = new JLabel("Username");
-        usernameHeader.setFont(new Font("Arial", Font.BOLD, 12));
-     
-        headerPanel.add(usernameHeader);
-        JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
-        manageUsersP.add(sep1);
-        
-       
-        
-        
-        JLabel userTypeHeader = new JLabel("Usertype");
-        userTypeHeader.setFont(new Font("Arial", Font.BOLD,12));
-        
-        headerPanel.add(userTypeHeader);
-        manageUsersP.add(headerPanel);
-        
-      
-        
-        //manageUsersP.add(removeUser);
-        
-        for (User user : users) {
-            JPanel  userPanel = new JPanel();
-            userPanel.setLayout(new GridLayout(1,2,10,10));
-            userPanel.setBackground(new Color(144, 238, 144));
-            JLabel UsernameLabel = new JLabel(user.getUsername());
-            userPanel.add(UsernameLabel);
-            
-            JLabel UsertypeLabel = new JLabel( user.getUsertype());
-            userPanel.add(UsertypeLabel);
-            String[] userTypeOptions = {"Customer", "Employee"};
-            JComboBox<String> userTypeComboBox = new JComboBox<>(userTypeOptions);
-            userTypeComboBox.setSelectedItem(user.getUsertype()); // Set selected item based on user's current type
-            userPanel.add(userTypeComboBox);
-            
-              userPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-              manageUsersP.add(userPanel);
-              
-              JSeparator now = new JSeparator(SwingConstants.HORIZONTAL);
-              manageUsersP.add(now);
-              
-        }
-        
+        removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
-        masterP.add(manageUsersP);
+        getContentPane().add(manageUsersP);
+        
+        infoHandler.refreshUserInfo();
+        
+        manageUsersB.setText("refresh");
+        
+        lblPageNumber.setLocation(266, 324);
+        btnPageBack.setLocation(223, 320);
+        btnPageForward.setLocation(309, 320);
+        manageUsersP.add(lblPageNumber);
+        manageUsersP.add(btnPageBack);
+        manageUsersP.add(btnPageForward);
+        
+        User[] userPage = infoHandler.getUserPage(1, USERS_PER_PAGE);
+        drawUserPage(userPage);
+        
+        int howManyUsers = infoHandler.getUsers().length;
+        int howManyPages = (howManyUsers / USERS_PER_PAGE);
+        if (howManyPages % ORDERLINES_PER_PAGE != 0 || howManyPages == 0) {
+            howManyPages += 1;
+        }
+        lblPageNumber.setText("1/" + howManyPages);
+        
         // Validates and repaints the changes
         validate();
         repaint();
+        
+    }
+    
+    
+    void buildingAction() {
         
     }
     
@@ -1110,7 +1469,8 @@ public class RestaurantGUI extends JFrame {
 	    menu.remove(viewOrderB);
         menu.remove(createOrderB);
         menu.remove(orderListB);
-        menu.remove(manageB);
+        menu.remove(manageUsersB);
+        menu.remove(buildingB);
 	}
 	
 	
@@ -1121,6 +1481,7 @@ public class RestaurantGUI extends JFrame {
 	    viewOrderB.setText("View Order");
 	    createOrderB.setText("Create Order");
 	    orderListB.setText("Order List");
-	    manageB.setText("Manage");
+	    manageUsersB.setText("Manage Users");
+	    buildingB.setText("Building");
 	}
 }

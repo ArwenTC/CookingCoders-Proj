@@ -124,6 +124,11 @@ public class InfoHandler {
     }
     
     
+    public User[] getUsers() {
+        return users;
+    }
+    
+    
     public int getMyOrderID() {
         return myOrderID;
     }
@@ -186,6 +191,11 @@ public class InfoHandler {
     	}
     	
     	return null;
+    }
+    
+    
+    public String getUsername() {
+        return username;
     }
     
     
@@ -405,7 +415,7 @@ public class InfoHandler {
     public void refreshUserInfo() {
     	try {
     		
-    		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "'", "username");
+    		ResultSet rs = myDatabase.getDatabaseInfo("user", "buildingname = '" + buildingName + "' AND usertype != 'admin'", "username");
 			
 			if (rs == null || !rs.next()) {
 			    users = new User[] {};
@@ -416,7 +426,7 @@ public class InfoHandler {
 			
 			do {
 		    	
-			    refreshedUserInfo.add(new User(rs.getString("username"), rs.getString("usertype")));
+			    refreshedUserInfo.add(new User(rs.getString("username"), rs.getString("password"), rs.getString("usertype")));
 		        
 		    } while (rs.next());
 			
@@ -465,21 +475,25 @@ public class InfoHandler {
     }
     
     
-    public void setUsertype(String username, String newUsertype) {
-        if (!newUsertype.equals("customer") || !newUsertype.equals("employee")) {
+    public void setUserInfo(String username, String newUsername, String newPassword, String newUsertype) {
+        if (!newUsertype.equals("customer") && !newUsertype.equals("employee")) {
+            System.out.println(newUsertype + ": " + newUsertype.length());
             JOptionPane.showMessageDialog(null, "invalid usertype: " + newUsertype, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         
         try {
-        
-        String sqlString = "UPDATE user SET usertype = ? WHERE username = ?;";
-        PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
-        
-        pst.setString(1, newUsertype);
-        pst.setString(2, username);
-        
-        pst.executeUpdate();
-        
+            
+            String sqlString = "UPDATE user SET usertype = ?, password = ?, username = ? WHERE username = ?;";
+            PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+            
+            pst.setString(1, newUsertype);
+            pst.setString(2, newPassword);
+            pst.setString(3, newUsername);
+            pst.setString(4, username);
+            
+            pst.executeUpdate();
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't set usertype: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }

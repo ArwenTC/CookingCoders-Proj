@@ -164,23 +164,16 @@ public class LoginWindow extends JFrame {
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			    
-				String Username = txtUsername.getText();
-				char [] Password = txtPassword.getPassword();
+				String username = txtUsername.getText();
+				char[] password = txtPassword.getPassword();
 				
-				if ("Admin".equals(Username) && new String(Password).equals("1")) {
-					JOptionPane.showMessageDialog(null, "Login successful");
-					loggedInUser = new User("Admin", "Admin");
-					
-					if ("admin".equals(loggedInUser.getUsertype())) {
-						programView = 3;
-					}
-				} else if (myDatabase.verifyLogin(Username, Password)) {
+				if (myDatabase.verifyLogin(username, password)) {
 				    
 					JOptionPane.showMessageDialog(null, "Login successful!");
 					
-					String UserType = myDatabase.getUserType(Username);
+					String usertype = myDatabase.getUserType(username);
 					
-					loggedInUser = new User(Username, UserType);
+					loggedInUser = new User(username, new String(password), usertype);
 					
 					if ("customer".equals(loggedInUser.getUsertype())) {
 						programView = 0;
@@ -205,6 +198,7 @@ public class LoginWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				txtUsername.setText(null);
 				txtPassword.setText(null);
+				txtBuilding.setText(null);
 				txtConfirm.setText(null);
 			}
 		});
@@ -222,18 +216,18 @@ public class LoginWindow extends JFrame {
                 try {
                     
                     // Collects user input from the text fields
-                    String userName = txtUsername.getText();
+                    String username = txtUsername.getText();
                     String buildingName = txtBuilding.getText();
                     password = txtPassword.getPassword();
                     confirmedPassword = txtConfirm.getPassword();
                     
                     
                     // Cases in which userName or passwords are invalid entries
-                    if (userName.isEmpty()) {
+                    if (username.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "no username entered", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if (userName.length() > 31) {
+                    if (username.length() > 31) {
                         JOptionPane.showMessageDialog(null, "username too long", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -253,7 +247,7 @@ public class LoginWindow extends JFrame {
                     
                     // Checks if the userName is available in the database
                     // Switches based on the error value
-                    switch(myDatabase.valueExists("USER", "Username", "'" + userName + "'")) {
+                    switch(myDatabase.valueExists("USER", "Username", "'" + username + "'")) {
                         case 0:
                             break;
                         case 1:
@@ -266,7 +260,7 @@ public class LoginWindow extends JFrame {
                     
                     
                     // Creates a DropDown option that prompts the user with their user type
-                    String [] userTypes = {"customer", "employee", "admin"};
+                    String[] userTypes = {"customer", "employee", "admin"};
                     String selectedUserType =(String) JOptionPane.showInputDialog(null, "Select User Type", "User Type", JOptionPane.QUESTION_MESSAGE, null, userTypes, userTypes[0]) ;
                     
                     
@@ -296,7 +290,7 @@ public class LoginWindow extends JFrame {
                             Arrays.asList( "Username", "Password", "Usertype", "BuildingName" )),
                         // Values
                         new ArrayList<Object>(
-                            Arrays.asList( userName, password, selectedUserType.toLowerCase(), buildingName ))
+                            Arrays.asList(username, password, selectedUserType.toLowerCase(), buildingName))
                     )) {
                         // Gives an error depending on the result
                         case 0:
@@ -314,7 +308,7 @@ public class LoginWindow extends JFrame {
                     JOptionPane.showMessageDialog(null, "user added", "Sign Up Succeeded", JOptionPane.INFORMATION_MESSAGE);
                     
                     // Creates a new user using the selected fields
-                    loggedInUser = new User(userName, selectedUserType.toLowerCase());
+                    loggedInUser = new User(username, new String(password), selectedUserType.toLowerCase());
                 
                 } finally {
                     // do this so the password doesn't stay in memory
@@ -332,10 +326,10 @@ public class LoginWindow extends JFrame {
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Creates new frame for exit
-				frmLoginSystem = new JFrame("Exit");
+				frmLoginSystem = new JFrame();
 				// Confirms if user want to exit and exits if so
-				if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm if you want to exit", "Login Systems", JOptionPane.YES_NO_OPTION ) 
-						== JOptionPane.YES_NO_OPTION) {
+				if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm exit", "Login System", JOptionPane.YES_NO_OPTION) 
+				    == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
 				
