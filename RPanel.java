@@ -1,8 +1,7 @@
+
 package GroupProject;
 
-
-
-//Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,7 +12,13 @@ public class RPanel extends JPanel {
 	Color color1 = new Color(38, 102, 55);
 	Color color2 = new Color(255, 255, 255);
 	
-	// Constructor that sets all colors
+	  /**
+     * Constructs an RPanel with the specified colors.
+     *
+     * @param color0 The background color of the panel.
+     * @param color1 The color for the outlines of the panel.
+     * @param color2 The color for additional elements.
+     */
 	public RPanel(Color color0, Color color1, Color color2) {
 		// Super constructor
 		super();
@@ -27,7 +32,11 @@ public class RPanel extends JPanel {
 		setBackground(this.color0);
 	}
 	
-	// Constructor that sets just button color and outline
+	 /**
+     * Constructs an RPanel with the specified background color.
+     *
+     * @param color0 The background color of the panel.
+     */
 	public RPanel(Color color0) {
 		// Super constructor
 		super();

@@ -1,10 +1,10 @@
 
-
 package GroupProject;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.swing.JOptionPane;
 
 // TODO: use char arrays instead of strings so the SQL queries can be overwritten.
 // The above TODO probably isn't necessary since this isn't a security class.
@@ -13,19 +13,19 @@ public class SQLDatabase {
 	
 	// Database info to be used when connecting / getting data
 	private String databaseURL;
-	private String tableName;
 	private String username;
 	private String password;
 	
 	// SQL Connection
-	public Connection con;
+	private Connection con;
 	
-	/**
-	 * Constructor method
-	 * @param databaseURL - name of the database
-	 * @param username - login details
-	 * @param password - login details
-	 */
+	 /**
+     * Constructs a SQLDatabase object with the specified database URL, username, and password.
+     *
+     * @param databaseURL The URL of the database.
+     * @param username The username for database authentication.
+     * @param password The password for database authentication.
+     */
 	public SQLDatabase(String databaseURL, String username, String password) {
 		
 		this.databaseURL = databaseURL;
@@ -41,39 +41,60 @@ public class SQLDatabase {
 			// Prints out if the database could not connect
 			System.out.println("Error connecting to database: " + e);
 		}
-		
 	}
 	
 	/**
-	 * Returns the data set inside a given table.
-	 * @param table
-	 * @return Result set containing info
-	 * @return null upon error
-	 */
-	public ResultSet getDatabaseInfo(String table) {
+     * Gets the database connection.
+     *
+     * @return The database connection.
+     */
+	public Connection getCon() {
+	    return con;
+	}
+	
+	
+	/**
+     * Returns the data set inside a given table.
+     *
+     * @param table The name of the table.
+     * @param condition The condition to filter the data. If null or empty, no condition is applied.
+     * @param orderBy The order by clause for sorting the data. If null or empty, no sorting is applied.
+     * @return ResultSet containing the data from the table, or null if an error occurs.
+     */
+	public ResultSet getDatabaseInfo(String table, String condition, String orderBy) {
+	    if (condition == null || condition.isEmpty()) {
+	        condition = "TRUE";
+	    }
+	    
+	    if (orderBy == null || orderBy.isEmpty()) {
+	        orderBy = "";
+	    } else {
+	        orderBy = " ORDER BY " + orderBy;
+	    }
 		
 		try {
 			// Creates selection statement
-			String sqlCommand = "SELECT * FROM `" + table + "`";
+			String sqlCommand = "SELECT * FROM `" + table + "`" + " WHERE " + condition + orderBy + ";";
 			Statement statement = con.createStatement();
 			
 			// Returns the set of results
 			return statement.executeQuery(sqlCommand);
 		}
 		catch (SQLException e) {
-			System.out.println("Error accessing database: " + e);
+		    JOptionPane.showMessageDialog(null, "Error accessing database: " + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		
 	}
 	
 	/**
-	 * Adds a value to a table, allowing different sizes of inputs.
-	 * @param table
-	 * @param elements
-	 * @param values
-	 * @return int 0 = pass >0 = error code
-	 */
+     * Adds a new row of data to a table.
+     *
+     * @param table The name of the table.
+     * @param elements The list of column names to insert data into.
+     * @param values The list of values to insert into corresponding columns.
+     * @return 0 if the operation is successful, >0 if an error occurs.
+     */
 	public int addItem(String table, ArrayList<String> elements, ArrayList<Object> values) {
 
 		// String builder used to piece together command
@@ -154,13 +175,14 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	/**
-	 * Removes an item from a given table, provided a key
-	 * @param table
-	 * @param keyName
-	 * @param keyValue
-	 * @return int 0 = pass >0 = error code
-	 */
+	 /**
+     * Removes a row of data from a table based on the specified key.
+     *
+     * @param table The name of the table.
+     * @param keyName The name of the column to identify the row to delete.
+     * @param keyValue The value of the key to identify the row to delete.
+     * @return 0 if the operation is successful, >0 if an error occurs.
+     */
 	public int removeItem(String table, String keyName, Object keyValue) {
 		
 		// Tries to remove an item from the database using a query
@@ -186,15 +208,16 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	/**
-	 * Modifies a set of data in a given table.
-	 * @param table
-	 * @param keyName
-	 * @param keyValue
-	 * @param elements
-	 * @param values
-	 * @return int 0 = pass >0 = error code
-	 */
+	 /**
+     * Updates a row of data in a table.
+     *
+     * @param table The name of the table.
+     * @param keyName The name of the column to identify the row to update.
+     * @param keyValue The value of the key to identify the row to update.
+     * @param elements The list of column names to update.
+     * @param values The list of new values to update into corresponding columns.
+     * @return 0 if the operation is successful, >0 if an error occurs.
+     */
 	public int updateItem(String table, String keyName, Object keyValue, ArrayList<String> elements, ArrayList<Object> values) {
 		
 		// String builder used to piece together command
@@ -253,13 +276,14 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	/**
-	 * Checks if a value exists in a table given a column and value
-	 * @param table
-	 * @param column
-	 * @param value
-	 * @return int 0 = doesn't exist 1 = exists >1 = error code
-	 */
+	 /**
+     * Checks if a value exists in a table given a column and value.
+     *
+     * @param table The name of the table.
+     * @param column The name of the column to search.
+     * @param value The value to search for in the specified column.
+     * @return 0 if the value does not exist, 1 if it exists, >1 if an error occurs.
+     */
 	public int valueExists(String table, String column, String value) {
 	    String sqlString = "SELECT 1 FROM `" + table + "` WHERE " + column + " = " + value + ";";
         
@@ -281,9 +305,11 @@ public class SQLDatabase {
 	}
 	
 	/**
-	 * Calls and returns an error value
-	 * @return 0 = pass, 1+ = error code
-	 */
+     * Executes a SQL command.
+     *
+     * @param command The SQL command to execute.
+     * @return 0 if the operation is successful, >0 if an error occurs.
+     */
 	public int execute(String command) {
 		try {
 			// Creates a statement and executes
@@ -297,10 +323,12 @@ public class SQLDatabase {
 		return 0;
 	}
 	
-	/**
-	 * Calls an returns a result set
-	 * @return 0 = pass, 1+ = error code
-	 */
+	 /**
+     * Executes a SQL query and returns the result set.
+     *
+     * @param command The SQL query to execute.
+     * @return The result set containing the data from the query, or null if an error occurs.
+     */
 	public ResultSet executeQuery(String command) {
 		try {
 			// Creates a statement and executes
@@ -313,8 +341,14 @@ public class SQLDatabase {
 			return null;
 		}
 	}
-	
-	public boolean verifyLogin(String Username, char[] Password) throws SQLException {
+	 /**
+     * Verifies the login credentials of a user.
+     *
+     * @param Username The username of the user.
+     * @param Password The password of the user.
+     * @return true if the login is successful, false otherwise.
+     */
+	public boolean verifyLogin(String Username, char[] Password) {
         String query = "SELECT password FROM USER WHERE Username = ? AND Password = ?";
         try (PreparedStatement pst = con.prepareStatement(query)) {
             pst.setString(1, Username);
@@ -322,9 +356,18 @@ public class SQLDatabase {
             try (ResultSet rs = pst.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "error verifying user password: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
+        
+        return false;
     }
-	
+	/**
+     * Retrieves the type of user based on the username.
+     *
+     * @param Username The username of the user.
+     * @return The type of user, or null if an error occurs.
+     */
 	public String getUserType(String Username) {
 		String query = "SELECT Usertype FROM USER WHERE Username = ?";
 		try (PreparedStatement pst = con.prepareStatement(query)) {
@@ -334,45 +377,10 @@ public class SQLDatabase {
 					return rs.getString("Usertype");
 				}
 			}
-		}catch (SQLException e) {
-			System.out.println("Error retrieving user type: "  + e.getMessage());
+		} catch (SQLException e) {
+		    JOptionPane.showMessageDialog(null, "Error retrieving user type: "  + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return null;
 	}
-
-	public List<User> getAllUser() {
-		List <User> userList = new ArrayList<>();
-		String query = "SELECT Username, Password, Usertype FROM USER";
-		try(PreparedStatement pst = con.prepareStatement(query);
-			ResultSet rs = pst.executeQuery()) {
-			while(rs.next()) {
-				String Username = rs.getString("Username");
-			
-				String Usertype = rs.getString("Usertype");
-				userList.add(new User(Username, Usertype));
-				
-			}
-		}catch(SQLException e) {
-			System.out.println("Error retrieving users: " + e.getMessage());
-		}
-		return userList;
-	}
-
-	public void updateUsertype(String username, String usertype) {
-		String query = "UPDATE USER SET Usertype = ? WHERE Username = ? ";
-		try(PreparedStatement pst = con.prepareStatement(query)) {
-			pst.setString(1, usertype );
-			pst.setString(2, username);
-			pst.executeUpdate();
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-
-	
-
-	
 	
 }

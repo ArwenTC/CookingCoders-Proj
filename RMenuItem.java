@@ -1,12 +1,17 @@
+
 package GroupProject;
 
-//Imports
+// Imports
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
+/**
+ * 
+ * Custom the JMenuItem
+ *
+ */
 public class RMenuItem extends JMenuItem {
 	
 	// Creates button color
@@ -15,7 +20,13 @@ public class RMenuItem extends JMenuItem {
 	Color clickColor = new Color(20, 138, 52);
 	Color color1 = new Color(255, 255, 255);
 	
-	// Constructor that sets all colors
+	 /**
+     * Constructs an RMenuItem with the specified text and colors.
+     *
+     * @param text   The text to display on the menu item.
+     * @param color0 The background color of the menu item.
+     * @param color1 The color of the text on the menu item.
+     */
 	public RMenuItem(String text, Color color0, Color color1) {
 		// Super constructor
 		super(text);
@@ -55,8 +66,11 @@ public class RMenuItem extends JMenuItem {
 		});
 		
 	}
-	
-	// Constructor that uses the default colors
+	 /**
+     * Constructs an RMenuItem with the specified text using default colors.
+     *
+     * @param text The text to display on the menu item.
+     */
 	public RMenuItem(String text) {
 		// Super constructor
 		super(text);
