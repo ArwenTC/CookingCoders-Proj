@@ -3,6 +3,8 @@
 package GroupProject;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,18 +81,18 @@ public class RestaurantGUI extends JFrame {
     private JLabel lblItem3;
     private JLabel lblItem4;
     private JLabel lblItem5;
-    private JButton btnClearItem1;
-    private JButton btnClearItem2;
-    private JButton btnClearItem3;
-    private JButton btnClearItem4;
-    private JButton btnClearItem5;
-    private JButton btnPageBack;
+    private RXButton btnClearItem1;
+    private RXButton btnClearItem2;
+    private RXButton btnClearItem3;
+    private RXButton btnClearItem4;
+    private RXButton btnClearItem5;
+    private RActionButton btnPageBack;
     private JLabel lblPageNumber;
-    private JButton btnPageForward;
+    private RActionButton btnPageForward;
     private JLabel lblMenuList;
     private JLabel lblCustomerName;
-    private JButton btnSubmitOrder;
-    private JButton buttonAddItem;
+    private RActionButton btnSubmitOrder;
+    private RActionButton buttonAddItem;
     private JScrollPane scrollPaneNote;
     private JLabel lblOrderInProgress;
     private JLabel lblWaitingOrders;
@@ -240,10 +242,10 @@ public class RestaurantGUI extends JFrame {
         
         // Creates Panels
         masterP = new RPanel();
-        viewOrderP = new RPanel();
-        createOrderP = new RPanel();
-        employeeViewOrderP = new RPanel();
-        orderListP = new RPanel();
+        viewOrderP = new ViewOrderPanel();
+        createOrderP = new ViewOrderPanel();
+        employeeViewOrderP = new ViewOrderPanel();
+        orderListP = new OrderListPanel();
         manageUsersP = new RPanel();
         buildingP = new RPanel();
         settingsP = new RPanel();
@@ -293,7 +295,7 @@ public class RestaurantGUI extends JFrame {
             }
         });
         
-        btnPageBack = new JButton("<");
+        btnPageBack = new RActionButton("<");
         btnPageBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 pageBackAction();
@@ -301,7 +303,7 @@ public class RestaurantGUI extends JFrame {
         });
         btnPageBack.setBounds(223, 280, 47, 23);
         
-        btnPageForward = new JButton(">");
+        btnPageForward = new RActionButton(">");
         btnPageForward.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 pageForwardAction();
@@ -316,7 +318,7 @@ public class RestaurantGUI extends JFrame {
         createOrderP.setLayout(null);
         viewOrderP.setLayout(null);
         
-        scrollPaneMenu = new JScrollPane();
+        scrollPaneMenu = new RScrollPane();
         scrollPaneMenu.setBounds(381, 30, 139, 130);
         createOrderP.add(scrollPaneMenu);
         
@@ -340,7 +342,7 @@ public class RestaurantGUI extends JFrame {
         lblNote.setBounds(31, 222, 69, 14);
         createOrderP.add(lblNote);
         
-        btnSubmitOrder = new JButton("Submit Order");
+        btnSubmitOrder = new RActionButton("Submit Order");
         btnSubmitOrder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 submitOrderAction();
@@ -374,7 +376,7 @@ public class RestaurantGUI extends JFrame {
         lblItem5.setVisible(false);
         createOrderP.add(lblItem5);
         
-        btnClearItem1 = new JButton("X");
+        btnClearItem1 = new RXButton("X");
         btnClearItem1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePageOrderLineAction(0);
@@ -385,7 +387,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem1.setVisible(false);
         createOrderP.add(btnClearItem1);
         
-        btnClearItem2 = new JButton("X");
+        btnClearItem2 = new RXButton("X");
         btnClearItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePageOrderLineAction(1);
@@ -396,7 +398,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem2.setVisible(false);
         createOrderP.add(btnClearItem2);
         
-        btnClearItem3 = new JButton("X");
+        btnClearItem3 = new RXButton("X");
         btnClearItem3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePageOrderLineAction(2);
@@ -407,7 +409,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem3.setVisible(false);
         createOrderP.add(btnClearItem3);
         
-        btnClearItem4 = new JButton("X");
+        btnClearItem4 = new RXButton("X");
         btnClearItem4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePageOrderLineAction(3);
@@ -417,8 +419,8 @@ public class RestaurantGUI extends JFrame {
         btnClearItem4.setBounds(10, 106, 39, 18);
         btnClearItem4.setVisible(false);
         createOrderP.add(btnClearItem4);
-        
-        btnClearItem5 = new JButton("X");
+   
+        btnClearItem5 = new RXButton("X");
         btnClearItem5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePageOrderLineAction(4);
@@ -432,7 +434,7 @@ public class RestaurantGUI extends JFrame {
         itemLabels = new JLabel[] {lblItem1, lblItem2, lblItem3, lblItem4, lblItem5};
         itemClearButtons = new JButton[] {btnClearItem1, btnClearItem2, btnClearItem3, btnClearItem4, btnClearItem5};
         
-        buttonAddItem = new JButton("Add");
+        buttonAddItem = new RActionButton("Add");
         buttonAddItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addItemAction();
@@ -441,14 +443,15 @@ public class RestaurantGUI extends JFrame {
         buttonAddItem.setBounds(413, 169, 83, 23);
         createOrderP.add(buttonAddItem);
         
-        scrollPaneNote = new JScrollPane();
+        // Styles the scroll pane
+        scrollPaneNote = new RScrollPane();
         scrollPaneNote.setBounds(27, 240, 220, 100);
         createOrderP.add(scrollPaneNote);
         
-        txtCurrentOrderNote = new JTextArea();
+        txtCurrentOrderNote = new RTextArea();
         txtCurrentOrderNote.setLineWrap(true);
         
-        txtWaitingOrderNote = new JTextArea();
+        txtWaitingOrderNote = new RTextArea();
         txtWaitingOrderNote.setLineWrap(true);
         
         lblOrderInProgress = new JLabel("Order In Progress");
@@ -480,7 +483,7 @@ public class RestaurantGUI extends JFrame {
         lblOrder5.setBounds(307, 240, 170, 14);
         orderListP.add(lblOrder5);
         
-        btnViewOrder1 = new JButton("View Order");
+        btnViewOrder1 = new RActionButton("View Order");
         btnViewOrder1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 viewOrderAction(0);
@@ -489,7 +492,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder1.setBounds(197, 46, 100, 23);
         orderListP.add(btnViewOrder1);
         
-        btnViewOrder2 = new JButton("View Order");
+        btnViewOrder2 = new RActionButton("View Order");
         btnViewOrder2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 viewOrderAction(1);
@@ -498,7 +501,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder2.setBounds(197, 96, 100, 23);
         orderListP.add(btnViewOrder2);
         
-        btnViewOrder3 = new JButton("View Order");
+        btnViewOrder3 = new RActionButton("View Order");
         btnViewOrder3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 viewOrderAction(2);
@@ -507,7 +510,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder3.setBounds(197, 146, 100, 23);
         orderListP.add(btnViewOrder3);
         
-        btnViewOrder4 = new JButton("View Order");
+        btnViewOrder4 = new RActionButton("View Order");
         btnViewOrder4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 viewOrderAction(3);
@@ -516,7 +519,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder4.setBounds(197, 196, 100, 23);
         orderListP.add(btnViewOrder4);
         
-        btnViewOrder5 = new JButton("View Order");
+        btnViewOrder5 = new RActionButton("View Order");
         btnViewOrder5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 viewOrderAction(4);
@@ -525,7 +528,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder5.setBounds(197, 246, 100, 23);
         orderListP.add(btnViewOrder5);
         
-        btnMarkCompleted1 = new JButton("Set Completed");
+        btnMarkCompleted1 = new RActionButton("Set Completed");
         btnMarkCompleted1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 markOrderCompletedAction(0);
@@ -534,7 +537,7 @@ public class RestaurantGUI extends JFrame {
         btnMarkCompleted1.setBounds(67, 46, 120, 23);
         orderListP.add(btnMarkCompleted1);
         
-        btnMarkCompleted2 = new JButton("Set Completed");
+        btnMarkCompleted2 = new RActionButton("Set Completed");
         btnMarkCompleted2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 markOrderCompletedAction(1);
@@ -543,7 +546,7 @@ public class RestaurantGUI extends JFrame {
         btnMarkCompleted2.setBounds(67, 96, 120, 23);
         orderListP.add(btnMarkCompleted2);
         
-        btnMarkCompleted3 = new JButton("Set Completed");
+        btnMarkCompleted3 = new RActionButton("Set Completed");
         btnMarkCompleted3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 markOrderCompletedAction(2);
@@ -552,7 +555,7 @@ public class RestaurantGUI extends JFrame {
         btnMarkCompleted3.setBounds(67, 146, 120, 23);
         orderListP.add(btnMarkCompleted3);
         
-        btnMarkCompleted4 = new JButton("Set Completed");
+        btnMarkCompleted4 = new RActionButton("Set Completed");
         btnMarkCompleted4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 markOrderCompletedAction(3);
@@ -561,7 +564,7 @@ public class RestaurantGUI extends JFrame {
         btnMarkCompleted4.setBounds(67, 196, 120, 23);
         orderListP.add(btnMarkCompleted4);
         
-        btnMarkCompleted5 = new JButton("Set Completed");
+        btnMarkCompleted5 = new RActionButton("Set Completed");
         btnMarkCompleted5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 markOrderCompletedAction(4);
@@ -601,7 +604,7 @@ public class RestaurantGUI extends JFrame {
         lblUsers.setBounds(270, 15, 46, 14);
         manageUsersP.add(lblUsers);
         
-        btnEditUser1 = new JButton("Save Edits");
+        btnEditUser1 = new RXButton("Save Edits");
         btnEditUser1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 editUserAction(0);
@@ -610,7 +613,7 @@ public class RestaurantGUI extends JFrame {
         btnEditUser1.setBounds(124, 55, 97, 23);
         manageUsersP.add(btnEditUser1);
         
-        btnEditUser2 = new JButton("Save Edits");
+        btnEditUser2 = new RXButton("Save Edits");
         btnEditUser2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 editUserAction(1);
@@ -619,7 +622,7 @@ public class RestaurantGUI extends JFrame {
         btnEditUser2.setBounds(124, 110, 97, 23);
         manageUsersP.add(btnEditUser2);
         
-        btnEditUser3 = new JButton("Save Edits");
+        btnEditUser3 = new RXButton("Save Edits");
         btnEditUser3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 editUserAction(2);
@@ -628,7 +631,7 @@ public class RestaurantGUI extends JFrame {
         btnEditUser3.setBounds(124, 165, 97, 23);
         manageUsersP.add(btnEditUser3);
         
-        btnEditUser4 = new JButton("Save Edits");
+        btnEditUser4 = new RXButton("Save Edits");
         btnEditUser4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 editUserAction(3);
@@ -637,7 +640,7 @@ public class RestaurantGUI extends JFrame {
         btnEditUser4.setBounds(124, 220, 97, 23);
         manageUsersP.add(btnEditUser4);
         
-        btnEditUser5 = new JButton("Save Edits");
+        btnEditUser5 = new RXButton("Save Edits");
         btnEditUser5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 editUserAction(4);
@@ -646,7 +649,7 @@ public class RestaurantGUI extends JFrame {
         btnEditUser5.setBounds(124, 275, 97, 23);
         manageUsersP.add(btnEditUser5);
         
-        btnDeleteUser1 = new JButton("Delete User");
+        btnDeleteUser1 = new RXButton("Delete User");
         btnDeleteUser1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteUserAction(0);
@@ -655,7 +658,7 @@ public class RestaurantGUI extends JFrame {
         btnDeleteUser1.setBounds(10, 55, 104, 23);
         manageUsersP.add(btnDeleteUser1);
         
-        btnDeleteUser2 = new JButton("Delete User");
+        btnDeleteUser2 = new RXButton("Delete User");
         btnDeleteUser2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteUserAction(1);
@@ -664,7 +667,7 @@ public class RestaurantGUI extends JFrame {
         btnDeleteUser2.setBounds(10, 110, 104, 23);
         manageUsersP.add(btnDeleteUser2);
         
-        btnDeleteUser3 = new JButton("Delete User");
+        btnDeleteUser3 = new RXButton("Delete User");
         btnDeleteUser3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteUserAction(2);
@@ -673,7 +676,7 @@ public class RestaurantGUI extends JFrame {
         btnDeleteUser3.setBounds(10, 165, 104, 23);
         manageUsersP.add(btnDeleteUser3);
         
-        btnDeleteUser4 = new JButton("Delete User");
+        btnDeleteUser4 = new RXButton("Delete User");
         btnDeleteUser4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteUserAction(3);
@@ -682,7 +685,7 @@ public class RestaurantGUI extends JFrame {
         btnDeleteUser4.setBounds(10, 220, 104, 23);
         manageUsersP.add(btnDeleteUser4);
         
-        btnDeleteUser5 = new JButton("Delete User");
+        btnDeleteUser5 = new RXButton("Delete User");
         btnDeleteUser5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deleteUserAction(4);
@@ -1584,7 +1587,7 @@ public class RestaurantGUI extends JFrame {
             itemStrings.add(costString + ": " + productView.getKey());
         }
         
-        menuList = new JList<String>(itemStrings.toArray(String[]::new));
+        menuList = new RItemList<String>(itemStrings.toArray(String[]::new));
         menuList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPaneMenu.setViewportView(menuList);
         

@@ -1,91 +1,54 @@
+
 package GroupProject;
 
-import java.awt.Color;
-import java.awt.Dimension;
+// Imports
+import javax.swing.*;
+import java.awt.*;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+public class OrderListPanel extends JPanel {
+	
+	// Creates button color
+	Color color0 = new Color(143, 186, 167);
+	Color color1 = new Color(38, 102, 55);
+	Color color2 = new Color(255, 255, 255);
 
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-public class OrderListPanel extends RPanel {
+	Color boxColor0 = new Color(255, 213, 140);
+	Color boxColor1 = new Color(163, 207, 187);
+	Color highlightColor0 = new Color(255, 221, 161);
+	Color highlightColor1 = new Color(175, 219, 199);
 	
-	ArrayList<OPanel> orderPanels;
-	
-	JScrollPane orderScroll;
-	
-	SQLDatabase database_;
-	/**
-     * Constructs an OrderListPanel with the specified SQL database connection.
-     *
-     * @param database_ The SQLDatabase object representing the database connection.
-     */
-	
-	public OrderListPanel(SQLDatabase database_) {
-		// Calls super constructor
+	// Constructor that uses the default colors
+	public OrderListPanel() {
+		// Super constructor
 		super();
-		
-		this.database_ = database_;
-		
-		orderPanels = new ArrayList<OPanel>();
-		
-		// Initializes 
-		orderScroll = new JScrollPane();
-		
-		ResultSet orders = database_.getDatabaseInfo("order", null, null);
-		try {
-			int index = 0;
-			// Iterates through the result set and adds items to the order panel
-			while (orders.next()) {
-				//orderPanels.add(new OPanel(new Order(orders.getInt(1), database_)));
-				orderScroll.add(orderPanels.get(index));
-				// Ups the index
-				index++;
-			}
-		} catch (SQLException e) {
-			// Catch exception
-		}
-		
-		add(orderScroll);
-		
-		// Repaints the changes
-		revalidate();
-		repaint();
+		// Sets background
+		setBackground(this.color0);
 	}
 	
-	/**
-	 * Panel used to display an order
-	 * @author Arwen
-	 */
-	private class OPanel extends JPanel {
+	@Override
+	protected void paintComponent(Graphics g) {
 		
-		// Creates a new button
-		private JButton remove;
+		// Calls the paint component from the button class
+		super.paintComponent(g);
 		
-		/**
-		 * Constructs an OPanel for displaying the specified order.
-         *
-         * @param order The Order object to display.
-		 */
-		public OPanel(Order order) {
-			super();
-			
-			remove = new JButton("X");
-			
-			// New preferred size
-			setPreferredSize(new Dimension(400, 75));
-			
-			// Sets background color
-			setBackground(new Color(252, 223, 141));
-			
-			// Adds the button to the panel
-			add(remove);
-		}
+		// Order Boxes
+		g.setColor(boxColor1);
+		g.drawRect(30, 20, 520, 275);
+		g.fillRect(30, 20, 521, 276);
+
+		// Creates a highlight to the order list box
+		g.setColor(highlightColor1);
+		g.drawRect(30, 20, 520, 18);
+		g.fillRect(30, 20, 521, 18);
+		g.drawRect(30, 277, 520, 28);
+		g.fillRect(30, 277, 521, 28);
+		
+		// Normal panel drawings
+		g.drawRect(0, 0, getWidth(), 10);
+		g.setColor(color1);
+		g.fillRect(0, 0, getWidth(), 11);
+		g.drawRect(0, getHeight()-20, getWidth(), getHeight());
+		g.setColor(color1);
+		g.fillRect(0, getHeight()-20, getWidth(), getHeight()+1);
 	}
-	
-	
 }
