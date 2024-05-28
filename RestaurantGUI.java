@@ -3,7 +3,6 @@
 package GroupProject;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 public class RestaurantGUI extends JFrame {
 
@@ -1465,7 +1463,9 @@ public class RestaurantGUI extends JFrame {
         
         String username = userToDelete.getUsername();
         
-        myDatabase.removeItem("user", "username", username);
+        if (myDatabase.removeItem("user", "username", username) != 0) {
+            return;
+        }
         
         infoHandler.refreshUserInfo();
         

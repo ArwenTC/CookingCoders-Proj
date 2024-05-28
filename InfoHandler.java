@@ -393,11 +393,10 @@ public class InfoHandler {
             
             ResultSet rs = myDatabase.getDatabaseInfo("order", "orderid = " + orderID, null);
             
-            if (rs == null) {
+            if (rs == null || !rs.next()) {
                 return -1;
             }
             
-            rs.next();
             result = rs.getInt("completed");
             
         } catch (SQLException e) {
@@ -474,18 +473,20 @@ public class InfoHandler {
                 
                 ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
                 
-                if (rsOrderLines == null) {
-                    return;
+                if (rsOrderLines == null || !rsOrderLines.next()) {
+                    continue;
                 }
                 
                 ArrayList<OrderLine> orderLines = new ArrayList<OrderLine>();
                 
-                while (rsOrderLines.next()) {
+                do {
+                    
                     String productName = rsOrderLines.getString("productname");
                     int quantity = rsOrderLines.getInt("quantity");
                     
                     orderLines.add(new OrderLine(productName, quantity));
-                }
+                    
+                } while (rsOrderLines.next());
                 
                 refreshedOrdersInProgress.add(new Order(orderID, orderLines, customerUsername, note));
                 

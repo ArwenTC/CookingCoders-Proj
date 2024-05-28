@@ -2,7 +2,6 @@
 
 package GroupProject;
 
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -22,15 +21,13 @@ public class Driver {
 	 * @return pass/fail 0 = pass, >0 = error code
 	 */
 	public int Run() {
-	    
-	    RestaurantGUI rgui = null;
 		
 		// Runs the gui
 	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "Kl51abe7!-4567");
 	    
 	    
 	    if (myDatabase.getCon() != null) {
-	        rgui = new RestaurantGUI(myDatabase);
+	        new RestaurantGUI(myDatabase);
 	    } else {
 	        JOptionPane.showMessageDialog(null, "Couldn't connect to database", "Database Connection Error", JOptionPane.ERROR_MESSAGE);
 	        return 1;

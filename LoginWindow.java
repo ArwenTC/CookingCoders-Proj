@@ -68,21 +68,19 @@ public class LoginWindow extends JFrame {
 	        // getting the building name
     	    ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'", null);
     	    
-    	    if (rs == null) {
+    	    if (rs == null || !rs.next()) {
                 return null;
             }
     	    
-    	    rs.next();
     	    String buildingName = rs.getString("BuildingName");
     	    
     	    // getting the building information
     	    rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'", null);
     	    
-    	    if (rs == null) {
+    	    if (rs == null || !rs.next()) {
                 return null;
             }
     	    
-    	    rs.next();
     	    String buildingState = rs.getString("state");
     	    String buildingCity = rs.getString("city");
     	    String buildingStreetAddr1 = rs.getString("streetaddr1");
@@ -160,9 +158,11 @@ public class LoginWindow extends JFrame {
         
         if (myDatabase.verifyLogin(username, password)) {
             
-            JOptionPane.showMessageDialog(null, "Login successful!");
+            String usertype = myDatabase.getUsertype(username);
             
-            String usertype = myDatabase.getUserType(username);
+            if (usertype == null) {
+                return;
+            }
             
             loggedInUser_ = new User(username, password, usertype);
             
@@ -181,6 +181,8 @@ public class LoginWindow extends JFrame {
                 );
                 loggedInUser_ = null;
             }
+            
+            JOptionPane.showMessageDialog(null, "Login successful!");
             
         } else {
             JOptionPane.showMessageDialog(null, "Invalid Username or password");
@@ -346,9 +348,11 @@ public class LoginWindow extends JFrame {
 		        
 		        if (myDatabase.verifyLogin(username, password)) {
 		            
-		            JOptionPane.showMessageDialog(null, "Login successful!");
+		            String usertype = myDatabase.getUsertype(username);
 		            
-		            String usertype = myDatabase.getUserType(username);
+		            if (usertype == null) {
+		                return;
+		            }
 		            
 		            loggedInUser_ = new User(username, password, usertype);
 		            
@@ -367,6 +371,8 @@ public class LoginWindow extends JFrame {
 		                );
 		                loggedInUser_ = null;
 		            }
+		            
+		            JOptionPane.showMessageDialog(null, "Login successful!");
 		            
 		        } else {
 		            JOptionPane.showMessageDialog(null, "Invalid Username or password");

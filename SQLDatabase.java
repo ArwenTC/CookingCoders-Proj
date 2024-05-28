@@ -373,7 +373,7 @@ public class SQLDatabase {
      * @param Username The username of the user.
      * @return The type of user, or null if an error occurs.
      */
-	public String getUserType(String Username) {
+	public String getUsertype(String Username) {
 		String query = "SELECT Usertype FROM USER WHERE Username = ?";
 		try (PreparedStatement pst = con.prepareStatement(query)) {
 			pst.setString(1, Username);
