@@ -1655,7 +1655,7 @@ public class RestaurantGUI extends JFrame {
         
         int howManyUsers = infoHandler.getUsers().length;
         int howManyPages = (howManyUsers / USERS_PER_PAGE);
-        if (howManyUsers % ORDERLINES_PER_PAGE != 0 || howManyUsers == 0) {
+        if (howManyUsers % USERS_PER_PAGE != 0 || howManyUsers == 0) {
             howManyPages += 1;
         }
         lblPageNumber.setText("1/" + howManyPages);
