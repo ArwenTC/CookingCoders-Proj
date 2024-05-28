@@ -15,7 +15,7 @@ import java.util.Map;
 public class RestaurantGUI extends JFrame {
 
     // Window Size
-    final int SIZE_X = 600, SIZE_Y = 450;
+	final int SIZE_X = 600, SIZE_Y = 450;
     
     // items per pages
     public final int ORDERLINES_PER_PAGE = 5;
@@ -237,8 +237,8 @@ public class RestaurantGUI extends JFrame {
         createOrderP = new ViewOrderPanel();
         employeeViewOrderP = new ViewOrderPanel();
         orderListP = new OrderListPanel();
-        manageUsersP = new RPanel();
-        buildingP = new RPanel();
+        manageUsersP = new ManagePanel();
+        buildingP = new BuildingPanel();
         
         // Menu bar that allows user to swap between each view
         menu = new JMenuBar();
@@ -686,27 +686,27 @@ public class RestaurantGUI extends JFrame {
         
         String[] comboBoxOptions = new String[] {"customer", "employee"};
         
-        comboBoxUsertype1 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype1 = new RComboBox<String>(comboBoxOptions);
         comboBoxUsertype1.setBounds(231, 55, 85, 22);
         comboBoxUsertype1.setSelectedItem("customer");
         manageUsersP.add(comboBoxUsertype1);
         
-        comboBoxUsertype2 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype2 = new RComboBox<String>(comboBoxOptions);
         comboBoxUsertype2.setBounds(231, 110, 85, 22);
         comboBoxUsertype2.setSelectedItem("customer");
         manageUsersP.add(comboBoxUsertype2);
         
-        comboBoxUsertype3 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype3 = new RComboBox<String>(comboBoxOptions);
         comboBoxUsertype3.setBounds(231, 165, 85, 22);
         comboBoxUsertype3.setSelectedItem("customer");
         manageUsersP.add(comboBoxUsertype3);
         
-        comboBoxUsertype4 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype4 = new RComboBox<String>(comboBoxOptions);
         comboBoxUsertype4.setBounds(231, 220, 85, 22);
         comboBoxUsertype4.setSelectedItem("customer");
         manageUsersP.add(comboBoxUsertype4);
         
-        comboBoxUsertype5 = new JComboBox<String>(comboBoxOptions);
+        comboBoxUsertype5 = new RComboBox<String>(comboBoxOptions);
         comboBoxUsertype5.setBounds(231, 275, 85, 22);
         comboBoxUsertype5.setSelectedItem("customer");
         manageUsersP.add(comboBoxUsertype5);
@@ -719,12 +719,12 @@ public class RestaurantGUI extends JFrame {
         lblPassword1.setBounds(326, 71, 70, 14);
         manageUsersP.add(lblPassword1);
         
-        txtUsername1 = new JTextField();
+        txtUsername1 = new RTextField();
         txtUsername1.setBounds(390, 46, 184, 20);
         manageUsersP.add(txtUsername1);
         txtUsername1.setColumns(10);
         
-        txtPassword1 = new JTextField();
+        txtPassword1 = new RTextField();
         txtPassword1.setBounds(390, 68, 184, 20);
         manageUsersP.add(txtPassword1);
         txtPassword1.setColumns(10);
@@ -733,7 +733,7 @@ public class RestaurantGUI extends JFrame {
         lblusername2.setBounds(326, 104, 69, 14);
         manageUsersP.add(lblusername2);
         
-        txtUsername2 = new JTextField();
+        txtUsername2 = new RTextField();
         txtUsername2.setColumns(10);
         txtUsername2.setBounds(390, 101, 184, 20);
         manageUsersP.add(txtUsername2);
@@ -742,7 +742,7 @@ public class RestaurantGUI extends JFrame {
         lblPassword2.setBounds(326, 126, 70, 14);
         manageUsersP.add(lblPassword2);
         
-        txtPassword2 = new JTextField();
+        txtPassword2 = new RTextField();
         txtPassword2.setColumns(10);
         txtPassword2.setBounds(390, 123, 184, 20);
         manageUsersP.add(txtPassword2);
@@ -751,7 +751,7 @@ public class RestaurantGUI extends JFrame {
         lblusername3.setBounds(326, 159, 69, 14);
         manageUsersP.add(lblusername3);
         
-        txtUsername3 = new JTextField();
+        txtUsername3 = new RTextField();
         txtUsername3.setColumns(10);
         txtUsername3.setBounds(390, 156, 184, 20);
         manageUsersP.add(txtUsername3);
@@ -760,7 +760,7 @@ public class RestaurantGUI extends JFrame {
         lblPassword3.setBounds(326, 181, 70, 14);
         manageUsersP.add(lblPassword3);
         
-        txtPassword3 = new JTextField();
+        txtPassword3 = new RTextField();
         txtPassword3.setColumns(10);
         txtPassword3.setBounds(390, 178, 184, 20);
         manageUsersP.add(txtPassword3);
@@ -769,7 +769,7 @@ public class RestaurantGUI extends JFrame {
         lblusername4.setBounds(326, 214, 69, 14);
         manageUsersP.add(lblusername4);
         
-        txtUsername4 = new JTextField();
+        txtUsername4 = new RTextField();
         txtUsername4.setColumns(10);
         txtUsername4.setBounds(390, 211, 184, 20);
         manageUsersP.add(txtUsername4);
@@ -778,7 +778,7 @@ public class RestaurantGUI extends JFrame {
         lblPassword4.setBounds(326, 236, 70, 14);
         manageUsersP.add(lblPassword4);
         
-        txtPassword4 = new JTextField();
+        txtPassword4 = new RTextField();
         txtPassword4.setColumns(10);
         txtPassword4.setBounds(390, 233, 184, 20);
         manageUsersP.add(txtPassword4);
@@ -787,7 +787,7 @@ public class RestaurantGUI extends JFrame {
         lblusername5.setBounds(326, 269, 69, 14);
         manageUsersP.add(lblusername5);
         
-        txtUsername5 = new JTextField();
+        txtUsername5 = new RTextField();
         txtUsername5.setColumns(10);
         txtUsername5.setBounds(390, 266, 184, 20);
         manageUsersP.add(txtUsername5);
@@ -796,7 +796,7 @@ public class RestaurantGUI extends JFrame {
         lblPassword5.setBounds(326, 291, 70, 14);
         manageUsersP.add(lblPassword5);
         
-        txtPassword5 = new JTextField();
+        txtPassword5 = new RTextField();
         txtPassword5.setColumns(10);
         txtPassword5.setBounds(390, 288, 184, 20);
         manageUsersP.add(txtPassword5);
@@ -817,7 +817,7 @@ public class RestaurantGUI extends JFrame {
         buildingP.setLayout(null);
         
         lblBuilding = new JLabel("Building");
-        lblBuilding.setBounds(270, 20, 46, 14);
+        lblBuilding.setBounds(270, 20, 100, 14);
         buildingP.add(lblBuilding);
         
         lblBuildingPhone = new JLabel("Building Phone:");
@@ -840,22 +840,22 @@ public class RestaurantGUI extends JFrame {
         lblStreetAddr2.setBounds(130, 250, 100, 14);
         buildingP.add(lblStreetAddr2);
         
-        txtBuildingPhone = new JTextField();
+        txtBuildingPhone = new RTextField();
         txtBuildingPhone.setBounds(240, 47, 150, 20);
         buildingP.add(txtBuildingPhone);
         txtBuildingPhone.setColumns(10);
         
-        txtCity = new JTextField();
+        txtCity = new RTextField();
         txtCity.setBounds(240, 147, 150, 20);
         buildingP.add(txtCity);
         txtCity.setColumns(10);
         
-        txtAddrLine1 = new JTextField();
+        txtAddrLine1 = new RTextField();
         txtAddrLine1.setBounds(240, 197, 150, 20);
         buildingP.add(txtAddrLine1);
         txtAddrLine1.setColumns(10);
         
-        txtAddrLine2 = new JTextField();
+        txtAddrLine2 = new RTextField();
         txtAddrLine2.setBounds(240, 247, 150, 20);
         buildingP.add(txtAddrLine2);
         txtAddrLine2.setColumns(10);
@@ -867,11 +867,11 @@ public class RestaurantGUI extends JFrame {
             "nj", "nm", "nv", "ny", "oh", "ok", "or", "pa", "ri", "sc",
             "sd", "tn", "tx", "ut", "va", "vt", "wa", "wi", "wv", "wy"
         };
-        comboBoxState = new JComboBox<String>(states);
+        comboBoxState = new RComboBox2<String>(states);
         comboBoxState.setBounds(240, 96, 50, 22);
         buildingP.add(comboBoxState);
         
-        btnBuilding = new JButton("Save Changes");
+        btnBuilding = new RActionButton("Save Changes");
         btnBuilding.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 saveBuildingChangesAction();
@@ -1495,7 +1495,7 @@ public class RestaurantGUI extends JFrame {
         
         infoHandler.refreshOrdersInProgress();
         
-        orderListB.setText("refresh");
+        orderListB.setText("REFRESH");
         
         lblPageNumber.setLocation(266, 284);
         btnPageBack.setLocation(223, 280);
@@ -1539,7 +1539,7 @@ public class RestaurantGUI extends JFrame {
             infoHandler.getMyWaitingOrderNote()
         );
         // Update the text of the "View Order" menu button to "refresh"
-        viewOrderB.setText("refresh");
+        viewOrderB.setText("REFRESH");
     }
     
     
@@ -1570,7 +1570,7 @@ public class RestaurantGUI extends JFrame {
         
         infoHandler.refreshOrderStatus();
         
-        createOrderB.setText("refresh");
+        createOrderB.setText("REFRESH");
         
         lblPageNumber.setLocation(53, 180);
         btnPageBack.setLocation(10, 176);
@@ -1641,7 +1641,7 @@ public class RestaurantGUI extends JFrame {
         
         infoHandler.refreshUserInfo();
         
-        manageUsersB.setText("refresh");
+        manageUsersB.setText("REFRESH");
         
         lblPageNumber.setLocation(266, 324);
         btnPageBack.setLocation(223, 320);
