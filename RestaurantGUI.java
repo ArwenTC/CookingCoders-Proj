@@ -1091,8 +1091,10 @@ public class RestaurantGUI extends JFrame {
             
             if (pagetype == CREATE_ORDER_PAGE_TYPE) {
                 myOrder = infoHandler.getMyCurrentOrder();
-            } else {
+            } else if (programView == CUSTOMER_VIEW_TYPE) {
                 myOrder = infoHandler.getMyWaitingOrder();
+            } else {
+                myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
             }
             
             OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
@@ -1133,8 +1135,10 @@ public class RestaurantGUI extends JFrame {
             
             if (pagetype == CREATE_ORDER_PAGE_TYPE) {
                 myOrder = infoHandler.getMyCurrentOrder();
-            } else {
+            } else if (programView == CUSTOMER_VIEW_TYPE) {
                 myOrder = infoHandler.getMyWaitingOrder();
+            } else {
+                myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
             }
             
             OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
@@ -1297,6 +1301,8 @@ public class RestaurantGUI extends JFrame {
         
         Order orderToView = infoHandler.getOrdersInProgress()[((currentPage - 1) * ORDERS_PER_PAGE) + idx];
         
+        infoHandler.setCurrentlyViewedOrder(orderToView);
+        
         setupOrderViewPage(
             orderToView.getItems(),
             orderToView.getOrderID(),
@@ -1306,6 +1312,11 @@ public class RestaurantGUI extends JFrame {
     }
     
     
+    /**
+     * Marks an order as completed and removes it from the order list.
+     * 
+     * @param idx The index of the order line to delete within the current page.
+     */
     public void markOrderCompletedAction(int idx) {
         JFrame confirmCompleted = new JFrame();
         if (JOptionPane.showConfirmDialog(confirmCompleted, "Confirm Order Completion", "Confirm Completion", JOptionPane.YES_NO_OPTION) 

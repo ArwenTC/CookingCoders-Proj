@@ -26,7 +26,7 @@ public class Driver {
 	    RestaurantGUI rgui = null;
 		
 		// Runs the gui
-	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "password");
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "Kl51abe7!-4567");
 	    
 	    
 	    if (myDatabase.getCon() != null) {

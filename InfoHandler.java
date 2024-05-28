@@ -50,6 +50,9 @@ public class InfoHandler {
     // -1 means no order currently in progress
     private int myOrderID = -1;
     
+    // the order currently being viewed by the employee
+    private Order currentlyViewedOrder;
+    
     /**
      * Constructor for InfoHandler
      * @param myDatabase    the SQLDatabase instance
@@ -235,6 +238,15 @@ public class InfoHandler {
     }
     
     /**
+     * Gets the order currently being viewed by the employee.
+     * 
+     * @return The currently viewed order
+     */
+    public Order getCurrentlyViewedOrder() {
+        return currentlyViewedOrder;
+    }
+    
+    /**
      * Gets the building information.
      * 
      * @return an array of strings containing the building information
@@ -288,36 +300,6 @@ public class InfoHandler {
         return username;
     }
     
-    /**
-     * Sets this building's information based on the new building name.
-     * 
-     * @param newBuildingName the new building name
-     */
-    public void setThisBuildingInfo(String newBuildingName) {
-        try {
-            
-            ResultSet rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + newBuildingName + "'", null);
-            
-            if (rs == null || !rs.next()) {
-                return;
-            }
-            
-            this.buildingPhone = newBuildingName;
-            this.state = rs.getString("state");
-            this.city = rs.getString("city");
-            this.streetAddr1 = rs.getString("streetaddr1");
-            this.streetAddr2 = rs.getString("streetaddr2");
-            
-            String sqlString = "UPDATE user SET buildingname = ? WHERE username = ?;";
-            PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
-            
-            pst.setString(1, newBuildingName);
-            pst.setString(2, this.username);
-            
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Couldn't refresh buildings map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
     /**
      * Adds the current order for the user to the database.
      *
@@ -592,6 +574,15 @@ public class InfoHandler {
         }
         
         return null;
+    }
+    
+    /**
+     * Sets the order currently being viewed by the employee.
+     * 
+     * @param orderBeingViewed The order to be viewed
+     */
+    public void setCurrentlyViewedOrder(Order orderBeingViewed) {
+        this.currentlyViewedOrder = orderBeingViewed;
     }
     
     /**
