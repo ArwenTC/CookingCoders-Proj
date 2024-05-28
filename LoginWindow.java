@@ -42,8 +42,6 @@ public class LoginWindow extends JFrame {
     // Creates a database myDatabase
 	private SQLDatabase myDatabase;
 	
-	// information about this instance of the program
-	InfoHandler infoHandler;
 	private JTextField txtBuilding;
 	
 	 /**

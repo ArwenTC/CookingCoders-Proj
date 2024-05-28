@@ -38,34 +38,27 @@ public class RestaurantGUI extends JFrame {
     private int programView;
     
     // Panels that will be swapped depending what the user selects
-    JPanel masterP;
-    JPanel viewOrderP;
-    JPanel createOrderP;
-    JPanel employeeViewOrderP;
-    JPanel orderListP;
-    JPanel manageUsersP;
-    JPanel buildingP;
-    JPanel settingsP;
+    private JPanel masterP;
+    private JPanel viewOrderP;
+    private JPanel createOrderP;
+    private JPanel employeeViewOrderP;
+    private JPanel orderListP;
+    private JPanel manageUsersP;
+    private JPanel buildingP;
     
     // Menu bar that allows user to swap between each view
-    JMenuBar menu;
+    private JMenuBar menu;
     // Menu bar buttons
-    JMenuItem viewOrderB;
-    JMenuItem createOrderB;
-    JMenuItem orderListB;
-    JMenuItem manageUsersB;
-    JMenuItem buildingB;
+    private JMenuItem viewOrderB;
+    private JMenuItem createOrderB;
+    private JMenuItem orderListB;
+    private JMenuItem manageUsersB;
+    private JMenuItem buildingB;
     
-    SQLDatabase myDatabase;
+    private SQLDatabase myDatabase;
     
-    InfoHandler infoHandler;
+    private InfoHandler infoHandler;
     
-    User loggedInUser;
-
-    String chosenBuildingName;
-
-    JLabel lblBuildingName;
-    JTextField buildingNameField;
     
     private JScrollPane scrollPaneMenu;
     private JList<String> menuList;
@@ -157,6 +150,10 @@ public class RestaurantGUI extends JFrame {
     private JLabel lblStreetAddr2;
     private JComboBox<String> comboBoxState;
     private JButton btnBuilding;
+    private JTextField txtBuildingPhone;
+    private JTextField txtCity;
+    private JTextField txtAddrLine1;
+    private JTextField txtAddrLine2;
     
     private JLabel[] itemLabels;
     private JButton[] itemClearButtons;
@@ -171,10 +168,6 @@ public class RestaurantGUI extends JFrame {
     private JTextField[] usernameTxtFields;
     private JTextField[] passwordTxtFields;
     private ArrayList<JComboBox<String>> usertypeComboBoxes;
-    private JTextField txtBuildingPhone;
-    private JTextField txtCity;
-    private JTextField txtAddrLine1;
-    private JTextField txtAddrLine2;
 
     /**
      * Creates the RestaurantGUI
@@ -246,7 +239,6 @@ public class RestaurantGUI extends JFrame {
         orderListP = new OrderListPanel();
         manageUsersP = new RPanel();
         buildingP = new RPanel();
-        settingsP = new RPanel();
         
         // Menu bar that allows user to swap between each view
         menu = new JMenuBar();
