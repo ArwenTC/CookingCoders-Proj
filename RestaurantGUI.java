@@ -1508,8 +1508,8 @@ public class RestaurantGUI extends JFrame {
         drawOrderPage(orderPage);
         
         int howManyWaitingOrders = infoHandler.getOrdersInProgress().length;
-        int howManyPages = (howManyWaitingOrders / ORDERLINES_PER_PAGE);
-        if (howManyWaitingOrders % ORDERLINES_PER_PAGE != 0 || howManyWaitingOrders == 0) {
+        int howManyPages = (howManyWaitingOrders / ORDERS_PER_PAGE);
+        if (howManyWaitingOrders % ORDERS_PER_PAGE != 0 || howManyWaitingOrders == 0) {
             howManyPages += 1;
         }
         lblPageNumber.setText("1/" + howManyPages);
@@ -1655,7 +1655,7 @@ public class RestaurantGUI extends JFrame {
         
         int howManyUsers = infoHandler.getUsers().length;
         int howManyPages = (howManyUsers / USERS_PER_PAGE);
-        if (howManyPages % ORDERLINES_PER_PAGE != 0 || howManyPages == 0) {
+        if (howManyUsers % ORDERLINES_PER_PAGE != 0 || howManyUsers == 0) {
             howManyPages += 1;
         }
         lblPageNumber.setText("1/" + howManyPages);
