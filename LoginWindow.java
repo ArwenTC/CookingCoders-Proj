@@ -4,6 +4,7 @@ package GroupProject;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
@@ -13,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 
 /**
@@ -32,7 +35,7 @@ public class LoginWindow extends JFrame {
 	private JButton btnSignUp;
 	private JLabel lblConfirm;
     private JPasswordField txtConfirm;
-    
+    private JPanel mainPanel;
     
     // Returns a view of the program
     private int programView;
@@ -51,6 +54,9 @@ public class LoginWindow extends JFrame {
      */
 	public LoginWindow(SQLDatabase myDatabase_) {
 	    myDatabase = myDatabase_;
+	    
+	    mainPanel = new RPanel();
+	    setContentPane(mainPanel);
 	    
 	    // Initializes the frame
 		initialize();
@@ -326,16 +332,16 @@ public class LoginWindow extends JFrame {
 		
 		
 		// Text Field Button
-		txtUsername = new JTextField();
+		txtUsername = new RTextField();
 		txtUsername.setBounds(215, 85, 254, 20);
 		txtUsername.setColumns(10);
 		
 		// Password Button
-		txtPassword = new JPasswordField();
+		txtPassword = new RPasswordField();
 		txtPassword.setBounds(215, 110, 254, 20);
 		
 		// Login Button
-		btnLogin = new JButton("Login");
+		btnLogin = new RActionButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 		        
@@ -383,7 +389,7 @@ public class LoginWindow extends JFrame {
 		
 		
 		// Reset Button
-		btnReset = new JButton("Reset");
+		btnReset = new RActionButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				txtUsername.setText(null);
@@ -395,7 +401,7 @@ public class LoginWindow extends JFrame {
 		btnReset.setBounds(177, 297, 89, 23);
 		
 		// Sign Up Button
-		btnSignUp = new JButton("Sign Up");
+		btnSignUp = new RActionButton("Sign Up");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
@@ -495,7 +501,7 @@ public class LoginWindow extends JFrame {
         btnSignUp.setBounds(318, 297, 89, 23);
 		
         // Creates an exit button
-        btnExit = new JButton("Exit");
+        btnExit = new RActionButton("Exit");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Creates new frame for exit
@@ -513,8 +519,12 @@ public class LoginWindow extends JFrame {
 		
 		// Separators
 		JSeparator separator = new JSeparator();
+		separator.setBackground(new Color(38, 102, 55));
+		separator.setForeground(new Color(38, 102, 55));
 		separator.setBounds(21, 277, 553, 2);
 		JSeparator separator_1 = new JSeparator();
+		separator_1.setBackground(new Color(38, 102, 55));
+		separator_1.setForeground(new Color(38, 102, 55));
 		separator_1.setBounds(21, 75, 553, 2);
 		
 		
@@ -524,7 +534,7 @@ public class LoginWindow extends JFrame {
 		lblConfirm = new JLabel("Confirm Password");
 		lblConfirm.setBounds(96, 225, 128, 14);
 		
-		txtConfirm = new JPasswordField();
+		txtConfirm = new RPasswordField();
 		txtConfirm.setBounds(215, 222, 254, 20);
 		
 		
@@ -546,13 +556,11 @@ public class LoginWindow extends JFrame {
 		lblBuilding.setBounds(96, 200, 110, 14);
 		getContentPane().add(lblBuilding);
 		
-		txtBuilding = new JTextField();
+		txtBuilding = new RTextField();
 		txtBuilding.setBounds(215, 197, 254, 20);
 		getContentPane().add(txtBuilding);
 		txtBuilding.setColumns(10);
 		
 		
 	}
-	
-	
 }

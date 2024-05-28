@@ -223,6 +223,8 @@ public class RestaurantGUI extends JFrame {
             case ADMIN_VIEW_TYPE:    setAdminView();    break;
         }
         
+        createOrderAction();
+        
         setVisible(true);
     }
     
