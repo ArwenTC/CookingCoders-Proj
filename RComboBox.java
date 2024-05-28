@@ -7,6 +7,10 @@ import javax.swing.JComboBox;
 
 public class RComboBox<String> extends JComboBox<String> {
 	
+	/**
+	 * Constructor
+	 * @param info
+	 */
 	public RComboBox(String[] info) {
 		super(info);
 		
@@ -24,6 +28,10 @@ public class RComboBox<String> extends JComboBox<String> {
 	}
 	
 
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

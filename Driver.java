@@ -23,7 +23,7 @@ public class Driver {
 	public int Run() {
 		
 		// Runs the gui
-	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/cs380restaurant", "root", "Kl51abe7!-4567");
+	    SQLDatabase myDatabase = new SQLDatabase("jdbc:mysql://localhost:3306/mydb", "root", "cs380");
 	    
 	    
 	    if (myDatabase.getCon() != null) {

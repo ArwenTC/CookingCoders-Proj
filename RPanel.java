@@ -56,7 +56,11 @@ public class RPanel extends JPanel {
 		// Sets background
 		setBackground(this.color0);
 	}
-	
+
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

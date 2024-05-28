@@ -58,7 +58,10 @@ public class RActionButton extends JButton {
 		});
 	}
 	
-
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

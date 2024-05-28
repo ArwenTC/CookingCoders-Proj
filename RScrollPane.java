@@ -9,12 +9,17 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class RScrollPane extends JScrollPane {
 	
+	/**
+	 * Constructor
+	 */
 	public RScrollPane() {
 		super();
 		
 		setBorder(null);
 	    getVerticalScrollBar().setBackground(new Color(222, 185, 126));
 	    getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+	    	
+	    	// Removes the up and down buttons
 	    	@Override
 	        protected JButton createDecreaseButton(int orientation) {
 	    		// Creates a button with no size

@@ -13,6 +13,7 @@ public class RItemList<String> extends JList<String> {
 
 	/**
 	 * Constructor method
+	 * @param array
 	 */
 	public RItemList(String[] array) {
 		super(array);
@@ -32,7 +33,10 @@ public class RItemList<String> extends JList<String> {
 		setBorder(null);
 	}
 	
-
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

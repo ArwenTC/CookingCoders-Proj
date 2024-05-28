@@ -67,7 +67,8 @@ public class RMenuItem extends JMenuItem {
 		});
 		
 	}
-	 /**
+	
+	/**
      * Constructs an RMenuItem with the specified text using default colors.
      *
      * @param text The text to display on the menu item.

@@ -19,24 +19,21 @@ public class ViewOrderPanel extends JPanel {
 	Color highlightColor0 = new Color(255, 221, 161);
 	Color highlightColor1 = new Color(175, 219, 199);
 	
-	// Constructor that uses the default colors - Includes customer check
-	public ViewOrderPanel(boolean isCustomer) {
+	/**
+	 * Constructor that uses default colors
+	 */
+	public ViewOrderPanel() {
 		// Super constructor
 		super();
-		
-		this.isCustomer = isCustomer;
 		// Sets background
 		setBackground(this.color0);
 	}
 	
-	// Constructor that uses the default colors
-		public ViewOrderPanel() {
-			// Super constructor
-			super();
-			// Sets background
-			setBackground(this.color0);
-		}
-	
+
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

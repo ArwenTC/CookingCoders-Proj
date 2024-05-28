@@ -75,7 +75,11 @@ public class RButton extends JButton {
 		// Sets the text color to white
 		setForeground(textColor);
 	}
-	
+
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
+import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
-public class RTextArea extends JTextArea {
+public class RPasswordField extends JPasswordField {
 
 	/**
 	 * Constructor method
 	 */
-	public RTextArea() {
+	public RPasswordField() {
 		super();
 
 		// Creates colors

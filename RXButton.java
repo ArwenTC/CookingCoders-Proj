@@ -11,6 +11,7 @@ public class RXButton extends JButton {
 	
 	/**
 	 * Constructor method
+	 * @param text
 	 */
 	public RXButton(String text) {
 		super(text);
@@ -56,6 +57,10 @@ public class RXButton extends JButton {
 	}
 	
 
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		

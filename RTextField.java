@@ -29,6 +29,10 @@ public class RTextField extends JTextField {
 	}
 	
 
+	/**
+	 * Paints rectangles on the object
+	 * @param g graphics component
+	 */
 	@Override
 	protected void paintComponent(Graphics g) {
 		
