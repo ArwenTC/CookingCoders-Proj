@@ -506,36 +506,45 @@ public class InfoHandler {
             ArrayList<Order> refreshedOrdersInProgress = new ArrayList<Order>();
             
             do {
+            	// If the username is not null
+                if (rsOrders.getString("customerusername") != null) {
+                	
+                	// Creates an order using the data from the current SQL order
+                	int orderID = rsOrders.getInt("orderID");
+                	String customerUsername = rsOrders.getString("customerusername");
+                	String note = rsOrders.getString("note");
+                	
+                	// Gets the order lines containing info at orderID orderID
+                	ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
+                	
+                	// If there are no order lines, continues, else does not.
+                	if (rsOrderLines == null || !rsOrderLines.next()) {
+                		continue;
+                	}
+                	
+                	// Creates an an order line list
+                	ArrayList<OrderLine> orderLines = new ArrayList<OrderLine>();
                 
-                int orderID = rsOrders.getInt("orderID");
-                String customerUsername = rsOrders.getString("customerusername");
-                String note = rsOrders.getString("note");
+                	// Adds the order lines to the order line list
+                	do {
+                		// Creates the order line object
+                		String productName = rsOrderLines.getString("productname");
+                		int quantity = rsOrderLines.getInt("quantity");
+                    
+                		orderLines.add(new OrderLine(productName, quantity));
+                    
+                	} while (rsOrderLines.next());
+                	
+                	// Adds the order to the list
+                	refreshedOrdersInProgress.add(new Order(orderID, orderLines, customerUsername, note));
                 
-                ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
-                
-                if (rsOrderLines == null || !rsOrderLines.next()) {
-                    continue;
+                	if (customerUsername.equals(this.username)) {
+                		myWaitingOrder = orderLines;
+                		myOrderID = orderID;
+                		myWaitingOrderNote = note;
+                	}
                 }
-                
-                ArrayList<OrderLine> orderLines = new ArrayList<OrderLine>();
-                
-                do {
-                    
-                    String productName = rsOrderLines.getString("productname");
-                    int quantity = rsOrderLines.getInt("quantity");
-                    
-                    orderLines.add(new OrderLine(productName, quantity));
-                    
-                } while (rsOrderLines.next());
-                
-                refreshedOrdersInProgress.add(new Order(orderID, orderLines, customerUsername, note));
-                
-                if (customerUsername.equals(this.username)) {
-                    myWaitingOrder = orderLines;
-                    myOrderID = orderID;
-                    myWaitingOrderNote = note;
-                }
-                
+                // Does another order
             } while (rsOrders.next());
             
             ordersInProgress = refreshedOrdersInProgress.toArray(Order[]::new);
