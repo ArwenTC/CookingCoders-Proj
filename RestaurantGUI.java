@@ -1,6 +1,6 @@
 
 
-package GroupProject;
+package groupproject;
 
 import javax.swing.*;
 
@@ -15,16 +15,18 @@ import java.util.Map;
 public class RestaurantGUI extends JFrame {
 
     // Window Size
-	final int SIZE_X = 600, SIZE_Y = 450;
+    final int SIZE_X = 600, SIZE_Y = 450;
     
     // items per pages
     public final int ORDERLINES_PER_PAGE = 5;
     public final int ORDERS_PER_PAGE = 5;
     public final int USERS_PER_PAGE = 5;
-    public final int CREATE_ORDER_PAGE_TYPE = 0;
-    public final int VIEW_ORDER_PAGE_TYPE = 1;
-    public final int ORDERS_PAGE_TYPE = 2;
-    public final int USERS_PAGE_TYPE = 3;
+    
+    public final int SUBMIT_ORDER_PAGE_TYPE = 0;
+    public final int EDIT_ORDER_PAGE_TYPE = 1;
+    public final int VIEW_ORDER_PAGE_TYPE = 2;
+    public final int ORDERS_PAGE_TYPE = 3;
+    public final int USERS_PAGE_TYPE = 4;
     
     // program view types
     private final int CUSTOMER_VIEW_TYPE = 0;
@@ -40,8 +42,7 @@ public class RestaurantGUI extends JFrame {
     // Panels that will be swapped depending what the user selects
     private JPanel masterP;
     private JPanel viewOrderP;
-    private JPanel createOrderP;
-    private JPanel employeeViewOrderP;
+    private JPanel writeOrderP;
     private JPanel orderListP;
     private JPanel manageUsersP;
     private JPanel buildingP;
@@ -65,8 +66,7 @@ public class RestaurantGUI extends JFrame {
     private JLabel lblCustomerTotal;
     private JLabel lblPendingOrderID;
     private JLabel lblNote;
-    private JTextArea txtCurrentOrderNote;
-    private JTextArea txtWaitingOrderNote;
+    private JTextArea txtOrderNote;
     private JLabel lblItem1;
     private JLabel lblItem2;
     private JLabel lblItem3;
@@ -236,8 +236,7 @@ public class RestaurantGUI extends JFrame {
         // Creates Panels
         masterP = new RPanel();
         viewOrderP = new ViewOrderPanel();
-        createOrderP = new ViewOrderPanel();
-        employeeViewOrderP = new ViewOrderPanel();
+        writeOrderP = new ViewOrderPanel();
         orderListP = new OrderListPanel();
         manageUsersP = new ManagePanel();
         buildingP = new BuildingPanel();
@@ -307,32 +306,32 @@ public class RestaurantGUI extends JFrame {
         lblPageNumber.setBounds(266, 284, 47, 14);
         lblPageNumber.setHorizontalAlignment(SwingConstants.CENTER);
         
-        createOrderP.setLayout(null);
+        writeOrderP.setLayout(null);
         viewOrderP.setLayout(null);
         
         scrollPaneMenu = new RScrollPane();
         scrollPaneMenu.setBounds(381, 30, 139, 130);
-        createOrderP.add(scrollPaneMenu);
+        writeOrderP.add(scrollPaneMenu);
         
         lblMenuList = new JLabel("Menu");
         lblMenuList.setBounds(439, 11, 81, 14);
-        createOrderP.add(lblMenuList);
+        writeOrderP.add(lblMenuList);
         
         lblCustomerName = new JLabel("Name:");
         lblCustomerName.setBounds(381, 203, 139, 14);
-        createOrderP.add(lblCustomerName);
+        writeOrderP.add(lblCustomerName);
         
         lblCustomerTotal = new JLabel("Total:");
         lblCustomerTotal.setBounds(381, 253, 139, 14);
-        createOrderP.add(lblCustomerTotal);
+        writeOrderP.add(lblCustomerTotal);
         
         lblPendingOrderID = new JLabel("Pending Order ID:");
         lblPendingOrderID.setBounds(381, 228, 139, 14);
-        createOrderP.add(lblPendingOrderID);
+        writeOrderP.add(lblPendingOrderID);
         
         lblNote = new JLabel("Note:");
         lblNote.setBounds(31, 222, 69, 14);
-        createOrderP.add(lblNote);
+        writeOrderP.add(lblNote);
         
         btnSubmitOrder = new RActionButton("Submit Order");
         btnSubmitOrder.addActionListener(new ActionListener() {
@@ -341,32 +340,32 @@ public class RestaurantGUI extends JFrame {
             }
         });
         btnSubmitOrder.setBounds(403, 278, 122, 58);
-        createOrderP.add(btnSubmitOrder);
+        writeOrderP.add(btnSubmitOrder);
         
         lblItem1 = new JLabel("");
         lblItem1.setBounds(55, 34, 109, 14);
         lblItem1.setVisible(false);
-        createOrderP.add(lblItem1);
+        writeOrderP.add(lblItem1);
         
         lblItem2 = new JLabel("");
         lblItem2.setBounds(55, 59, 109, 14);
         lblItem2.setVisible(false);
-        createOrderP.add(lblItem2);
+        writeOrderP.add(lblItem2);
         
         lblItem3 = new JLabel("");
         lblItem3.setBounds(55, 84, 109, 14);
         lblItem3.setVisible(false);
-        createOrderP.add(lblItem3);
+        writeOrderP.add(lblItem3);
         
         lblItem4 = new JLabel("");
         lblItem4.setBounds(55, 108, 109, 14);
         lblItem4.setVisible(false);
-        createOrderP.add(lblItem4);
+        writeOrderP.add(lblItem4);
         
         lblItem5 = new JLabel("");
         lblItem5.setBounds(55, 133, 109, 14);
         lblItem5.setVisible(false);
-        createOrderP.add(lblItem5);
+        writeOrderP.add(lblItem5);
         
         btnClearItem1 = new RXButton("X");
         btnClearItem1.addActionListener(new ActionListener() {
@@ -377,7 +376,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem1.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem1.setBounds(10, 32, 39, 18);
         btnClearItem1.setVisible(false);
-        createOrderP.add(btnClearItem1);
+        writeOrderP.add(btnClearItem1);
         
         btnClearItem2 = new RXButton("X");
         btnClearItem2.addActionListener(new ActionListener() {
@@ -388,7 +387,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem2.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem2.setBounds(10, 57, 39, 18);
         btnClearItem2.setVisible(false);
-        createOrderP.add(btnClearItem2);
+        writeOrderP.add(btnClearItem2);
         
         btnClearItem3 = new RXButton("X");
         btnClearItem3.addActionListener(new ActionListener() {
@@ -399,7 +398,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem3.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem3.setBounds(10, 82, 39, 18);
         btnClearItem3.setVisible(false);
-        createOrderP.add(btnClearItem3);
+        writeOrderP.add(btnClearItem3);
         
         btnClearItem4 = new RXButton("X");
         btnClearItem4.addActionListener(new ActionListener() {
@@ -410,7 +409,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem4.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem4.setBounds(10, 106, 39, 18);
         btnClearItem4.setVisible(false);
-        createOrderP.add(btnClearItem4);
+        writeOrderP.add(btnClearItem4);
    
         btnClearItem5 = new RXButton("X");
         btnClearItem5.addActionListener(new ActionListener() {
@@ -421,7 +420,7 @@ public class RestaurantGUI extends JFrame {
         btnClearItem5.setFont(new Font("Tahoma", Font.PLAIN, 8));
         btnClearItem5.setBounds(10, 131, 39, 18);
         btnClearItem5.setVisible(false);
-        createOrderP.add(btnClearItem5);
+        writeOrderP.add(btnClearItem5);
         
         itemLabels = new JLabel[] {lblItem1, lblItem2, lblItem3, lblItem4, lblItem5};
         itemClearButtons = new JButton[] {btnClearItem1, btnClearItem2, btnClearItem3, btnClearItem4, btnClearItem5};
@@ -433,22 +432,19 @@ public class RestaurantGUI extends JFrame {
             }
         });
         buttonAddItem.setBounds(413, 169, 83, 23);
-        createOrderP.add(buttonAddItem);
+        writeOrderP.add(buttonAddItem);
         
         // Styles the scroll pane
         scrollPaneNote = new RScrollPane();
         scrollPaneNote.setBounds(27, 240, 220, 100);
-        createOrderP.add(scrollPaneNote);
+        writeOrderP.add(scrollPaneNote);
         
-        txtCurrentOrderNote = new RTextArea();
-        txtCurrentOrderNote.setLineWrap(true);
-        
-        txtWaitingOrderNote = new RTextArea();
-        txtWaitingOrderNote.setLineWrap(true);
+        txtOrderNote = new RTextArea();
+        txtOrderNote.setLineWrap(true);
         
         lblOrderInProgress = new JLabel("Order In Progress");
         lblOrderInProgress.setBounds(405, 300, 135, 14);
-        createOrderP.add(lblOrderInProgress);
+        writeOrderP.add(lblOrderInProgress);
         
         orderListP.setLayout(null);
         lblWaitingOrders = new JLabel("Waiting Orders");
@@ -478,7 +474,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder1 = new RActionButton("View Order");
         btnViewOrder1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                viewOrderAction(0);
+                employeeViewOrderAction(0);
             }
         });
         btnViewOrder1.setBounds(197, 46, 100, 23);
@@ -487,7 +483,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder2 = new RActionButton("View Order");
         btnViewOrder2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                viewOrderAction(1);
+                employeeViewOrderAction(1);
             }
         });
         btnViewOrder2.setBounds(197, 96, 100, 23);
@@ -496,7 +492,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder3 = new RActionButton("View Order");
         btnViewOrder3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                viewOrderAction(2);
+                employeeViewOrderAction(2);
             }
         });
         btnViewOrder3.setBounds(197, 146, 100, 23);
@@ -505,7 +501,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder4 = new RActionButton("View Order");
         btnViewOrder4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                viewOrderAction(3);
+                employeeViewOrderAction(3);
             }
         });
         btnViewOrder4.setBounds(197, 196, 100, 23);
@@ -514,7 +510,7 @@ public class RestaurantGUI extends JFrame {
         btnViewOrder5 = new RActionButton("View Order");
         btnViewOrder5.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                viewOrderAction(4);
+                employeeViewOrderAction(4);
             }
         });
         btnViewOrder5.setBounds(197, 246, 100, 23);
@@ -1008,47 +1004,86 @@ public class RestaurantGUI extends JFrame {
      * @param orderID The ID of the order to be viewed.
      * @param username The username associated with the order.
      * @param orderNote The note associated with the order.
+     * @param editing A boolean indicating whether or not the order is being written to.
      */
-    void setupOrderViewPage(ArrayList<OrderLine> orderToView, int orderID, String username, String orderNote) {
-        pagetype = VIEW_ORDER_PAGE_TYPE;
+    void setupOrderPage() {
         
-        addOrderLinePageSharedGraphics(viewOrderP);
-        createOrderP.add(txtWaitingOrderNote);
-        scrollPaneNote.setViewportView(txtWaitingOrderNote);
+        boolean viewing = (pagetype == VIEW_ORDER_PAGE_TYPE);
+        boolean editing = (pagetype == EDIT_ORDER_PAGE_TYPE);
+        
+        JPanel panelToUse = viewing ? viewOrderP : writeOrderP;
+        
+        addOrderLinePageSharedGraphics(panelToUse);
+        writeOrderP.add(txtOrderNote);
+        scrollPaneNote.setViewportView(txtOrderNote);
         
         // resets the menu button text
         resetMenuButtonText();
         // Removes any panels currently in view
         removeAllPanelsFromContentPane();
         // Adds the panel selected by the user
-        getContentPane().add(viewOrderP);
+        getContentPane().add(panelToUse);
         
         lblPageNumber.setLocation(53, 180);
         btnPageBack.setLocation(10, 176);
         btnPageForward.setLocation(96, 176);
-        viewOrderP.add(lblPageNumber);
-        viewOrderP.add(btnPageBack);
-        viewOrderP.add(btnPageForward);
+        panelToUse.add(lblPageNumber);
+        panelToUse.add(btnPageBack);
+        panelToUse.add(btnPageForward);
+        
+        Order orderToView = infoHandler.getCurrentlyViewedOrder();
+        ArrayList<OrderLine> orderListToView = orderToView.getItems();
+        String username = orderToView.getCustomerUsername();
+        int orderID = orderToView.getOrderID();
+        String orderNote = orderToView.getNote();
         
         lblCustomerName.setText("Name: " + username);
         lblPendingOrderID.setText("Pending Order ID: " + (orderID != -1 ? orderID : "null"));
-        lblCustomerTotal.setText("Total: $" + String.format("%.2f", infoHandler.getTotalCharge(orderToView)));
+        lblCustomerTotal.setText("Total: $" + String.format("%.2f", infoHandler.getTotalCharge(orderListToView)));
         
-        OrderLine[] waitingOrderArray = orderToView.toArray(OrderLine[]::new);
-        OrderLine[] orderLinePage = infoHandler.getOrderLinePage(waitingOrderArray, 1, ORDERLINES_PER_PAGE);
+        if (!viewing) {
+            ArrayList<String> itemStrings = new ArrayList<String>();
+            
+            for (Map.Entry<String, Double> productView : infoHandler.getProductEntrySet()) {
+                String costString = "$" + String.format("%.2f", productView.getValue());
+                itemStrings.add(costString + ": " + productView.getKey());
+            }
+            
+            menuList = new RItemList<String>(itemStrings.toArray(String[]::new));
+            menuList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            scrollPaneMenu.setViewportView(menuList);
+            
+            panelToUse.add(scrollPaneMenu);
+        }
+        
+        OrderLine[] orderListArray = orderListToView.toArray(OrderLine[]::new);
+        OrderLine[] orderLinePage = infoHandler.getOrderLinePage(orderListArray, 1, ORDERLINES_PER_PAGE);
         
         drawOrderLinePage(orderLinePage);
         
-        int howManyPages = (waitingOrderArray.length / ORDERLINES_PER_PAGE);
-        if (waitingOrderArray.length % ORDERLINES_PER_PAGE != 0 || waitingOrderArray.length == 0) {
+        int howManyPages = (orderListArray.length / ORDERLINES_PER_PAGE);
+        if (orderListArray.length % ORDERLINES_PER_PAGE != 0 || orderListArray.length == 0) {
             howManyPages += 1;
         }
         lblPageNumber.setText("1/" + howManyPages);
         
-        lblOrderInProgress.setText(orderID == -1 ? "No Order In Progress" : "Order In Progress");
-        lblOrderInProgress.setVisible(true);
+        boolean myOrderInProgress = (infoHandler.getMyOrderID() != -1);
+        lblOrderInProgress.setText(myOrderInProgress ? "Order In Progress" : "No Order In Progress");
         
-        txtWaitingOrderNote.setText(orderNote);
+        if (viewing) {
+            btnSubmitOrder.setVisible(false);
+            lblOrderInProgress.setVisible(true);
+        } else if (editing) {
+            btnSubmitOrder.setText("Edit Order");
+            btnSubmitOrder.setVisible(true);
+            lblOrderInProgress.setVisible(false);
+        } else {
+            btnSubmitOrder.setText("Submit Order");
+            btnSubmitOrder.setVisible(!myOrderInProgress);
+            lblOrderInProgress.setVisible(myOrderInProgress);
+        }
+        
+        txtOrderNote.setText(orderNote);
         
         // Validates and repaints the changes
         validate();
@@ -1078,17 +1113,8 @@ public class RestaurantGUI extends JFrame {
         
         currentPage -= 1;
         
-        if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-            ArrayList<OrderLine> myOrder;
-            
-            if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                myOrder = infoHandler.getMyCurrentOrder();
-            } else if (programView == CUSTOMER_VIEW_TYPE) {
-                myOrder = infoHandler.getMyWaitingOrder();
-            } else {
-                myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
-            }
-            
+        if (pagetype == SUBMIT_ORDER_PAGE_TYPE || pagetype == EDIT_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+            ArrayList<OrderLine> myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
             OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
             drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
         } else if (pagetype == ORDERS_PAGE_TYPE) {
@@ -1122,17 +1148,8 @@ public class RestaurantGUI extends JFrame {
         
         currentPage += 1;
         
-        if (pagetype == CREATE_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
-            ArrayList<OrderLine> myOrder;
-            
-            if (pagetype == CREATE_ORDER_PAGE_TYPE) {
-                myOrder = infoHandler.getMyCurrentOrder();
-            } else if (programView == CUSTOMER_VIEW_TYPE) {
-                myOrder = infoHandler.getMyWaitingOrder();
-            } else {
-                myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
-            }
-            
+        if (pagetype == SUBMIT_ORDER_PAGE_TYPE || pagetype == EDIT_ORDER_PAGE_TYPE || pagetype == VIEW_ORDER_PAGE_TYPE) {
+            ArrayList<OrderLine> myOrder = infoHandler.getCurrentlyViewedOrder().getItems();
             OrderLine[] orderLines = myOrder.toArray(OrderLine[]::new);
             drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentPage, ORDERLINES_PER_PAGE));
         } else if (pagetype == ORDERS_PAGE_TYPE) {
@@ -1145,7 +1162,7 @@ public class RestaurantGUI extends JFrame {
     }
     
     /**
-     * Action performed when submitting the current order.
+     * Action performed when submitting or editing the current order.
      * This method checks if the total charge of the current order is zero,
      * if the user note exceeds 255 characters,
      * displays an error message and returns if either condition is met,
@@ -1156,33 +1173,53 @@ public class RestaurantGUI extends JFrame {
      * updates the order line page with the modified order lines.
      */
     public void submitOrderAction() {
-        if (infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder()) == 0.0) {
+        boolean editing = (pagetype == EDIT_ORDER_PAGE_TYPE);
+        
+        Order currentlyViewedOrder = infoHandler.getCurrentlyViewedOrder();
+        
+        if (editing) {
+            int orderStatus = infoHandler.getOrderStatus(currentlyViewedOrder.getOrderID());
+            
+            if (orderStatus == 1) {
+                JOptionPane.showMessageDialog(null, "order already marked as completed", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (orderStatus == -1) { // error, message already printed
+                return;
+            }
+        }
+        
+        if (infoHandler.getTotalCharge(currentlyViewedOrder.getItems()) == 0.0) {
             return;
         }
         
-        if (txtCurrentOrderNote.getText().length() >= 255) {
+        if (currentlyViewedOrder.getNote().length() >= 255) {
             JOptionPane.showMessageDialog(null, "user note must be less than 255 characters", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         JFrame confirmSubmit = new JFrame();
-        if (JOptionPane.showConfirmDialog(confirmSubmit, "Confirm Order Submission", "Confirm Order", JOptionPane.YES_NO_OPTION) 
+        if (JOptionPane.showConfirmDialog(confirmSubmit, "Confirm Current Order", "Confirm Order", JOptionPane.YES_NO_OPTION) 
                 != JOptionPane.YES_OPTION) {
             return;
         }
         
-        int orderID = infoHandler.addUserCurrentOrder(txtCurrentOrderNote.getText());
-        
-        txtCurrentOrderNote.setText("");
-        lblPendingOrderID.setText("Pending Order ID: " + orderID);
-        lblCustomerTotal.setText("$0.00");
-        lblPageNumber.setText("1/1");
-        
-        lblOrderInProgress.setVisible(true);
-        btnSubmitOrder.setVisible(false);
-        
-        OrderLine[] orderLines = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
-        drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, 1, ORDERLINES_PER_PAGE));
+        if (pagetype == SUBMIT_ORDER_PAGE_TYPE) {
+            int orderID = infoHandler.addUserCurrentOrder(txtOrderNote.getText());
+            
+            txtOrderNote.setText("");
+            lblPendingOrderID.setText("Pending Order ID: " + orderID);
+            lblCustomerTotal.setText("Total: $0.00");
+            lblPageNumber.setText("1/1");
+            
+            lblOrderInProgress.setText("Order In Progress");
+            lblOrderInProgress.setVisible(true);
+            btnSubmitOrder.setVisible(false);
+            
+            OrderLine[] orderLines = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
+            drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, 1, ORDERLINES_PER_PAGE));
+        } else {
+            infoHandler.editOrder(currentlyViewedOrder, txtOrderNote.getText());
+        }
     }
     
     /**
@@ -1207,7 +1244,7 @@ public class RestaurantGUI extends JFrame {
         
         String productName = selectedValue.substring(selectedValue.indexOf(':') + 2);
         
-        ArrayList<OrderLine> currentOrderLines = infoHandler.getMyCurrentOrder();
+        ArrayList<OrderLine> currentOrderLines = infoHandler.getCurrentlyViewedOrder().getItems();
         
         boolean itemCountIncremented = false;
         for (OrderLine orderLine : currentOrderLines) {
@@ -1226,7 +1263,7 @@ public class RestaurantGUI extends JFrame {
         
         int currentOrderLinePage = Integer.valueOf(currentPageString);
         
-        OrderLine[] orderLines = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
+        OrderLine[] orderLines = currentOrderLines.toArray(OrderLine[]::new);
         drawOrderLinePage(infoHandler.getOrderLinePage(orderLines, currentOrderLinePage, ORDERLINES_PER_PAGE));
         
         int totalPages = (currentOrderLines.size() / ORDERLINES_PER_PAGE);
@@ -1235,7 +1272,7 @@ public class RestaurantGUI extends JFrame {
         }
         lblPageNumber.setText(currentPageString + "/" + totalPages);
         
-        double total = infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder());
+        double total = infoHandler.getTotalCharge(currentOrderLines);
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
     }
     
@@ -1284,7 +1321,9 @@ public class RestaurantGUI extends JFrame {
      *
      * @param idx The index of the order to mark as completed within the current page.
      */
-    public void viewOrderAction(int idx) {
+    public void employeeViewOrderAction(int idx) {
+        pagetype = EDIT_ORDER_PAGE_TYPE;
+        
         String pageNumberTxt = lblPageNumber.getText();
         int slashIndex = pageNumberTxt.indexOf('/');
         String currentPageString = pageNumberTxt.substring(0, slashIndex);
@@ -1295,12 +1334,7 @@ public class RestaurantGUI extends JFrame {
         
         infoHandler.setCurrentlyViewedOrder(orderToView);
         
-        setupOrderViewPage(
-            orderToView.getItems(),
-            orderToView.getOrderID(),
-            orderToView.getCustomerUsername(),
-            orderToView.getNote()
-        );
+        setupOrderPage();
     }
     
     
@@ -1362,7 +1396,7 @@ public class RestaurantGUI extends JFrame {
         int xIndex = itemLabelText.lastIndexOf('x');
         String itemToRemove = itemLabelText.substring(0, xIndex - 1);
         
-        ArrayList<OrderLine> currentOrderLines = infoHandler.getMyCurrentOrder();
+        ArrayList<OrderLine> currentOrderLines = infoHandler.getCurrentlyViewedOrder().getItems();
         
         for (int i = 0; i < currentOrderLines.size(); i++) {
             if (currentOrderLines.get(i).getProductName().equals(itemToRemove)) {
@@ -1381,7 +1415,7 @@ public class RestaurantGUI extends JFrame {
         lblPageNumber.setText(currentPage + "/" + totalPages);
         drawOrderLinePage(infoHandler.getOrderLinePage(currentOrderLines.toArray(OrderLine[]::new), currentPage, ORDERLINES_PER_PAGE));
         
-        double total = infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder());
+        double total = infoHandler.getTotalCharge(currentOrderLines);
         lblCustomerTotal.setText("Total: $" + String.format("%.2f", total));
     }
     /**
@@ -1531,15 +1565,22 @@ public class RestaurantGUI extends JFrame {
      * and validates the changes made.
      */
     void viewOrderAction() {
-    	// Refresh order status to ensure the latest data is retrieved
+        pagetype = VIEW_ORDER_PAGE_TYPE;
+        
+        // Refresh order status to ensure the latest data is retrieved
         infoHandler.refreshOrderStatus();
-     // Set up the order view page with information about the user's waiting order
-        setupOrderViewPage(
-            infoHandler.getMyWaitingOrder(),
-            infoHandler.getMyOrderID(),
-            infoHandler.getUsername(),
-            infoHandler.getMyWaitingOrderNote()
+        
+        infoHandler.setCurrentlyViewedOrder(
+            new Order(
+                infoHandler.getMyOrderID(),
+                infoHandler.getMyWaitingOrder(),
+                infoHandler.username,
+                infoHandler.getMyWaitingOrderNote()
+            )
         );
+        
+        // Set up the order view page with information about the user's waiting order
+        setupOrderPage();
         // Update the text of the "View Order" menu button to "refresh"
         viewOrderB.setText("REFRESH");
     }
@@ -1557,69 +1598,24 @@ public class RestaurantGUI extends JFrame {
      * and validates and repaints the changes.
      */
     void createOrderAction() {
-        pagetype = CREATE_ORDER_PAGE_TYPE;
+        pagetype = SUBMIT_ORDER_PAGE_TYPE;
         
-        addOrderLinePageSharedGraphics(createOrderP);
-        createOrderP.add(txtCurrentOrderNote);
-        scrollPaneNote.setViewportView(txtCurrentOrderNote);
-        
-        // resets the menu button text
-        resetMenuButtonText();
-        // Removes any panels currently in view
-        removeAllPanelsFromContentPane();
-        // Adds the panel selected by the user
-        getContentPane().add(createOrderP);
-        
+        // Refresh order status to ensure the latest data is retrieved
         infoHandler.refreshOrderStatus();
         
+        infoHandler.setCurrentlyViewedOrder(
+            new Order(
+                infoHandler.getMyOrderID(),
+                infoHandler.getMyCurrentOrder(),
+                infoHandler.username,
+                ""
+            )
+        );
+        
+        // Set up the order view page with information about the user's waiting order
+        setupOrderPage();
+        
         createOrderB.setText("REFRESH");
-        
-        lblPageNumber.setLocation(53, 180);
-        btnPageBack.setLocation(10, 176);
-        btnPageForward.setLocation(96, 176);
-        createOrderP.add(lblPageNumber);
-        createOrderP.add(btnPageBack);
-        createOrderP.add(btnPageForward);
-        
-        lblCustomerName.setText("Name: " + infoHandler.getUsername());
-        lblPendingOrderID.setText("Pending Order ID: " + (infoHandler.getMyOrderID() != -1 ? infoHandler.getMyOrderID() : "null"));
-        lblCustomerTotal.setText("Total: $" + String.format("%.2f", infoHandler.getTotalCharge(infoHandler.getMyCurrentOrder())));
-        
-        ArrayList<String> itemStrings = new ArrayList<String>();
-        
-        for (Map.Entry<String, Double> productView : infoHandler.getProductEntrySet()) {
-            String costString = "$" + String.format("%.2f", productView.getValue());
-            itemStrings.add(costString + ": " + productView.getKey());
-        }
-        
-        menuList = new RItemList<String>(itemStrings.toArray(String[]::new));
-        menuList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        scrollPaneMenu.setViewportView(menuList);
-        
-        OrderLine[] currentOrder = infoHandler.getMyCurrentOrder().toArray(OrderLine[]::new);
-        OrderLine[] orderLinePage = infoHandler.getOrderLinePage(currentOrder, 1, ORDERLINES_PER_PAGE);
-        
-        drawOrderLinePage(orderLinePage);
-        
-        int howManyPages = (currentOrder.length / ORDERLINES_PER_PAGE);
-        if (currentOrder.length % ORDERLINES_PER_PAGE != 0 || currentOrder.length == 0) {
-            howManyPages += 1;
-        }
-        lblPageNumber.setText("1/" + howManyPages);
-        
-        lblOrderInProgress.setText("Order In Progress");
-        if (infoHandler.getMyOrderID() == -1) {
-            lblOrderInProgress.setVisible(false);
-            btnSubmitOrder.setVisible(true);
-        } else {
-            lblOrderInProgress.setVisible(true);
-            btnSubmitOrder.setVisible(false);
-        }
-        
-        // Validates and repaints the changes
-        validate();
-        repaint();
-        
     }
     
     
@@ -1734,8 +1730,7 @@ public class RestaurantGUI extends JFrame {
      */
     void removeAllPanelsFromContentPane() {
         getContentPane().remove(viewOrderP);
-        getContentPane().remove(createOrderP);
-        getContentPane().remove(employeeViewOrderP);
+        getContentPane().remove(writeOrderP);
         getContentPane().remove(orderListP);
         getContentPane().remove(manageUsersP);
         getContentPane().remove(buildingP);
@@ -1751,8 +1746,7 @@ public class RestaurantGUI extends JFrame {
      */
     void removeAllPanels() {
         masterP.remove(viewOrderP);
-        masterP.remove(createOrderP);
-        masterP.remove(employeeViewOrderP);
+        masterP.remove(writeOrderP);
         masterP.remove(orderListP);
         masterP.remove(manageUsersP);
         masterP.remove(buildingP);

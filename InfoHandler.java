@@ -1,5 +1,5 @@
 
-package GroupProject;
+package groupproject;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,10 +85,10 @@ public class InfoHandler {
     /**
      *Paginates an array of objects.
      * 
-     * @param pageSource 	 the source array to paginate
-     * @param pageNumber  	the page number to retrieve (1-based)
-     * @param itemsPerPage 	the number of items per page
-     * @param page       	 the output array to hold the paginated items
+     * @param pageSource      the source array to paginate
+     * @param pageNumber      the page number to retrieve (1-based)
+     * @param itemsPerPage     the number of items per page
+     * @param page            the output array to hold the paginated items
      */
     
     private void makePage(Object[] pageSource, int pageNumber, int itemsPerPage, Object[] page) {
@@ -329,7 +329,7 @@ public class InfoHandler {
             
             for (int i = 0; i < myCurrentOrder.size(); i++) {
                 sqlString = "INSERT INTO orderline (orderID, OrderLineNumber, ProductName, Quantity) VALUES (?, ?, ?, ?);";
-                pst = myDatabase.getCon().prepareStatement(sqlString, Statement.RETURN_GENERATED_KEYS);
+                pst = myDatabase.getCon().prepareStatement(sqlString);
                 
                 OrderLine orderLine = myCurrentOrder.get(i);
                 
@@ -339,7 +339,6 @@ public class InfoHandler {
                 pst.setInt(4, orderLine.getQuantity());
                 
                 pst.executeUpdate();
-                
             }
             
             myWaitingOrder = new ArrayList<OrderLine>(myCurrentOrder);
@@ -353,6 +352,47 @@ public class InfoHandler {
         }
         
         return myOrderID;
+    }
+    
+    /**
+     * Edits an existing order
+     * 
+     * @param orderToEdit The order being edited.
+     */
+    public void editOrder(Order orderToEdit, String newNote) {
+        try {
+            
+            ArrayList<OrderLine> items = orderToEdit.getItems();
+            
+            int orderID = orderToEdit.getOrderID();
+            
+            String sqlString = "UPDATE `order` SET note = '" + newNote + "' WHERE orderID = " + orderID + ";";
+            PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+            
+            pst.executeUpdate();
+            
+            sqlString = "DELETE FROM `orderline` WHERE orderID = " + orderID + ";";
+            pst = myDatabase.getCon().prepareStatement(sqlString);
+            
+            pst.executeUpdate();
+            
+            for (int i = 0; i < items.size(); i++) {
+                sqlString = "INSERT INTO orderline (orderID, OrderLineNumber, ProductName, Quantity) VALUES (?, ?, ?, ?);";
+                pst = myDatabase.getCon().prepareStatement(sqlString);
+                
+                OrderLine orderLine = items.get(i);
+                
+                pst.setInt(1, orderID);
+                pst.setInt(2, i + 1);
+                pst.setString(3, orderLine.getProductName());
+                pst.setInt(4, orderLine.getQuantity());
+                
+                pst.executeUpdate();
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Couldn't edit order: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     /**

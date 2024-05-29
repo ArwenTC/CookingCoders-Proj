@@ -1,5 +1,5 @@
 
-package GroupProject;
+package groupproject;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,15 +25,15 @@ import java.awt.event.ActionEvent;
  */
 
 public class LoginWindow extends JFrame {
-	
-	private JTextField txtUsername;
-	private JPasswordField txtPassword;
-	private JButton btnLogin;
-	private JButton btnReset;
-	private JButton btnExit;
-	private JFrame frmLoginSystem;
-	private JButton btnSignUp;
-	private JLabel lblConfirm;
+    
+    private JTextField txtUsername;
+    private JPasswordField txtPassword;
+    private JButton btnLogin;
+    private JButton btnReset;
+    private JButton btnExit;
+    private JFrame frmLoginSystem;
+    private JButton btnSignUp;
+    private JLabel lblConfirm;
     private JPasswordField txtConfirm;
     private JPanel mainPanel;
     
@@ -41,54 +41,54 @@ public class LoginWindow extends JFrame {
     private int programView;
     
     private User loggedInUser = null;
-	
+    
     // Creates a database myDatabase
-	private SQLDatabase myDatabase;
-	
-	private JTextField txtBuilding;
-	
-	 /**
+    private SQLDatabase myDatabase;
+    
+    private JTextField txtBuilding;
+    
+     /**
      * Constructor for the LoginWindow class.
      * Initializes the login window with the given database instance.
      * @param myDatabase_ The SQLDatabase instance used for authentication and data storage.
      */
-	public LoginWindow(SQLDatabase myDatabase_) {
-	    myDatabase = myDatabase_;
-	    
-	    mainPanel = new RPanel();
-	    setContentPane(mainPanel);
-	    
-	    // Initializes the frame
-		initialize();
-	}
-	
-	  /**
+    public LoginWindow(SQLDatabase myDatabase_) {
+        myDatabase = myDatabase_;
+        
+        mainPanel = new RPanel();
+        setContentPane(mainPanel);
+        
+        // Initializes the frame
+        initialize();
+    }
+    
+      /**
      * Creates an InfoHandler instance based on the logged-in user's data.
      * @return An InfoHandler instance containing user and building information.
      */
-	public InfoHandler makeInfoHandler() {
-	    try {
-	        
-	        // getting the building name
-    	    ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'", null);
-    	    
-    	    if (rs == null || !rs.next()) {
+    public InfoHandler makeInfoHandler() {
+        try {
+            
+            // getting the building name
+            ResultSet rs = myDatabase.getDatabaseInfo("user", "username = '" + loggedInUser.getUsername() + "'", null);
+            
+            if (rs == null || !rs.next()) {
                 return null;
             }
-    	    
-    	    String buildingName = rs.getString("BuildingName");
-    	    
-    	    // getting the building information
-    	    rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'", null);
-    	    
-    	    if (rs == null || !rs.next()) {
+            
+            String buildingName = rs.getString("BuildingName");
+            
+            // getting the building information
+            rs = myDatabase.getDatabaseInfo("building", "buildingname = '" + buildingName + "'", null);
+            
+            if (rs == null || !rs.next()) {
                 return null;
             }
-    	    
-    	    String buildingState = rs.getString("state");
-    	    String buildingCity = rs.getString("city");
-    	    String buildingStreetAddr1 = rs.getString("streetaddr1");
-    	    String buildingStreetAddr2 = rs.getString("streetaddr2");
+            
+            String buildingState = rs.getString("state");
+            String buildingCity = rs.getString("city");
+            String buildingStreetAddr1 = rs.getString("streetaddr1");
+            String buildingStreetAddr2 = rs.getString("streetaddr2");
             
             InfoHandler infoHandler = new InfoHandler(
                 myDatabase,
@@ -109,39 +109,39 @@ public class LoginWindow extends JFrame {
             }
             
             return infoHandler;
-    	    
-	    } catch (SQLException e) {
-	        JOptionPane.showMessageDialog(null, "Error when getting info for InfoHandler creation" + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
-	    }
-	    
-	    return null;
-	}
-	
-	
-	/**
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error when getting info for InfoHandler creation" + e, "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return null;
+    }
+    
+    
+    /**
      * Toggles the visibility of the login window frame.
      * @return True if the frame is now visible, false otherwise.
      */
-	public void toggleVisibility() {
-	    setVisible(!isVisible());
-	}
-	
-	/**
+    public void toggleVisibility() {
+        setVisible(!isVisible());
+    }
+    
+    /**
      * Checks if a user is currently logged in.
      * @return True if a user is logged in, false otherwise.
      */
-	public boolean userIsLoggedIn() {
-	    return loggedInUser != null;
-	}
+    public boolean userIsLoggedIn() {
+        return loggedInUser != null;
+    }
 
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
+    /**
+     * Initialize the contents of the frame.
+     */
 
-	
-	
-	/**
+    
+    
+    /**
      * Retrieves the current view of the program.
      * @return The current view of the program.
      */
@@ -304,104 +304,104 @@ public class LoginWindow extends JFrame {
         }
     }
 
-	
+    
     /**
      * Initializes the contents of the login window frame.
      */
 
-	private void initialize() {
-		
-		// Sets the bounds of the frame
-		setBounds(100, 100, 595, 394);
-		setTitle("Admin Login");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		getContentPane().setLayout(null);
-		
-		// Sets the login label
-		JLabel lbLogin = new JLabel("Login Page");
-		lbLogin.setBounds(260, 30, 98, 14);
-		getContentPane().add(lbLogin);
-		
-		JLabel lblUsername = new JLabel("Username");
-		lblUsername.setBounds(96, 88, 71, 14);
-		getContentPane().add(lblUsername);
-		
-		JLabel lblPassword = new JLabel("Password");
-		lblPassword.setBounds(96, 113, 71, 14);
-		getContentPane().add(lblPassword);
-		
-		
-		// Text Field Button
-		txtUsername = new RTextField();
-		txtUsername.setBounds(215, 85, 254, 20);
-		txtUsername.setColumns(10);
-		
-		// Password Button
-		txtPassword = new RPasswordField();
-		txtPassword.setBounds(215, 110, 254, 20);
-		
-		// Login Button
-		btnLogin = new RActionButton("Login");
-		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-		        
-		        User loggedInUser_ = null;
-		        
-		        String username = txtUsername.getText();
-		        String password = new String(txtPassword.getPassword());
-		        
-		        if (myDatabase.verifyLogin(username, password)) {
-		            
-		            String usertype = myDatabase.getUsertype(username);
-		            
-		            if (usertype == null) {
-		                return;
-		            }
-		            
-		            loggedInUser_ = new User(username, password, usertype);
-		            
-		            if ("customer".equals(usertype)) {
-		                programView = 0;
-		            } else if ("employee".equals(usertype)) {
-		                programView = 1;
-		            } else if ("admin".equals(usertype)) {
-		                programView = 2;
-		            } else {
-		                JOptionPane.showMessageDialog(
-		                    null,
-		                    "unrecognized usertype: " + loggedInUser.getUsertype(),
-		                    "Sign Up Error",
-		                    JOptionPane.ERROR_MESSAGE
-		                );
-		                loggedInUser_ = null;
-		            }
-		            
-		            JOptionPane.showMessageDialog(null, "Login successful!");
-		            
-		        } else {
-		            JOptionPane.showMessageDialog(null, "Invalid Username or password");
-		        }
-		        
-		        loggedInUser = loggedInUser_;
-			}
-		});
-		btnLogin.setBounds(31, 297, 89, 23);
-		
-		
-		// Reset Button
-		btnReset = new RActionButton("Reset");
-		btnReset.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				txtUsername.setText(null);
-				txtPassword.setText(null);
-				txtBuilding.setText(null);
-				txtConfirm.setText(null);
-			}
-		});
-		btnReset.setBounds(177, 297, 89, 23);
-		
-		// Sign Up Button
-		btnSignUp = new RActionButton("Sign Up");
+    private void initialize() {
+        
+        // Sets the bounds of the frame
+        setBounds(100, 100, 595, 394);
+        setTitle("Admin Login");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setLayout(null);
+        
+        // Sets the login label
+        JLabel lbLogin = new JLabel("Login Page");
+        lbLogin.setBounds(260, 30, 98, 14);
+        getContentPane().add(lbLogin);
+        
+        JLabel lblUsername = new JLabel("Username");
+        lblUsername.setBounds(96, 88, 71, 14);
+        getContentPane().add(lblUsername);
+        
+        JLabel lblPassword = new JLabel("Password");
+        lblPassword.setBounds(96, 113, 71, 14);
+        getContentPane().add(lblPassword);
+        
+        
+        // Text Field Button
+        txtUsername = new RTextField();
+        txtUsername.setBounds(215, 85, 254, 20);
+        txtUsername.setColumns(10);
+        
+        // Password Button
+        txtPassword = new RPasswordField();
+        txtPassword.setBounds(215, 110, 254, 20);
+        
+        // Login Button
+        btnLogin = new RActionButton("Login");
+        btnLogin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+                User loggedInUser_ = null;
+                
+                String username = txtUsername.getText();
+                String password = new String(txtPassword.getPassword());
+                
+                if (myDatabase.verifyLogin(username, password)) {
+                    
+                    String usertype = myDatabase.getUsertype(username);
+                    
+                    if (usertype == null) {
+                        return;
+                    }
+                    
+                    loggedInUser_ = new User(username, password, usertype);
+                    
+                    if ("customer".equals(usertype)) {
+                        programView = 0;
+                    } else if ("employee".equals(usertype)) {
+                        programView = 1;
+                    } else if ("admin".equals(usertype)) {
+                        programView = 2;
+                    } else {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "unrecognized usertype: " + loggedInUser.getUsertype(),
+                            "Sign Up Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        loggedInUser_ = null;
+                    }
+                    
+                    JOptionPane.showMessageDialog(null, "Login successful!");
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid Username or password");
+                }
+                
+                loggedInUser = loggedInUser_;
+            }
+        });
+        btnLogin.setBounds(31, 297, 89, 23);
+        
+        
+        // Reset Button
+        btnReset = new RActionButton("Reset");
+        btnReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                txtUsername.setText(null);
+                txtPassword.setText(null);
+                txtBuilding.setText(null);
+                txtConfirm.setText(null);
+            }
+        });
+        btnReset.setBounds(177, 297, 89, 23);
+        
+        // Sign Up Button
+        btnSignUp = new RActionButton("Sign Up");
         btnSignUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
@@ -499,68 +499,68 @@ public class LoginWindow extends JFrame {
         
         // Creates a sign up button
         btnSignUp.setBounds(318, 297, 89, 23);
-		
+        
         // Creates an exit button
         btnExit = new RActionButton("Exit");
-		btnExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Creates new frame for exit
-				frmLoginSystem = new JFrame();
-				// Confirms if user want to exit and exits if so
-				if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm exit", "Login System", JOptionPane.YES_NO_OPTION) 
-				    == JOptionPane.YES_OPTION) {
-					System.exit(0);
-				}
-				
-			}
-		});
-		btnExit.setBounds(467, 297, 89, 23);
-		
-		
-		// Separators
-		JSeparator separator = new JSeparator();
-		separator.setBackground(new Color(38, 102, 55));
-		separator.setForeground(new Color(38, 102, 55));
-		separator.setBounds(21, 277, 553, 2);
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setBackground(new Color(38, 102, 55));
-		separator_1.setForeground(new Color(38, 102, 55));
-		separator_1.setBounds(21, 75, 553, 2);
-		
-		
-		JLabel lblSigningUpMsg = new JLabel("If signing up:");
-		lblSigningUpMsg.setBounds(96, 160, 110, 14);
-		
-		lblConfirm = new JLabel("Confirm Password");
-		lblConfirm.setBounds(96, 225, 128, 14);
-		
-		txtConfirm = new RPasswordField();
-		txtConfirm.setBounds(215, 222, 254, 20);
-		
-		
-		
-		// Adds all created objects to the contentPane
-		getContentPane().add(btnReset);
-		getContentPane().add(txtUsername);
-		getContentPane().add(txtPassword);
-		getContentPane().add(btnLogin);
-		getContentPane().add(btnSignUp);
+        btnExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Creates new frame for exit
+                frmLoginSystem = new JFrame();
+                // Confirms if user want to exit and exits if so
+                if (JOptionPane.showConfirmDialog(frmLoginSystem, "Confirm exit", "Login System", JOptionPane.YES_NO_OPTION) 
+                    == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+                
+            }
+        });
+        btnExit.setBounds(467, 297, 89, 23);
+        
+        
+        // Separators
+        JSeparator separator = new JSeparator();
+        separator.setBackground(new Color(38, 102, 55));
+        separator.setForeground(new Color(38, 102, 55));
+        separator.setBounds(21, 277, 553, 2);
+        JSeparator separator_1 = new JSeparator();
+        separator_1.setBackground(new Color(38, 102, 55));
+        separator_1.setForeground(new Color(38, 102, 55));
+        separator_1.setBounds(21, 75, 553, 2);
+        
+        
+        JLabel lblSigningUpMsg = new JLabel("If signing up:");
+        lblSigningUpMsg.setBounds(96, 160, 110, 14);
+        
+        lblConfirm = new JLabel("Confirm Password");
+        lblConfirm.setBounds(96, 225, 128, 14);
+        
+        txtConfirm = new RPasswordField();
+        txtConfirm.setBounds(215, 222, 254, 20);
+        
+        
+        
+        // Adds all created objects to the contentPane
+        getContentPane().add(btnReset);
+        getContentPane().add(txtUsername);
+        getContentPane().add(txtPassword);
+        getContentPane().add(btnLogin);
+        getContentPane().add(btnSignUp);
         getContentPane().add(btnExit);
-		getContentPane().add(separator);
-		getContentPane().add(separator_1);
-		getContentPane().add(lblSigningUpMsg);
-		getContentPane().add(lblConfirm);
-		getContentPane().add(txtConfirm);
-		
-		JLabel lblBuilding = new JLabel("Building Phone");
-		lblBuilding.setBounds(96, 200, 110, 14);
-		getContentPane().add(lblBuilding);
-		
-		txtBuilding = new RTextField();
-		txtBuilding.setBounds(215, 197, 254, 20);
-		getContentPane().add(txtBuilding);
-		txtBuilding.setColumns(10);
-		
-		
-	}
+        getContentPane().add(separator);
+        getContentPane().add(separator_1);
+        getContentPane().add(lblSigningUpMsg);
+        getContentPane().add(lblConfirm);
+        getContentPane().add(txtConfirm);
+        
+        JLabel lblBuilding = new JLabel("Building Phone");
+        lblBuilding.setBounds(96, 200, 110, 14);
+        getContentPane().add(lblBuilding);
+        
+        txtBuilding = new RTextField();
+        txtBuilding.setBounds(215, 197, 254, 20);
+        getContentPane().add(txtBuilding);
+        txtBuilding.setColumns(10);
+        
+        
+    }
 }
