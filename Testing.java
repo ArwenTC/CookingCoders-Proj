@@ -12,12 +12,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-
+/*
+ * JUnit testing class
+ */
 public class Testing {
     
     private static SQLDatabase database;
     private static InfoHandler infoHandler;
     
+    /*
+     * testing setup
+     */
     @BeforeClass
     public static void setUp() {
         String databaseURL = "jdbc:mysql://localhost:3306/cs380restaurant";
@@ -32,11 +37,17 @@ public class Testing {
         }
     }
     
+    /*
+     * tests the database connection
+     */
     @Test
     public void testConnection() {
         assertNotNull("Database connection should be established.", database.getCon());
     }
     
+    /*
+     * tests the addItem method of SQLDatabase
+     */
     @Test
     public void testAddItem() {
         ArrayList<String> elements = new ArrayList<>(Arrays.asList("Username", "Password", "Usertype", "BuildingName"));
@@ -48,6 +59,9 @@ public class Testing {
         database.removeItem("user", "Username", "test_user");
     }
     
+    /*
+     * tests the removeItem method of SQLDatabase
+     */
     @Test
     public void testRemoveItem() {
         ArrayList<String> elements = new ArrayList<>(Arrays.asList("Username", "Password", "Usertype", "BuildingName"));
@@ -57,18 +71,27 @@ public class Testing {
         assertEquals("Item should be remove successfully.", 0, result);
     }
     
+    /*
+     * tests the execute method of SQLDatabase
+     */
     @Test
     public void testExecute() {
         int result = database.execute("Delete FROM user WHERE Username = 'test_user'");
         assertEquals("Command should be executed", 0, result);
     }
     
+    /*
+     * tests the verifyLogin method of SQLDatabase
+     */
     @Test
     public void testVerifyLogin() {
         assertTrue("Login should be succesful.", database.verifyLogin("idk", "123"));
         assertFalse("Login failed", database.verifyLogin("aaaa", "1234"));
     }
     
+    /*
+     * tests the executeQuery method of SQLDatabase
+     */
     @Test
     public void testExecuteQuery() {
         ResultSet rs = database.executeQuery("SELECT * FROM user");
@@ -80,6 +103,9 @@ public class Testing {
         }
     }
     
+    /*
+     * tests the getUsertype method of SQLDatabase
+     */
     @Test
     public void testGetUserType() {
         String usertype = database.getUsertype("testuser");
@@ -87,6 +113,9 @@ public class Testing {
         assertNull("Usertype should be null for non-existing user", database.getUsertype("non_existent_user"));
     }
     
+    /*
+     * tests the addUserCurrentOrder method of SQLDatabase
+     */
     @Test
     public void testAddUserCurrentOrder() {
         int orderID = infoHandler.addUserCurrentOrder("Test order note");
