@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 
 /**
  * 
- * THis one will help to handle the various operations related to the user information, orders and building details
+ * This one will help to handle the various operations related to the user information, orders and building details
  */
 public class InfoHandler {
     
@@ -85,10 +85,10 @@ public class InfoHandler {
     /**
      *Paginates an array of objects.
      * 
-     * @param pageSource      the source array to paginate
-     * @param pageNumber      the page number to retrieve (1-based)
-     * @param itemsPerPage     the number of items per page
-     * @param page            the output array to hold the paginated items
+     * @param pageSource 	 the source array to paginate
+     * @param pageNumber  	the page number to retrieve (1-based)
+     * @param itemsPerPage 	the number of items per page
+     * @param page       	 the output array to hold the paginated items
      */
     
     private void makePage(Object[] pageSource, int pageNumber, int itemsPerPage, Object[] page) {
@@ -366,8 +366,11 @@ public class InfoHandler {
             
             int orderID = orderToEdit.getOrderID();
             
-            String sqlString = "UPDATE `order` SET note = '" + newNote + "' WHERE orderID = " + orderID + ";";
+            String sqlString = "UPDATE `order` SET note = ? WHERE orderID = ?;";
             PreparedStatement pst = myDatabase.getCon().prepareStatement(sqlString);
+            
+            pst.setString(1, newNote);
+            pst.setInt(2, orderToEdit.getOrderID());
             
             pst.executeUpdate();
             
@@ -507,8 +510,13 @@ public class InfoHandler {
             
             do {
                 
-                int orderID = rsOrders.getInt("orderID");
                 String customerUsername = rsOrders.getString("customerusername");
+                
+                if (customerUsername == null) {
+                    continue;
+                }
+                
+                int orderID = rsOrders.getInt("orderID");
                 String note = rsOrders.getString("note");
                 
                 ResultSet rsOrderLines = myDatabase.getDatabaseInfo("orderline", "orderID = " + orderID, "orderlinenumber");
@@ -546,6 +554,52 @@ public class InfoHandler {
     }
     
     /**
+     * Refreshes the status of the current user's order from the database.
+     */
+    public void refreshOrderStatus() {
+        try {
+            
+            ResultSet rs = myDatabase.getDatabaseInfo("order", "customerusername = '" + username + "' AND completed = FALSE", null);
+            
+            if (rs == null) { // error
+                
+                return;
+                
+            } else if (!rs.next()) { // no currently waiting order
+                
+                myOrderID = -1;
+                myWaitingOrder.clear();
+                myWaitingOrderNote = "";
+                
+            } else { // update currently waiting order
+                
+                myWaitingOrderNote = rs.getString("note");
+                
+                rs = myDatabase.getDatabaseInfo("orderline", "orderID = " + rs.getInt("orderID"), "orderlinenumber");
+                
+                if (rs == null || !rs.next()) {
+                    return;
+                }
+                
+                myWaitingOrder.clear();
+                
+                do {
+                    
+                    String productName = rs.getString("productname");
+                    int quantity = rs.getInt("quantity");
+                    
+                    myWaitingOrder.add(new OrderLine(productName, quantity));
+                    
+                } while (rs.next());
+                
+            }
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Couldn't refresh order status: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
      * Refreshes the user information for the current building from the database.
      */
     public void refreshUserInfo() {
@@ -570,26 +624,6 @@ public class InfoHandler {
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Couldn't refresh users map: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    /**
-     * Refreshes the status of the current user's order from the database.
-     */
-    public void refreshOrderStatus() {
-        try {
-            
-            ResultSet rs = myDatabase.getDatabaseInfo("order", "customerusername = '" + username + "' AND completed = FALSE", null);
-            
-            if (rs == null) {
-                return;
-            } else if (!rs.next()) {
-                myOrderID = -1;
-                myWaitingOrderNote = "";
-            }
-            
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Couldn't refresh order status: " + e.getMessage(), "SQL Error", JOptionPane.ERROR_MESSAGE);
         }
     }
     
