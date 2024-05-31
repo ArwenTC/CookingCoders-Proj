@@ -15,7 +15,7 @@ import java.util.Map;
 public class RestaurantGUI extends JFrame {
 
     // Window Size
-    final int SIZE_X = 600, SIZE_Y = 450;
+    public final int SIZE_X = 600, SIZE_Y = 450;
     
     // items per pages
     public final int ORDERLINES_PER_PAGE = 5;
