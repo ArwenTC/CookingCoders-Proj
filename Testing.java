@@ -161,8 +161,6 @@ public class Testing {
         infoHandler.markOrderCompleted(orderIdToRemove);
         assertEquals("Order status should be 0", 1, infoHandler.getOrderStatus(orderIdToRemove));
         
-        
-        
     }
     
 }
