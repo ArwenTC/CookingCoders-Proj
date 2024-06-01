@@ -11,7 +11,7 @@ import java.sql.*;
  * This class has an order containing multiple order lines, associated with a customer
  *
  */
-public class Order{
+public class Order {
 
     private int orderID;
     private ArrayList<OrderLine> items;
