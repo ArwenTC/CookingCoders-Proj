@@ -292,21 +292,11 @@ public class InfoHandler {
     }
     
     /**
-     * Gets the username.
-     * 
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
-    
-    /**
      * Adds the current order for the user to the database.
      *
      * @param note The note to add to the order.
      * @return The order ID if successful, -1 if there is an error.
      */
-    
     public int addUserCurrentOrder(String note) {
         try {
             
