@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,6 +21,8 @@ public class Testing {
     private static SQLDatabase database;
     private static InfoHandler infoHandler;
     
+    private static int orderIdToRemove = -1;
+    
     /*
      * testing setup
      */
@@ -30,11 +33,24 @@ public class Testing {
         String password = "Kl51abe7!-4567";
         database = new SQLDatabase(databaseURL, username, password);
 
-        infoHandler = new InfoHandler(database, "testUser", "cusotmer", "1234567890", "State", "City", "StreetAddr1", "StreetAddr2");
+        infoHandler = new InfoHandler(database, "testuser", "customer", "1234567890", "State", "City", "StreetAddr1", "StreetAddr2");
         
         if (database.getCon() == null) {
             throw new RuntimeException("Tests cancelled because connection to MySQL couldn't be established.");
         }
+    }
+    
+    /*
+     * removing inserted test data from the database
+     */
+    @AfterClass
+    public static void cleanUp() {
+        if (database.getCon() == null || orderIdToRemove == -1) {
+            return;
+        }
+        
+        database.execute("DELETE FROM orderline WHERE orderid = " + orderIdToRemove + ";");
+        database.execute("DELETE FROM `order` WHERE orderid = " + orderIdToRemove + ";");
     }
     
     /*
@@ -114,12 +130,39 @@ public class Testing {
     }
     
     /*
-     * tests the addUserCurrentOrder method of SQLDatabase
+     * tests InfoHandler methods
      */
     @Test
-    public void testAddUserCurrentOrder() {
-        int orderID = infoHandler.addUserCurrentOrder("Test order note");
-        assertNotEquals("Order ID should not be -1", -1, orderID);
+    public void testInfoHandler() throws SQLException {
+        
+        // addUserCurrentOrder test
+        infoHandler.getMyCurrentOrder().add(new OrderLine("burger", 1));
+        orderIdToRemove = infoHandler.addUserCurrentOrder("Test order note");
+        assertNotEquals("Order ID should not be -1", -1, orderIdToRemove);
+        
+        
+        // getOrderStatus test
+        assertEquals("Order status should be 0", 0, infoHandler.getOrderStatus(orderIdToRemove));
+        
+        
+        // editOrder test
+        infoHandler.getMyCurrentOrder().clear();
+        infoHandler.getMyCurrentOrder().add(new OrderLine("pizza", 1));
+        Order editedOrder = new Order(orderIdToRemove, infoHandler.getMyCurrentOrder(), "testuser", "");
+        infoHandler.editOrder(editedOrder, "test note");
+        
+        ResultSet rs = database.executeQuery("SELECT productname FROM orderline WHERE orderid = " + orderIdToRemove + ";");
+        rs.next();
+        
+        assertEquals("orderline product should be pizza", "pizza", rs.getString(1));
+        
+        
+        // markOrderCompleted test
+        infoHandler.markOrderCompleted(orderIdToRemove);
+        assertEquals("Order status should be 0", 1, infoHandler.getOrderStatus(orderIdToRemove));
+        
+        
+        
     }
     
 }
